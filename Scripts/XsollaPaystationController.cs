@@ -74,6 +74,8 @@ namespace Xsolla
 		protected override void UpdateGoods (XsollaGoodsManager goods)
 		{
 			Logger.Log ("Goods recived");
+			// SetVirtual curr name
+			goods.setItemVirtCurrName("Деньга");
 			_shopViewController.UpdateGoods(goods, Utils.GetTranslations().Get(XsollaTranslations.VIRTUAL_ITEM_OPTION_BUTTON));
 			SetLoading (false);
 		}

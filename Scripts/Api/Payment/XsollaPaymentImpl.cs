@@ -373,6 +373,7 @@ namespace Xsolla
 							if(rootNode.Count > 2){
 								XsollaUtils utils = new XsollaUtils().Parse(rootNode) as XsollaUtils;
 								projectId = utils.GetProject().id.ToString();
+
 								OnUtilsRecieved(utils);
 								OnTranslationRecieved(utils.GetTranslations());
 							} else {

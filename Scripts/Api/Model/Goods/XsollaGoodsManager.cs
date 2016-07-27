@@ -11,14 +11,21 @@ namespace Xsolla
 
 		public IParseble Parse (JSONNode goodsNode)
 		{
-
 			JSONNode itemsNode = goodsNode ["virtual_items"];//virtual_items <- NEW | OLD -> items
 			IEnumerator<JSONNode> goodsEnumerator = itemsNode.Childs.GetEnumerator ();
 			while(goodsEnumerator.MoveNext())
 			{
-				AddItem(new XsollaShopItem().Parse(goodsEnumerator.Current) as XsollaShopItem);
+				XsollaShopItem item = new XsollaShopItem().Parse(goodsEnumerator.Current) as XsollaShopItem;
+				AddItem(item);
 			}
 			return this;
+		}
+
+
+		public void setItemVirtCurrName(string pName){
+			foreach(XsollaShopItem item in this.GetItemsList()){
+				item.SetVirtCurrName(pName);
+			}
 		}
 	}
 
@@ -69,6 +76,7 @@ namespace Xsolla
 		private string 	description;						//	description: "Кролики — это маленькие млекопитающие семейства зайцевых.",
 		private string 	descriptionLong;					//	long_description: "There are eight different genera in the family classified as rabbits...",
 		private string 	currency;							//	currency: "USD",
+		private string  virtCurrency = "Coins";				//  item virtual currency. Today not allowed different currency for each item.
 
 		private float 	amount;								//	amount: 0.39,
 		private float 	amountWithoutDiscount;				//	amount_without_discount: 0.39,
@@ -81,6 +89,10 @@ namespace Xsolla
 		private string[] 				unsatisfiedUserAttributes;	//	unsatisfied_user_attributes: []
 		private XsollaBonusItem 		bonusVirtualCurrency;		//	bonus_virtual_currency: {},
 		private List<XsollaBonusItem> 	bonusVirtualItems;			//	bonus_virtual_items: [],
+
+		public void SetVirtCurrName(string pName){
+			virtCurrency = pName;
+		}
 
 		public long GetId(){
 			return id;
@@ -133,10 +145,11 @@ namespace Xsolla
 				}
 			} else {
 				if (vcAmount == vcAmountWithoutDiscount) {
-					return CurrencyFormatter.FormatPrice ("Coins", vcAmount.ToString ());
+					// FIX name currency must by localizated  
+					return CurrencyFormatter.FormatPrice (virtCurrency, vcAmount.ToString ());
 				} else {
-					string oldPrice = CurrencyFormatter.FormatPrice ("Coins", vcAmountWithoutDiscount.ToString ());
-					string newPrice = CurrencyFormatter.FormatPrice ("Coins", vcAmount.ToString ());
+					string oldPrice = CurrencyFormatter.FormatPrice (virtCurrency, vcAmountWithoutDiscount.ToString ());
+					string newPrice = CurrencyFormatter.FormatPrice (virtCurrency, vcAmount.ToString ());
 					return "<size=10><color=#a7a7a7>" + oldPrice + "</color></size>" + " " + newPrice;
 				}
 			}
@@ -176,7 +189,7 @@ namespace Xsolla
 		public IParseble Parse (JSONNode shopItemNode)
 		{
 			id 						= shopItemNode ["id"].AsInt;
-			sku 					= shopItemNode["sku"].Value;
+			sku 					= shopItemNode ["sku"].Value;
 			name 					= shopItemNode ["name"].Value;
 			description 			= shopItemNode ["description"].Value;
 			descriptionLong 		= shopItemNode ["long_description"].Value;
