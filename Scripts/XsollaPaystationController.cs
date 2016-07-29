@@ -75,7 +75,7 @@ namespace Xsolla
 		{
 			Logger.Log ("Goods recived");
 			// SetVirtual curr name
-			goods.setItemVirtCurrName("Деньга");
+			goods.setItemVirtCurrName(Utils.GetProject().virtualCurrencyName);
 			_shopViewController.UpdateGoods(goods, Utils.GetTranslations().Get(XsollaTranslations.VIRTUAL_ITEM_OPTION_BUTTON));
 			SetLoading (false);
 		}

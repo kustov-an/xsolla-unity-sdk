@@ -22,7 +22,7 @@ namespace Xsolla
 					amount = amount + "RUB";
 					break;//&#8399;
 				default:
-					amount = amount + currency;
+					amount = amount + " " + currency;
 					break;//&#8399;
 			}
 			return amount;

@@ -44,7 +44,7 @@ As Example you can use XsollaPaystationController;
  - Less functionality
  - Less secure
 
-*To use **SIMPLE INTEGRATION** plase contact our account managers am@xsolla.com*
+To use **SIMPLE INTEGRATION** plase contact our account managers am@xsolla.com
 
 ##### UI Xsolla
 
