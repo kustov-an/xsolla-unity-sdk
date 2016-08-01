@@ -12,6 +12,10 @@ namespace Xsolla {
 		public CCPayment payment;
 		private string token;
 	
+		void Start() {
+			AddHttpRequestObj();
+		}
+
 		public string getToken()
 		{
 			return token;
@@ -43,7 +47,7 @@ namespace Xsolla {
 			Dictionary<string, object> dataArgs = new Dictionary<string, object>();
 			dataArgs.Add("data", request);
 			// Get object to request 
-			HttpTlsRequest httpreq = GameObject.Find("GameLoader").GetComponent<HttpTlsRequest>();
+			HttpTlsRequest httpreq = GameObject.Find(HttpTlsRequest.loaderGameObjName).GetComponent<HttpTlsRequest>();
 			StartCoroutine(httpreq.Request("https://livedemo.xsolla.com/sdk/token/", dataArgs, (value) => {
 				if (!value.HasError)
 				{
@@ -114,6 +118,11 @@ namespace Xsolla {
 			GameObject paystationobject = Instantiate(Resources.Load("Prefabs/XsollaPaystation")) as GameObject;
 			XsollaPaystationController formController = paystationobject.GetComponent<XsollaPaystationController> ();
 			return formController;
+		}
+
+		private void AddHttpRequestObj(){
+			GameObject loaderObj = Instantiate(Resources.Load("Prefabs/GameLoader")) as GameObject;
+			loaderObj.name = HttpTlsRequest.loaderGameObjName;
 		}
 
 	}

@@ -9,6 +9,7 @@ namespace Xsolla {
 	public class HttpTlsRequest: MonoBehaviour {
 				
 		private static String outputFileName = "requestResult.x";
+		public static String loaderGameObjName = "HttpRequestLoader";
 
 		// Method to get http tls request
 		public IEnumerator Request(string pUrl, Dictionary<string, object> pDataDic, Action<RequestClass> onReturnRes)

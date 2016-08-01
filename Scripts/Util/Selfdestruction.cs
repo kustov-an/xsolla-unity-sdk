@@ -17,6 +17,4 @@ public class Selfdestruction : MonoBehaviour {
 	public void DestroyObject(GameObject go){
 		Destroy (go);
 	}
-
-
 }

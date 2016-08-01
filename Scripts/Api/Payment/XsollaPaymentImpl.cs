@@ -346,7 +346,7 @@ namespace Xsolla
 
 			}
 				
-			HttpTlsRequest httpreq = GameObject.Find("GameLoader").GetComponent<HttpTlsRequest>();
+			HttpTlsRequest httpreq = GameObject.Find(HttpTlsRequest.loaderGameObjName).GetComponent<HttpTlsRequest>();
 			StartCoroutine(httpreq.Request(url, post, (value) => ProcessingRequestResult(type, value, post)));
 
 //			Debug.Log (url);
