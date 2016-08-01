@@ -87,6 +87,7 @@ namespace  Xsolla
 			
 			Payment.QuickPaymentMethodsRecieved += (quickpayments) => ShowQuickPaymentsList(Utils, quickpayments);
 			Payment.PaymentMethodsRecieved += ShowPaymentsList;
+			Payment.SavedPaymentMethodsRecieved += ShowPaymentsList;
 			Payment.CountriesRecieved += ShowCountries;
 			
 			Payment.PricepointsRecieved += (pricepoints) => ShowPricepoints(Utils, pricepoints);
@@ -176,6 +177,13 @@ namespace  Xsolla
 			Logger.Log ("Load Payment Methods request");
 			SetLoading (true);
 			Payment.GetPayments (null, currentPurchase.GetMergedMap());
+		}
+
+		public void LoadSavedPaymentMethods()
+		{
+			Logger.Log ("Load saved payments methods");
+			SetLoading(true);
+			Payments.GetSavedPayments();
 		}
 
 		public void LoadCountries()

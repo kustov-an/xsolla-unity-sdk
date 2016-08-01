@@ -21,6 +21,7 @@ namespace Xsolla
 		private const int GOODS_GROUPS 			= 51;
 		private const int GOODS_ITEMS 			= 52;
 		private const int PAYMENT_LIST 			= 6;
+		private const int SAVED_PAYMENT_LIST	= 61;
 		private const int QUICK_PAYMENT_LIST 	= 7;
 		private const int COUNTRIES 			= 8;
 		private const int VIRTUAL_PAYMENT_SUMMARY 	= 9;
@@ -36,6 +37,7 @@ namespace Xsolla
 		public Action<XsollaGoodsManager> 		GoodsRecieved;
 
 		public Action<XsollaPaymentMethods> 	PaymentMethodsRecieved;
+		public Action<XsollaPaymentMethods>     SavedPaymentMethodsRecieved;
 		public Action<XsollaQuickPayments> 		QuickPaymentMethodsRecieved;
 		public Action<XsollaCountries> 			CountriesRecieved;
 
@@ -319,6 +321,11 @@ namespace Xsolla
 			POST (PAYMENT_LIST, GetPaymentListUrl(), requestParams);
 		}
 
+		public void GetSavedPayments(Dictionary<string, string> requestParams)
+		{
+			POST(SAVED_PAYMENT_LIST, GetSavedPaymentListUrl(), requestParams);
+		}
+
 		public void GetCountries(Dictionary<string, object> requestParams)
 		{
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
@@ -459,6 +466,11 @@ namespace Xsolla
 							XsollaPaymentMethods paymentMethods = new XsollaPaymentMethods();
 							paymentMethods.Parse(rootNode);
 							OnPaymentMethodsRecieved(paymentMethods);
+						}
+						break;
+					case SAVED_PAYMENT_LIST:
+						{
+							
 						}
 						break;
 					case QUICK_PAYMENT_LIST:
@@ -773,6 +785,10 @@ namespace Xsolla
 
 		private string GetPaymentListUrl(){
 			return DOMAIN + "/paystation2/api/paymentlist";
+		}
+
+		private string GetSavedPaymentListUrl(){
+			return DOMAIN + "/paystation2/api/savedmethods";
 		}
 
 		private string GetQuickPaymentsUrl(){
