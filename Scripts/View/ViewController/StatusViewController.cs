@@ -77,11 +77,9 @@ namespace Xsolla {
 			AddTitle (utils.GetProject().name);
 			AddStatus (status.Status.Description);
 			AddElement (translations.Get ("virtualstatus_check_operation"), status.OperationId);
-			// FIX DateTime format
 			AddElement (translations.Get ("virtualstatus_check_time"), string.Format("{0:dd/MM/yyyy HH:mm}", DateTime.Parse(status.OperationCreated)));
 			AddElement (translations.Get ("virtualstatus_check_virtual_items"), status.GetPurchase(0));
 			AddLine ();
-			// FIX Add 
 			AddBigElement (translations.Get ("virtualstatus_check_vc_amount"), status.VcAmount + " " + utils.GetProject().virtualCurrencyName);
 			statusViewExitButton.gameObject.GetComponent<Text> ().text = "< Back";
 			statusViewExitButton.onClick.AddListener (delegate {OnClickExit(currentStatus, status.OperationId, Xsolla.XsollaStatusData.Status.DONE);});
