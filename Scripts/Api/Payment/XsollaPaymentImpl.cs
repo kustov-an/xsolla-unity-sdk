@@ -29,26 +29,26 @@ namespace Xsolla
 		private const int VIRTUAL_STATUS 			= 21;
 
 
-		public Action<XsollaUtils> 				UtilsRecieved;
-		public Action<XsollaTranslations> 		TranslationRecieved;
+		public Action<XsollaUtils> 					UtilsRecieved;
+		public Action<XsollaTranslations> 			TranslationRecieved;
 
-		public Action<XsollaPricepointsManager> PricepointsRecieved;
-		public Action<XsollaGroupsManager> 		GoodsGroupsRecieved;
-		public Action<XsollaGoodsManager> 		GoodsRecieved;
+		public Action<XsollaPricepointsManager> 	PricepointsRecieved;
+		public Action<XsollaGroupsManager> 			GoodsGroupsRecieved;
+		public Action<XsollaGoodsManager> 			GoodsRecieved;
 
-		public Action<XsollaPaymentMethods> 	PaymentMethodsRecieved;
-		public Action<XsollaPaymentMethods>     SavedPaymentMethodsRecieved;
-		public Action<XsollaQuickPayments> 		QuickPaymentMethodsRecieved;
-		public Action<XsollaCountries> 			CountriesRecieved;
+		public Action<XsollaPaymentMethods> 		PaymentMethodsRecieved;
+		public Action<XsollaSavedPaymentMethods>    SavedPaymentMethodsRecieved;
+		public Action<XsollaQuickPayments> 			QuickPaymentMethodsRecieved;
+		public Action<XsollaCountries> 				CountriesRecieved;
 
-		public Action<XsollaForm> 				FormReceived;
-		public Action<XsollaStatus, XsollaForm> StatusReceived;
-		public Action<string, int> 				StatusChecked;
-		public Action<XsollaError> 				ErrorReceived;
+		public Action<XsollaForm> 					FormReceived;
+		public Action<XsollaStatus, XsollaForm> 	StatusReceived;
+		public Action<string, int> 					StatusChecked;
+		public Action<XsollaError> 					ErrorReceived;
 
-		public Action<XVirtualPaymentSummary> 	VirtualPaymentSummaryRecieved;
-		public Action<string> 					VirtualPaymentProceedError;
-		public Action<XVPStatus> 				VirtualPaymentStatusRecieved;
+		public Action<XVirtualPaymentSummary> 		VirtualPaymentSummaryRecieved;
+		public Action<string> 						VirtualPaymentProceedError;
+		public Action<XVPStatus> 					VirtualPaymentStatusRecieved;
 
 		//TODO CHANGE PARAMS
 		protected string _accessToken;
@@ -170,6 +170,12 @@ namespace Xsolla
 		{
 			if(PaymentMethodsRecieved != null)
 				PaymentMethodsRecieved(paymentMethods);
+		}
+
+		private void OnSavedPaymentMethodsRecieved(XsollaSavedPaymentMethods pMethods)
+		{
+			if (SavedPaymentMethodsRecieved != null)
+				SavedPaymentMethodsRecieved(pMethods);
 		}
 
 		private void OnQuickPaymentMethodsRecieved(XsollaQuickPayments quickPayments)
@@ -321,7 +327,7 @@ namespace Xsolla
 			POST (PAYMENT_LIST, GetPaymentListUrl(), requestParams);
 		}
 
-		public void GetSavedPayments(Dictionary<string, string> requestParams)
+		public void GetSavedPayments(Dictionary<string, object> requestParams)
 		{
 			POST(SAVED_PAYMENT_LIST, GetSavedPaymentListUrl(), requestParams);
 		}
@@ -470,7 +476,9 @@ namespace Xsolla
 						break;
 					case SAVED_PAYMENT_LIST:
 						{
-							
+							XsollaSavedPaymentMethods savedPaymentsMethods = new XsollaSavedPaymentMethods();
+							savedPaymentsMethods.Parse(rootNode);
+							OnSavedPaymentMethodsRecieved(savedPaymentsMethods);
 						}
 						break;
 					case QUICK_PAYMENT_LIST:

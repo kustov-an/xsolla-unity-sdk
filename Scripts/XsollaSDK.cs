@@ -13,7 +13,7 @@ namespace Xsolla {
 		private string token;
 	
 		void Start() {
-			AddHttpRequestObj();
+			//AddHttpRequestObj();
 		}
 
 		public string getToken()

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Xsolla
 {
-	public class XsollaSavedPaymentMethods: XsollaObjectsManager<XsollaPaymentMethod>, IParseble 
+	public class XsollaSavedPaymentMethods: XsollaObjectsManager<XsollaSavedPaymentMethod>, IParseble 
 	{
 
 		private XsollaApi api;
@@ -15,30 +15,21 @@ namespace Xsolla
 			return api;
 		}
 
-		public List<XsollaPaymentMethod> GetSortedItems(string s)
+		public List<XsollaSavedPaymentMethod> GetSortedItems(string s)
 		{
-			return itemsList.FindAll (delegate(XsollaPaymentMethod xpm) {
-				return xpm.name.ToLower().StartsWith (s.ToLower());
+			return itemsList.FindAll (delegate(XsollaSavedPaymentMethod xpm) {
+				return xpm.getName().ToLower().StartsWith (s.ToLower());
 			});
-		}
-
-		public List<XsollaPaymentMethod> GetRecomendedItems()
-		{
-			return GetItemsList().FindAll (delegate(XsollaPaymentMethod xpm) {
-				return xpm.isHidden == 0 && xpm.isRecommended == 1;
-			});//((xpm) => {return xpm.isHidden == 0 && xpm.isRecommended == 1;});
-
 		}
 
 		public IParseble Parse (JSONNode paymentListNode)
 		{
-			IEnumerator<JSONNode> paymentListEnumerator =  paymentListNode["instances"].Childs.GetEnumerator();
+			IEnumerator<JSONNode> paymentListEnumerator =  paymentListNode["list"].Childs.GetEnumerator();
 			while(paymentListEnumerator.MoveNext())
 			{
-				XsollaPaymentMethod method = new XsollaPaymentMethod().Parse(paymentListEnumerator.Current) as XsollaPaymentMethod;
-				if(method.id != 64 && method.id != 1738){
-					AddItem(method);
-				}
+				XsollaSavedPaymentMethod method = new XsollaSavedPaymentMethod().Parse(paymentListEnumerator.Current) as XsollaSavedPaymentMethod;
+				AddItem(method);
+
 			}
 			api = new XsollaApi().Parse(paymentListNode["api"]) as XsollaApi;
 			return this;
@@ -47,17 +38,22 @@ namespace Xsolla
 
 	public class XsollaSavedPaymentMethod : IXsollaObject, IParseble
 	{
-		private long id {get; private set;}
-		private string type {get; private set;}
-		private string currency {get; private set;}
-		private string name {get; private set;}
-		private long pid {get; private set;}
-		private string reccurentType {get; private set;}
-		private object form {get; private set;} // "form":{"paymentSid":"pDEPBqz5qAoFWnBz"}
-		private bool replaced {get; private set;}
-		private string psName {get; private set;}
-		private string iconSrc {get; private set;}
-		private bool isSelected {get; private set;}
+		private long id {get; set;}
+		private string type {get; set;}
+		private string currency {get; set;}
+		private string name {get; set;}
+		private long pid {get; set;}
+		private string reccurentType {get; set;}
+		private SavedMethodForm form {get; set;} // "form":{"paymentSid":"pDEPBqz5qAoFWnBz"}
+		private bool replaced {get; set;}
+		private string psName {get; set;}
+		private string iconSrc {get; set;}
+		private bool isSelected {get; set;}
+
+		public string getName()
+		{
+			return name;	
+		}
 
 		public string GetImageUrl()
 		{
@@ -95,8 +91,7 @@ namespace Xsolla
 			name = pJsonNode["name"];
 			pid = pJsonNode["pid"].AsInt;
 			reccurentType = pJsonNode["reccurentType"];
-			// parse form
-			//
+			form = new SavedMethodForm().Parse(pJsonNode["form"]) as SavedMethodForm;
 			replaced = pJsonNode["replaced"].AsBool;
 			psName = pJsonNode["psName"];
 			iconSrc = pJsonNode["iconSrc"];
@@ -107,6 +102,22 @@ namespace Xsolla
 		public override string ToString ()
 		{
 			return string.Format ("[XsollaSavedPaymentMethod: id={0}, type={1}, currency={2}, name={3}, pid={4}, reccurentType={5}, form={6}, replaced={7}, psName={8}, iconSrc={9}, isSelected={10}]", id, type, currency, name, pid, reccurentType, form, replaced, psName, iconSrc, isSelected);
+		}
+	}
+
+	public class SavedMethodForm : IParseble
+	{
+		private string paymentSid;
+
+		public string getPaymentSid()
+		{
+			return paymentSid;
+		}
+
+		public IParseble Parse(JSONNode pJsonNode)
+		{
+			paymentSid = pJsonNode["paymentSid"];
+			return this;
 		}
 	}
 

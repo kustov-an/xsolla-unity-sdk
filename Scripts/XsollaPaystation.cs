@@ -50,6 +50,7 @@ namespace  Xsolla
 		//KVvI4jVlPaTbre4IAD2chJWTBRqQPkCD
 		public void OpenPaystation (string accessToken, bool isSandbox)
 		{
+			AddHttpRequestObj();
 			SetLoading (isSandbox);
 			Logger.isLogRequired = true;//isSandbox;
 			Logger.Log ("Paystation initiated current mode sandbox");
@@ -68,7 +69,11 @@ namespace  Xsolla
 			StartPayment (dict, isSandbox);
 		}
 
-
+		private void AddHttpRequestObj(){
+			GameObject loaderObj = Instantiate(Resources.Load("Prefabs/GameLoader")) as GameObject;
+			loaderObj.name = HttpTlsRequest.loaderGameObjName;
+		}
+			
 		private void StartPayment(Dictionary<string, object> dict, bool isSandbox){
 			Logger.Log ("Request prepared");
 			currentPurchase.Add(ActivePurchase.Part.TOKEN, dict);
@@ -87,7 +92,7 @@ namespace  Xsolla
 			
 			Payment.QuickPaymentMethodsRecieved += (quickpayments) => ShowQuickPaymentsList(Utils, quickpayments);
 			Payment.PaymentMethodsRecieved += ShowPaymentsList;
-			Payment.SavedPaymentMethodsRecieved += ShowPaymentsList;
+			Payment.SavedPaymentMethodsRecieved += ShowSavedPaymentsList;
 			Payment.CountriesRecieved += ShowCountries;
 			
 			Payment.PricepointsRecieved += (pricepoints) => ShowPricepoints(Utils, pricepoints);
@@ -183,7 +188,7 @@ namespace  Xsolla
 		{
 			Logger.Log ("Load saved payments methods");
 			SetLoading(true);
-			Payments.GetSavedPayments();
+			Payment.GetSavedPayments(currentPurchase.GetMergedMap());
 		}
 
 		public void LoadCountries()
@@ -362,6 +367,7 @@ namespace  Xsolla
 		
 		protected abstract void ShowQuickPaymentsList (XsollaUtils utils, XsollaQuickPayments paymentMethods);
 		protected abstract void ShowPaymentsList (XsollaPaymentMethods paymentMethods);
+		protected abstract void ShowSavedPaymentsList(XsollaSavedPaymentMethods savedPaymentsMethods);
 		protected abstract void ShowCountries (XsollaCountries paymentMethods);
 
 		protected abstract void ShowPaymentForm (XsollaUtils utils, XsollaForm form);

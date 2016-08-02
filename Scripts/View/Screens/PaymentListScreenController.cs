@@ -132,6 +132,5 @@ namespace Xsolla
 		{
 			return _paymentMethods != null;
 		}
-
 	}
 }
