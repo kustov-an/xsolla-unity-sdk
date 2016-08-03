@@ -7,18 +7,19 @@ namespace Xsolla
 {
 	public class PaymentListScreenController : ScreenBaseConroller<object> 
 	{
-
 		public Text titleText;
 		public QuickPaymentsController quickController;
 		public AllPaymentsController allController;
+		public SavedPayController savedPayController;
 		public ImageLoader imageLoader;
 		public GameObject screenHider;
 
 		private string startCountryIso;
 		private XsollaQuickPayments _quickPayments;
 		private XsollaPaymentMethods _paymentMethods;
+		private XsollaSavedPaymentMethods _savedPaymetnsMethods;
 		private XsollaCountries _countries;
-		private int loadingProgress = 0; // 3 - full loaded
+		private int loadingProgress = 0; // 4 - full loaded with savedmethods
 		private XsollaUtils utilsLink;
 
 		public override void InitScreen (XsollaTranslations translations, object model)
@@ -52,6 +53,12 @@ namespace Xsolla
 //			OpenAllPayments ();
 		}
 
+		public void SetSavedPaymentsMethods(XsollaSavedPaymentMethods paymentMethods)
+		{
+			_savedPaymetnsMethods = paymentMethods;
+			LoadElement();
+		}
+
 		public void UpdateQuick(XsollaQuickPayments quickPayments)
 		{
 			_quickPayments = quickPayments;
@@ -65,8 +72,16 @@ namespace Xsolla
 			allController.UpdatePaymentMethods (paymentMethods);
 		}
 
+		public void UpdateSavedMethods(XsollaSavedPaymentMethods paymentMethods)
+		{
+			_savedPaymetnsMethods = paymentMethods;
+			//quickController.SetSavedMethods(paymentMethods);
+			//allController.UpdatePaymentMethods(paymentMethods)
+		}
+
 		private void InitChildView(){
 //			Resizer.ResizeToParrent (gameObject);
+			savedPayController.SetSavedMethods(_savedPaymetnsMethods);
 			quickController.SetQuickMethods (_quickPayments);
 			quickController.SetAllMethods (_paymentMethods);
 			allController.SetPaymentMethods (_paymentMethods);
@@ -99,7 +114,7 @@ namespace Xsolla
 
 		public bool IsAllLoaded()
 		{
-			return loadingProgress == 3;
+			return loadingProgress == 4;
 		}
 
 		public void ChoosePaymentMethod(long paymentMethodId)
@@ -131,6 +146,11 @@ namespace Xsolla
 		public bool IsAllPayments()
 		{
 			return _paymentMethods != null;
+		}
+
+		public bool IsSavedPayments()
+		{
+			return _savedPaymetnsMethods != null;
 		}
 	}
 }

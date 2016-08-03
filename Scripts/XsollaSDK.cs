@@ -11,10 +11,6 @@ namespace Xsolla {
 		public bool isSandbox = false;
 		public CCPayment payment;
 		private string token;
-	
-		void Start() {
-			//AddHttpRequestObj();
-		}
 
 		public string getToken()
 		{
@@ -119,11 +115,5 @@ namespace Xsolla {
 			XsollaPaystationController formController = paystationobject.GetComponent<XsollaPaystationController> ();
 			return formController;
 		}
-
-		private void AddHttpRequestObj(){
-			GameObject loaderObj = Instantiate(Resources.Load("Prefabs/GameLoader")) as GameObject;
-			loaderObj.name = HttpTlsRequest.loaderGameObjName;
-		}
-
 	}
 }

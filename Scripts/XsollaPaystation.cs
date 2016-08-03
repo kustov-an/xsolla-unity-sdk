@@ -70,8 +70,12 @@ namespace  Xsolla
 		}
 
 		private void AddHttpRequestObj(){
-			GameObject loaderObj = Instantiate(Resources.Load("Prefabs/GameLoader")) as GameObject;
-			loaderObj.name = HttpTlsRequest.loaderGameObjName;
+			GameObject loader = GameObject.Find(HttpTlsRequest.loaderGameObjName);
+			if (loader == null)
+			{
+				GameObject loaderObj = Instantiate(Resources.Load("Prefabs/GameLoader")) as GameObject;
+				loaderObj.name = HttpTlsRequest.loaderGameObjName;
+			}
 		}
 			
 		private void StartPayment(Dictionary<string, object> dict, bool isSandbox){
@@ -171,6 +175,8 @@ namespace  Xsolla
 				currentPurchase.Remove (ActivePurchase.Part.PID);
 				currentPurchase.Remove (ActivePurchase.Part.XPS);
 			}
+			//FIX First we must check savemethod, and if we not have those, we draw all methods
+			LoadSavedPaymentMethods();
 			LoadPaymentMethods ();
 			LoadCountries ();
 			SetLoading (true);

@@ -18,8 +18,13 @@ namespace Xsolla
 		public List<XsollaSavedPaymentMethod> GetSortedItems(string s)
 		{
 			return itemsList.FindAll (delegate(XsollaSavedPaymentMethod xpm) {
-				return xpm.getName().ToLower().StartsWith (s.ToLower());
+				return xpm.GetName().ToLower().StartsWith (s.ToLower());
 			});
+		}
+
+		public List<XsollaSavedPaymentMethod> GetItemList()
+		{
+			return this.itemsList;
 		}
 
 		public IParseble Parse (JSONNode paymentListNode)
@@ -49,11 +54,6 @@ namespace Xsolla
 		private string psName {get; set;}
 		private string iconSrc {get; set;}
 		private bool isSelected {get; set;}
-
-		public string getName()
-		{
-			return name;	
-		}
 
 		public string GetImageUrl()
 		{

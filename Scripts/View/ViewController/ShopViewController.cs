@@ -107,10 +107,6 @@ namespace Xsolla
 
 		private void OpenPaymentMethods(Dictionary<string, object> purchase, bool isVirtualPayment)
 		{
-			//FIX First we must check savemethod, and if we not have those, we draw all methods
-			gameObject.GetComponentInParent<XsollaPaystationController> ().LoadSavedPaymentMethods();
-
-
 //			if(isVirtualPayment)
 //				purchase.Add ("is_virtual_payment", 1);
 			gameObject.GetComponentInParent<XsollaPaystationController> ().ChooseItem (purchase, isVirtualPayment);

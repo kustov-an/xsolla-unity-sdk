@@ -165,10 +165,13 @@ namespace Xsolla
 
 		protected override void ShowSavedPaymentsList (XsollaSavedPaymentMethods savedPaymentsMethods)
 		{
-			if (savedPaymentsMethods != null)
-				DrawPaymentListScreen ();
+			DrawPaymentListScreen ();
+			if (!_paymentListScreenController.IsSavedPayments())
+				_paymentListScreenController.SetSavedPaymentsMethods(savedPaymentsMethods);
 			else
-				return;
+				_paymentListScreenController.UpdateSavedMethods(savedPaymentsMethods);
+			if(_paymentListScreenController.IsAllLoaded())
+				SetLoading (false);
 		}
 
 		protected override void ShowCountries (XsollaCountries countries)
