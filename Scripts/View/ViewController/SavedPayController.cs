@@ -66,13 +66,24 @@ namespace Xsolla
 
 		private void onMethodClick(XsollaSavedPaymentMethod pMethod)
 		{
-			Logger.Log(pMethod.GetName());
+			Dictionary<string, object> purchase = new Dictionary<string, object>();
+//			access_token:DGgexDZvknZb32PEnlmCe3yQrL1T5mL1
+//			saved_method_id:1802757
+//			pid:1380
+//			paymentWithSavedMethod:1
+//			paymentSid:HSUTivuAzJ4Sx85w
+//			userInitialCurrency:USD
+//			returnUrl:https://secure.xsolla.com/paystation3/#/desktop/return/?access_token=DGgexDZvknZb32PEnlmCe3yQrL1T5mL1&preferences=eyJ1c2VySW5pdGlhbEN1cnJlbmN5IjoiVVNEIiwic2t1WzFdIjoxfQ--&sessional=eyJoaXN0b3J5IjpbWyJ2aXJ0dWFsaXRlbSIsdHJ1ZV0sWyJzYXZlZG1ldGhvZCIsdHJ1ZV1dfQ--&additional=eyJzYXZlZF9tZXRob2RfaWQiOjE4MDI3NTcsInBpZCI6MTM4MCwicGF5bWVudFdpdGhTYXZlZE1ldGhvZCI6MSwicGF5bWVudFNpZCI6IkhTVVRpdnVBeko0U3g4NXcifQ--
+//			sku[1]:1
+//			ga_client_id:14912095.1466420900
+//			ps_custom_data:{"cd19":null}
+			GetComponentInParent<XsollaPaystationController> ().ChoosePaymentMethod (purchase);
 		}
 
 		public void SetUpNavButtons()
 		{
 			showQuickPaymentMethods.GetComponent<Button>().onClick.AddListener (() => { 
-				GetComponentInParent<PaymentListScreenController>().OpenAllPayments();
+				GetComponentInParent<PaymentListScreenController>().OpenQuickPayments();
 			});
 			back.GetComponent<Button>().onClick.AddListener (() => { 
 				GetComponentInParent<XsollaPaystationController>().LoadShopPricepoints();

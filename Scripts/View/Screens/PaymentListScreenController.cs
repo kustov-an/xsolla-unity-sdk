@@ -32,6 +32,7 @@ namespace Xsolla
 			utilsLink = utils;
 			titleText.text = utils.GetTranslations().Get(XsollaTranslations.PAYMENT_METHODS_PAGE_TITLE);
 			startCountryIso = utils.GetUser ().GetCountryIso ();
+			savedPayController.InitScreen(utilsLink);
 		}
 
 		public void SetQuickPayments(XsollaQuickPayments quickPayments)
@@ -81,41 +82,47 @@ namespace Xsolla
 
 		private void InitChildView(){
 //			Resizer.ResizeToParrent (gameObject);
-			if (_savedPaymetnsMethods != null)
-			{
-				savedPayController.InitScreen(utilsLink);
-				savedPayController.SetSavedMethods(_savedPaymetnsMethods);
+ 			quickController.SetQuickMethods (_quickPayments);
+			quickController.SetAllMethods (_paymentMethods);
+			allController.SetPaymentMethods (_paymentMethods);
+			if (utilsLink.GetUser ().IsAllowChangeCountry ()) { 
+				allController.SetCountries (startCountryIso, _countries);
 			}
-			else
-			{
-				quickController.SetQuickMethods (_quickPayments);
-				quickController.SetAllMethods (_paymentMethods);
-				allController.SetPaymentMethods (_paymentMethods);
-				if (utilsLink.GetUser ().IsAllowChangeCountry ()) { 
-					allController.SetCountries (startCountryIso, _countries);
-				}
-				screenHider.SetActive (false);
-			}
+			savedPayController.SetSavedMethods(_savedPaymetnsMethods);
 		}
 
 		public void OpenQuickPayments()
 		{
+			savedPayController.gameObject.SetActive(false);
+			screenHider.SetActive (false);
 			allController.gameObject.SetActive(false);
 			quickController.gameObject.SetActive(true);
 		}
 
 		public void OpenAllPayments()
 		{
+			savedPayController.gameObject.SetActive(false);
+			screenHider.SetActive (false);
 			quickController.gameObject.SetActive(false);
 			allController.gameObject.SetActive(true);
+		}
 
+		public void OpenSavedMethod()
+		{
+			screenHider.SetActive(true);
+			quickController.gameObject.SetActive(false);
+			allController.gameObject.SetActive(false);
 		}
 
 		private void LoadElement(){
 			loadingProgress++;
 			if(IsAllLoaded()){
 				InitChildView ();
-				OpenQuickPayments ();
+				if (_savedPaymetnsMethods == null)
+					OpenQuickPayments ();
+				else 
+					OpenSavedMethod ();
+
 			}
 		}
 
