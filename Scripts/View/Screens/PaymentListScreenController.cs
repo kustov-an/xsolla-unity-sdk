@@ -10,7 +10,7 @@ namespace Xsolla
 		public Text titleText;
 		public QuickPaymentsController quickController;
 		public AllPaymentsController allController;
-		public SavedPayController savedPayController;
+		//public SavedPayController savedPayController;
 		public ImageLoader imageLoader;
 		public GameObject screenHider;
 
@@ -81,7 +81,7 @@ namespace Xsolla
 
 		private void InitChildView(){
 //			Resizer.ResizeToParrent (gameObject);
-			savedPayController.SetSavedMethods(_savedPaymetnsMethods);
+			//savedPayController.SetSavedMethods(_savedPaymetnsMethods);
 			quickController.SetQuickMethods (_quickPayments);
 			quickController.SetAllMethods (_paymentMethods);
 			allController.SetPaymentMethods (_paymentMethods);
@@ -114,7 +114,7 @@ namespace Xsolla
 
 		public bool IsAllLoaded()
 		{
-			return loadingProgress == 4;
+			return loadingProgress == 3;
 		}
 
 		public void ChoosePaymentMethod(long paymentMethodId)
