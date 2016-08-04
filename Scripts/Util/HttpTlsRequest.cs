@@ -104,7 +104,7 @@ namespace Xsolla {
 			try
 			{
 				Process process = Process.Start(start);
-				using (StreamReader sr = new StreamReader(outputFileName))
+				using (StreamReader sr = process.StandardOutput)
 				{
 					// Read the stream to a string, and write the string to the console.
 					result = sr.ReadToEnd();
