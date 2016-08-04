@@ -88,6 +88,9 @@ public class XsollaError {
 
 #### TRY IT!
 
+If you use **Windows OS** you must move content from folder XsollaUnitySDK/move_Content_to_project_plugins to folder YOUR_PROJECT/Assets/Plugins. 
+If you don’t have this folder, create it.
+
 You can look demo on https://livedemo.xsolla.com/sdk/unity/  
 We have two test scenes in "XsollaUnitySDK" -> "Resources" -> "_Scenes" folder:  
 - XsollaFarmFreshScene - emulates item shop  
