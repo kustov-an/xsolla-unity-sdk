@@ -69,7 +69,7 @@ namespace  Xsolla
 			StartPayment (dict, isSandbox);
 		}
 
-		private void AddHttpRequestObj(){
+		public static void AddHttpRequestObj(){
 			GameObject loader = GameObject.Find(HttpTlsRequest.loaderGameObjName);
 			if (loader == null)
 			{

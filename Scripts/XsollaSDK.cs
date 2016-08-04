@@ -42,6 +42,7 @@ namespace Xsolla {
 			// Prepare args
 			Dictionary<string, object> dataArgs = new Dictionary<string, object>();
 			dataArgs.Add("data", request);
+			XsollaPaystation.AddHttpRequestObj();
 			// Get object to request 
 			HttpTlsRequest httpreq = GameObject.Find(HttpTlsRequest.loaderGameObjName).GetComponent<HttpTlsRequest>();
 			StartCoroutine(httpreq.Request("https://livedemo.xsolla.com/sdk/token/", dataArgs, (value) => {
