@@ -45,7 +45,7 @@ namespace Xsolla {
 			case RuntimePlatform.WindowsPlayer:
 			case RuntimePlatform.WindowsWebPlayer:
 				{
-					CaptureConsoleCmdOutput(@"" + Application.dataPath +"/Plugins/" + "ExecConnectWin.dll", args, out res);
+					CaptureConsoleCmdOutputWin(@"" + Application.dataPath +"/Plugins/" + "ExecConnectWin.dll", args, out res);
 					break;
 				}
 			case RuntimePlatform.Android:
@@ -89,6 +89,34 @@ namespace Xsolla {
 				onComplite(new RequestClass(www.text, pUrl));
 			} else {
 				onComplite(new RequestClass(www.text,pUrl,true,www.error));
+			}
+		}
+
+		private static void CaptureConsoleCmdOutputWin(string pExeName, string pArgs, out RequestClass pRes)
+		{
+			string result = "";
+			ProcessStartInfo start = new ProcessStartInfo();
+			start.FileName = pExeName;
+			start.Arguments = pArgs;
+			start.UseShellExecute = false;
+			start.RedirectStandardOutput = true;
+			start.CreateNoWindow = true;
+			try
+			{
+				Process process = Process.Start(start);
+				using (StreamReader sr = new StreamReader(outputFileName))
+				{
+					// Read the stream to a string, and write the string to the console.
+					result = sr.ReadToEnd();
+				}
+
+				process.WaitForExit();
+				pRes = new RequestClass(result, pArgs, false, "");
+			}
+			catch (Exception e)
+			{
+				Logger.Log(e.Message);
+				pRes = new RequestClass("",pArgs,true,e.Message.ToString());
 			}
 		}
 
