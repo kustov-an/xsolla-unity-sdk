@@ -22,7 +22,7 @@ namespace Xsolla {
 			// Get data paremetrs
 			foreach(KeyValuePair<string, object> dicItem in pDataDic)
 			{
-				urldata += dicItem.Key + "=" + Uri.EscapeDataString(dicItem.Value.ToString()) + "&";
+				urldata += dicItem.Key + "=" + Uri.EscapeDataString((dicItem.Value==null)?"":dicItem.Value.ToString()) + "&";
 			}
 			urldata = "?" + urldata.Substring(0, urldata.Length - 1);
 			args = pUrl + urldata;
