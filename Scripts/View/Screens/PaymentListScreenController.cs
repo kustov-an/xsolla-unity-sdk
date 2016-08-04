@@ -10,7 +10,7 @@ namespace Xsolla
 		public Text titleText;
 		public QuickPaymentsController quickController;
 		public AllPaymentsController allController;
-		//public SavedPayController savedPayController;
+		public SavedPayController savedPayController;
 		public ImageLoader imageLoader;
 		public GameObject screenHider;
 
@@ -81,14 +81,21 @@ namespace Xsolla
 
 		private void InitChildView(){
 //			Resizer.ResizeToParrent (gameObject);
-			//savedPayController.SetSavedMethods(_savedPaymetnsMethods);
-			quickController.SetQuickMethods (_quickPayments);
-			quickController.SetAllMethods (_paymentMethods);
-			allController.SetPaymentMethods (_paymentMethods);
-			if (utilsLink.GetUser ().IsAllowChangeCountry ()) { 
-				allController.SetCountries (startCountryIso, _countries);
+			if (_savedPaymetnsMethods != null)
+			{
+				savedPayController.InitScreen(utilsLink);
+				savedPayController.SetSavedMethods(_savedPaymetnsMethods);
 			}
-			screenHider.SetActive (false);
+			else
+			{
+				quickController.SetQuickMethods (_quickPayments);
+				quickController.SetAllMethods (_paymentMethods);
+				allController.SetPaymentMethods (_paymentMethods);
+				if (utilsLink.GetUser ().IsAllowChangeCountry ()) { 
+					allController.SetCountries (startCountryIso, _countries);
+				}
+				screenHider.SetActive (false);
+			}
 		}
 
 		public void OpenQuickPayments()
@@ -114,7 +121,7 @@ namespace Xsolla
 
 		public bool IsAllLoaded()
 		{
-			return loadingProgress == 3;
+			return loadingProgress == 4;
 		}
 
 		public void ChoosePaymentMethod(long paymentMethodId)

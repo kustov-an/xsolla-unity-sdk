@@ -8,15 +8,15 @@ using System.Collections;namespace Xsolla {
 	{
 		public static string API_ERROR_MESSAGE = "api_error_message";//"Sorry, we couldn't complete your request. Please contact our customer support."
 		public static string APP_ERROR_TITLE = "app_error_title";//"Something is going wrong"
-		public static string BACK_TO_LIST = "Back to payment methods";
-		public static string BACK_TO_PAYMENT ="Back to the payment";
-		public static string BACK_TO_PICEPOINT = "Back to virtual currency";
-		public static string BACK_TO_SAVEDMETHOD = "Back to saved payment methods";
-		public static string BACK_TO_SPECIALS = "Back to Shop";
-		public static string BACK_TO_SPECIALSLIST = "Back to Shop";
-		public static string BACK_TO_STORE = "Return to Store";
-		public static string BACK_TO_SUBSCRIPTION = "Back to subscriptions";
-		public static string BACK_TO_VIRTUALITEM = "Back to item shop";
+		public static string BACK_TO_LIST = "back_to_list";//"Back to payment methods"
+		public static string BACK_TO_PAYMENT ="back_to_payment";//"Back to the payment"
+		public static string BACK_TO_PICEPOINT = "back_to_pricepoint";//"Back to virtual currency"
+		public static string BACK_TO_SAVEDMETHOD = "back_to_savedmethod";//"Back to payment accounts"
+		public static string BACK_TO_SPECIALS = "back_to_specials";//"Back to Shop",
+		public static string BACK_TO_SPECIALSLIST = "back_to_specialslist";//"Back to Shop",
+		public static string BACK_TO_STORE = "back_to_store";//"Return to Store"
+		public static string BACK_TO_SUBSCRIPTION = "back_to_subscription";//"Back to subscriptions"
+		public static string BACK_TO_VIRTUALITEM = "back_to_virtualitem";//"Back to item shop"
 		public static string BALANCE_BACK_BUTTON = "balance_back_button";//"Continue payment"
 		public static string BALANCE_HISTORY_AMOUNT = "balance_history_amount";//"Amount"
 		public static string BALANCE_HISTORY_COMMENT = "balance_history_comment";//"Comment"

@@ -9,14 +9,20 @@ namespace Xsolla
 	public class SavedPayController : MonoBehaviour
 	{
 		public ImageLoader imageLoader;
+		public GameObject title;
 		public GameObject methodsGrid;
-		public Button showMore;
-		public Button back;
+		public GameObject showQuickPaymentMethods;
+		public GameObject back;
 		public GameObject self;
 
-		public void Start()
+		private XsollaUtils utilsLink;
+
+		public void InitScreen(XsollaUtils utils)
 		{
-			//SetSavedMethods(null);
+			utilsLink = utils;
+			title.GetComponent<Text>().text = utils.GetTranslations().Get(XsollaTranslations.SAVEDMETHOD_PAGE_TITLE);
+			showQuickPaymentMethods.GetComponent<Text>().text = utils.GetTranslations().Get(XsollaTranslations.PAYMENT_LIST_SHOW_QUICK);
+			back.GetComponent<Text>().text = utils.GetTranslations().Get(XsollaTranslations.BACK_TO_SPECIALS);
 		}
 
 		public void SetSavedMethods(XsollaSavedPaymentMethods pMethods)
@@ -29,12 +35,13 @@ namespace Xsolla
 				{
 					CreateMethodBtn(method);
 				}
-
+				self.gameObject.SetActive(true);
+				SetUpNavButtons();
 			}
 			else
 			{
 				// if methods list is empty, we hide all window
-				self.SetActive(false);
+				self.gameObject.SetActive(false);
 			}
 		}
 
@@ -49,6 +56,8 @@ namespace Xsolla
 			controller.setMethod(pMethod);
 			// Set name 
 			controller._nameMethod.text = pMethod.GetName();
+			// Set Type
+			controller._nameType.text = pMethod.GetPsName();
 			// Set icon
 			imageLoader.LoadImage(controller._iconMethod, pMethod.GetImageUrl());		
 			// Set BtnList
@@ -58,6 +67,16 @@ namespace Xsolla
 		private void onMethodClick(XsollaSavedPaymentMethod pMethod)
 		{
 			Logger.Log(pMethod.GetName());
+		}
+
+		public void SetUpNavButtons()
+		{
+			showQuickPaymentMethods.GetComponent<Button>().onClick.AddListener (() => { 
+				GetComponentInParent<PaymentListScreenController>().OpenAllPayments();
+			});
+			back.GetComponent<Button>().onClick.AddListener (() => { 
+				GetComponentInParent<XsollaPaystationController>().LoadShopPricepoints();
+			});
 		}
 
 	}

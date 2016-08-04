@@ -9,10 +9,10 @@ namespace Xsolla
 	{
 		public Image _iconMethod;
 		public Text _nameMethod;
+		public Text _nameType;
 		public Button _btnMethod;
 
 		private XsollaSavedPaymentMethod _method;
-
 
 		public void setMethod (XsollaSavedPaymentMethod pMethod)
 		{

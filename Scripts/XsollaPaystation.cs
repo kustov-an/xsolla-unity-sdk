@@ -96,7 +96,7 @@ namespace  Xsolla
 			
 			Payment.QuickPaymentMethodsRecieved += (quickpayments) => ShowQuickPaymentsList(Utils, quickpayments);
 			Payment.PaymentMethodsRecieved += ShowPaymentsList;
-			//Payment.SavedPaymentMethodsRecieved += ShowSavedPaymentsList;
+			Payment.SavedPaymentMethodsRecieved += ShowSavedPaymentsList;
 			Payment.CountriesRecieved += ShowCountries;
 			
 			Payment.PricepointsRecieved += (pricepoints) => ShowPricepoints(Utils, pricepoints);
@@ -176,7 +176,7 @@ namespace  Xsolla
 				currentPurchase.Remove (ActivePurchase.Part.XPS);
 			}
 			//FIX First we must check savemethod, and if we not have those, we draw all methods
-			//LoadSavedPaymentMethods();
+			LoadSavedPaymentMethods();
 			LoadPaymentMethods ();
 			LoadCountries ();
 			SetLoading (true);
