@@ -1717,7 +1717,7 @@ MonoBehaviour:
   paymenListView: {fileID: 11417290}
   dropDownContainer: {fileID: 100780}
   dropDownController: {fileID: 11486392}
-  back: {fileID: 11406052}
+  back: {fileID: 164072}
 --- !u!114 &11416506
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3590,8 +3590,9 @@ MonoBehaviour:
   - {fileID: 193520}
   - {fileID: 138160}
   - {fileID: 109380}
-  showMore: {fileID: 11426290}
-  back: {fileID: 11450620}
+  showMore: {fileID: 165704}
+  back: {fileID: 109826}
+  title: {fileID: 174802}
 --- !u!114 &11476534
 MonoBehaviour:
   m_ObjectHideFlags: 1

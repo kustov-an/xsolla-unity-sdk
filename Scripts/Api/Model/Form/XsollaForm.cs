@@ -117,6 +117,10 @@ namespace Xsolla
 			return pid == 26 || pid == 1380;
 		}
 
+		public bool IsCreditCard(){
+			return map.ContainsKey("card_number") && map.ContainsKey("card_year");
+		}
+
 		public string GetAccount()
 		{
 			return account;

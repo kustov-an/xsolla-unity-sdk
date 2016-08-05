@@ -10,14 +10,24 @@ namespace Xsolla{
 		public ImageLoader imageLoader;
 		public GameObject[] quiсk;// max 2
 		public GameObject[] popular;//max 6
-		public Button showMore;
-		public Button back;
+		public GameObject showMore;
+		public GameObject back;
+		public GameObject title;
+
+		private XsollaUtils utilsLink;
 
 //		private XsollaQuickPayments quickPayments;
 //		private XsollaPaymentMethods paymentMethods;
 
 		public void DrawLayout(XsollaPaymentMethods paymentMethods){
+		}
 
+		public void InitScreen(XsollaUtils utils)
+		{
+			utilsLink = utils;
+			showMore.GetComponent<Text>().text = utilsLink.GetTranslations().Get(XsollaTranslations.PAYMENT_LIST_SHOW_MORE);
+			back.GetComponent<Text>().text = utilsLink.GetTranslations().Get(XsollaTranslations.BACK_TO_SPECIALS);
+				
 		}
 
 		public void SetQuickMethods(XsollaQuickPayments quickPayments){
@@ -70,10 +80,10 @@ namespace Xsolla{
 
 		public void SetUpNavButtons()
 		{
-			showMore.onClick.AddListener (() => { 
+			showMore.GetComponent<Button>().onClick.AddListener (() => { 
 				GetComponentInParent<PaymentListScreenController>().OpenAllPayments();
 			});
-			back.onClick.AddListener (() => { 
+			back.GetComponent<Button>().onClick.AddListener (() => { 
 				GetComponentInParent<XsollaPaystationController>().LoadShopPricepoints();
 			});
 		}

@@ -100,7 +100,7 @@ namespace Xsolla
 		}
 	
 		public GameObject GetFormView(XsollaForm xsollaForm, XsollaTranslations translations){
-			bool isCcRender = xsollaForm.GetCurrentCommand() == XsollaForm.CurrentCommand.FORM && xsollaForm.IsValidPaymentSystem();
+			bool isCcRender = xsollaForm.GetCurrentCommand() == XsollaForm.CurrentCommand.FORM && xsollaForm.IsCreditCard();
 			if (isCcRender)
 			{
 				return GetCardViewWeb(xsollaForm, translations);

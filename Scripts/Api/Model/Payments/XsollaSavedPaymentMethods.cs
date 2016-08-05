@@ -68,6 +68,11 @@ namespace Xsolla
 			return id.ToString();
 		}
 
+		public long GetPid()
+		{
+			return pid;
+		}
+
 		public string GetName()
 		{
 			return name;
@@ -81,6 +86,19 @@ namespace Xsolla
 		public object GetForm()
 		{
 			return form;
+		}
+
+		public string GetFormSid()
+		{
+			if (form != null)
+				return form.getPaymentSid();
+			else
+				return "";
+		}
+
+		public string GetCurrency()
+		{
+			return currency;
 		}
 
 		public IParseble Parse (JSONNode pJsonNode)

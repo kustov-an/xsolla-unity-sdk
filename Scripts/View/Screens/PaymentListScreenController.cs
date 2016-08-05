@@ -33,6 +33,8 @@ namespace Xsolla
 			titleText.text = utils.GetTranslations().Get(XsollaTranslations.PAYMENT_METHODS_PAGE_TITLE);
 			startCountryIso = utils.GetUser ().GetCountryIso ();
 			savedPayController.InitScreen(utilsLink);
+			quickController.InitScreen(utilsLink);
+			//allController.InitScreen(utilsLink);
 		}
 
 		public void SetQuickPayments(XsollaQuickPayments quickPayments)
@@ -118,7 +120,8 @@ namespace Xsolla
 			loadingProgress++;
 			if(IsAllLoaded()){
 				InitChildView ();
-				if (_savedPaymetnsMethods == null)
+				// if count savedMethods equal 0, we open Auick methods, else we open saved methods 
+				if (_savedPaymetnsMethods.GetCount() == 0)
 					OpenQuickPayments ();
 				else 
 					OpenSavedMethod ();
