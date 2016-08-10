@@ -343,7 +343,7 @@ MonoBehaviour:
   mainScreen: {fileID: 182370, guid: 5669f861fabf44f1489d6275533f3591, type: 2}
   progressBar: {fileID: 11428966}
   shopScreenPrefab: {fileID: 100982, guid: cb921154163324f8f9da723276377c99, type: 2}
-  paymentListScreebPrefab: {fileID: 100116, guid: fb4dc43f379934a23a7276772c6d7a24,
+  paymentListScreebPrefab: {fileID: 131000, guid: 7e73afce3fae84ba8bb0be4dd540be18,
     type: 2}
   container: {fileID: 111068}
 --- !u!114 &11492102
