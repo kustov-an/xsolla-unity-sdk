@@ -13,7 +13,8 @@ namespace Xsolla
 			var parentHeight = parentRectTransform.rect.height;
 			var parentWidth = parentRectTransform.rect.width;
 			var parentRatio = parentWidth/parentHeight;// > 1 horizontal
-			var width = containerRectTransform.rect.width;
+			float parentScale = parentRectTransform.localScale.x;
+    		var width = containerRectTransform.rect.width;
 			if (parentRatio < 1) {
 				containerRectTransform.offsetMin = new Vector2 (-parentWidth/2, -parentHeight/2);
 				containerRectTransform.offsetMax = new Vector2 (parentWidth/2, parentHeight/2);
@@ -23,8 +24,8 @@ namespace Xsolla
 					containerRectTransform.offsetMin = new Vector2 (-newWidth/2, -parentHeight/2);
 					containerRectTransform.offsetMax = new Vector2 (newWidth/2, parentHeight/2);
 				} else {
-					containerRectTransform.offsetMin = new Vector2 (-width/2, -parentHeight/2);
-					containerRectTransform.offsetMax = new Vector2 (width/2, parentHeight/2);
+					containerRectTransform.offsetMin = new Vector2 (-width/2, -parentHeight/2/parentScale);
+					containerRectTransform.offsetMax = new Vector2 (width/2, parentHeight/2/parentScale);
 				}
 			}
 		}

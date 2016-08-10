@@ -251,10 +251,10 @@ namespace Xsolla
 			if (nextStepParams.Count == 0) {
 				nextStepParams.Add ("pid", 26);
 			}
-//			if (!nextStepParams.ContainsKey ("paymentWithSavedMethod")) {
-//				nextStepParams.Add ("paymentWithSavedMethod", 0);
+			if (!nextStepParams.ContainsKey ("paymentWithSavedMethod")) {
+				nextStepParams.Add ("paymentWithSavedMethod", 0);
 //				nextStepParams.Add ("returnUrl", "");
-//			}
+			}
 			POST (DIRECTPAYMENT_FORM, GetDirectpaymentLink(), nextStepParams);
 		}
 

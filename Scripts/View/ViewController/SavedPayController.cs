@@ -67,23 +67,11 @@ namespace Xsolla
 		private void onMethodClick(XsollaSavedPaymentMethod pMethod)
 		{
 			Dictionary<string, object> purchase = new Dictionary<string, object>();
-//			access_token:DGgexDZvknZb32PEnlmCe3yQrL1T5mL1
-			//purchase.Add("access_token", utilsLink.GetAcceessToken());
-//			saved_method_id:1802757
 			purchase.Add("saved_method_id", pMethod.GetKey());
-//			pid:1380
 			purchase.Add("pid", pMethod.GetPid());
-//			paymentWithSavedMethod:1
 			purchase.Add("paymentWithSavedMethod", 1);
-//			paymentSid:HSUTivuAzJ4Sx85w
 			purchase.Add("paymentSid", pMethod.GetFormSid());
-
-//			userInitialCurrency:USD
 			purchase.Add("userInitialCurrency", pMethod.GetCurrency());
-//			returnUrl:https://secure.xsolla.com/paystation3/#/desktop/return/?access_token=DGgexDZvknZb32PEnlmCe3yQrL1T5mL1&preferences=eyJ1c2VySW5pdGlhbEN1cnJlbmN5IjoiVVNEIiwic2t1WzFdIjoxfQ--&sessional=eyJoaXN0b3J5IjpbWyJ2aXJ0dWFsaXRlbSIsdHJ1ZV0sWyJzYXZlZG1ldGhvZCIsdHJ1ZV1dfQ--&additional=eyJzYXZlZF9tZXRob2RfaWQiOjE4MDI3NTcsInBpZCI6MTM4MCwicGF5bWVudFdpdGhTYXZlZE1ldGhvZCI6MSwicGF5bWVudFNpZCI6IlYzSWNibk9PSkdaWTA5NmUifQ--
-//			sku[1]:1
-//			ga_client_id:14912095.1466420900
-//			ps_custom_data:{"cd19":null}
 			GetComponentInParent<XsollaPaystationController> ().ChoosePaymentMethod (purchase);
 		}
 			
