@@ -173,7 +173,8 @@ namespace Xsolla
 				if(element != null){
 					//		input.text = element.GetTitle();
 					//						input.GetComponentInChildren<MainValidator>().setErrorMsg(newErrorMsg);
-					input.GetComponentInChildren<Text>().text = element.GetExample();
+					if (element.GetName() != XsollaApiConst.CARD_CVV)
+						input.GetComponentInChildren<Text>().text = element.GetExample();
 					// FIX update with unity 5.2 
 					input.onValueChanged.AddListener(delegate{OnValueChange(input, element.GetName());});
 				} else {
@@ -183,12 +184,33 @@ namespace Xsolla
 				if(validator != null)
 					validators.Add(validator);
 			}
+			// Toggle allowSubscription
+			if (xsollaForm.Contains(XsollaApiConst.ALLOW_SUBSCRIPTION))
+			{
+				XsollaFormElement ToggleElement = null;
+				ToggleElement = xsollaForm.GetItem(XsollaApiConst.ALLOW_SUBSCRIPTION);
+				// get toggle object
+				Toggle toggle = cardViewObj.GetComponentInChildren<Toggle> ();
+				// set label name 
+				Text lable = toggle.transform.GetComponentInChildren<Text>();
+				lable.text = ToggleElement.GetTitle();
+				OnValueChange(ToggleElement.GetName(), toggle.isOn.ToString());
+				toggle.onValueChanged.AddListener ((b) => {
+					OnValueChange(ToggleElement.GetName(), b.ToString());
+				});
+			}
+
 			return cardViewObj;
 		}
 
 		private void OnValueChange(InputField _input, string elemName)
 		{
 			_form.UpdateElement(elemName, _input.text);
+		}
+
+		private void OnValueChange(string elemName, string pValue)
+		{
+			_form.UpdateElement(elemName, pValue);
 		}
 
 		//TODO make new window non blocking
