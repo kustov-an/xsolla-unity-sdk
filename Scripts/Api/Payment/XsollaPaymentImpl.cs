@@ -58,7 +58,6 @@ namespace Xsolla
 		}
 
 		public XsollaPaymentImpl(string accessToken){
-			//accessToken = "KhevmS4ddZ3lmzZKU4yBlmKwTeKO3bTY";
 			this._accessToken = accessToken;
 
 		}

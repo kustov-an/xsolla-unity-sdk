@@ -194,9 +194,9 @@ namespace Xsolla
 				// set label name 
 				Text lable = toggle.transform.GetComponentInChildren<Text>();
 				lable.text = ToggleElement.GetTitle();
-				OnValueChange(ToggleElement.GetName(), toggle.isOn.ToString());
+				OnValueChange(ToggleElement.GetName(), toggle.isOn?"1":"0");
 				toggle.onValueChanged.AddListener ((b) => {
-					OnValueChange(ToggleElement.GetName(), b.ToString());
+					OnValueChange(ToggleElement.GetName(), b?"1":"0");
 				});
 			}
 
