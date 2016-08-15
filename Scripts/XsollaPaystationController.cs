@@ -83,7 +83,11 @@ namespace Xsolla
 		protected override void ShowPaymentForm (XsollaUtils utils, XsollaForm form)
 		{
 			Logger.Log ("Payment Form recived");
-			DrawForm (utils, form);
+			// If we have form with skip checkoutForm
+			//if ((form.GetCurrentCommand() == XsollaForm.CurrentCommand.CHECKOUT) && form.GetSkipChekout())
+			//	DoPayment(form.GetXpsMap());
+			//else
+				DrawForm (utils, form);
 			SetLoading (false);
 		}
 			

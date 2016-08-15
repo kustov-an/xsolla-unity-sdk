@@ -26,6 +26,7 @@ namespace Xsolla {
 			}
 			urldata = "?" + urldata.Substring(0, urldata.Length - 1);
 			args = pUrl + urldata;
+			Logger.Log(this.GetType().Name + " -> " + args);
 
 
 			// Platform switcher

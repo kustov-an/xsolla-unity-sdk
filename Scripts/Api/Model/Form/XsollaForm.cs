@@ -23,6 +23,8 @@ namespace Xsolla
         private String sum;
         private String instruction;
         private int pid;
+		private bool skipForm;
+		private bool skipCheckout;
 
 		private string checkoutToken;
 		private XsollaError xsollaError;
@@ -212,6 +214,16 @@ namespace Xsolla
 				return checkoutToken.ToString();
 		}
 
+		public bool GetSkipForm()
+		{
+			return skipForm;
+		}
+
+		public bool GetSkipChekout()
+		{
+			return skipCheckout;
+		}
+
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * *
 		* PRIVATE METHODS
 		* * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -259,6 +271,15 @@ namespace Xsolla
             this.pid = pid;
         }
 
+		private void SetSkipForm(bool pValue)
+		{
+			skipForm = pValue;
+		}
+
+		private void SetSkipCheckout(bool pValue)
+		{
+			skipCheckout = pValue;
+		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * *
 		* OVERRIDED METHODS
@@ -294,7 +315,9 @@ namespace Xsolla
 			this.SetSum (rootNode[XsollaApiConst.R_BUYDATA]["sum"]);
 			this.SetInstruction (rootNode[XsollaApiConst.R_INSTRUCTION]);
 			this.SetPid (rootNode[XsollaApiConst.R_PID].AsInt);
-
+			this.SetSkipForm(rootNode[XsollaApiConst.R_SKIPFORM].AsBool);
+			this.SetSkipCheckout(rootNode[XsollaApiConst.R_SKIPCHECKOUT].AsBool);
+	
 			checkoutToken = rootNode ["checkoutToken"];
 			JSONNode buyDataNode = rootNode ["buyData"];
 			if (buyDataNode != null && !"null".Equals (buyDataNode)) {
@@ -321,7 +344,7 @@ namespace Xsolla
 			}
             return this;
         }
-
+			
 		public override string ToString ()
 		{
 			StringBuilder builder = new StringBuilder();

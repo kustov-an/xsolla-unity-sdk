@@ -46,6 +46,7 @@ namespace Xsolla {
         public const string R_BACKVISIBLE = "backVisible";
         public const string R_FORMURL = "formURL";
         public const string R_SKIPFORM = "skipForm";
+		public const string R_SKIPCHECKOUT = "skipCheckout";
         public const string R_FORMPARAMS = "formParams";
         public const string R_FORMISHIDDEN = "formIsHidden";
         public const string R_INSTRUCTION = "instruction";

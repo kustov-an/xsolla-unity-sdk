@@ -161,7 +161,8 @@ namespace Xsolla {
 		{
 			if (StatusHandler != null)
 				StatusHandler (group, invoice, status);
-			GetComponentInParent<XsollaPaystationController> ().gameObject.GetComponentInChildren<Selfdestruction> ().DestroyRoot ();
+			if (GetComponentInParent<XsollaPaystationController> () != null)
+				GetComponentInParent<XsollaPaystationController> ().gameObject.GetComponentInChildren<Selfdestruction> ().DestroyRoot ();
 		}
 
 		private void OnClickBack(XsollaStatus.Group group ,string invoice, Xsolla.XsollaStatusData.Status status)
