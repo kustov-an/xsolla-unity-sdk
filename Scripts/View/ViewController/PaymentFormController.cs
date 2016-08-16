@@ -26,6 +26,19 @@ namespace Xsolla
 		public void InitView(XsollaTranslations translations, XsollaForm form)
 		{
 			_form = form;
+			// if have skipCheckout and this checkout form
+			if ((form.GetCurrentCommand() == XsollaForm.CurrentCommand.CHECKOUT) && form.GetSkipChekout()){
+				string checkoutToken = _form.GetCheckoutToken();
+				bool isLinkRequired = checkoutToken != null 
+					&& !"".Equals(checkoutToken) 
+					&& !"null".Equals(checkoutToken)
+					&& !"false".Equals(checkoutToken);
+				if (isLinkRequired){
+					OnClickPay(isLinkRequired);
+					return;
+				}
+			}
+
 			string pattern = "{{.*?}}";
 			Regex regex = new Regex (pattern);
 			string title = regex.Replace (translations.Get(XsollaTranslations.PAYMENT_PAGE_TITLE_VIA), form.GetTitle (), 1);
