@@ -342,8 +342,13 @@ namespace Xsolla
 			WWWForm form = new WWWForm();
 			StringBuilder sb = new StringBuilder ();
 			if (!post.ContainsKey (XsollaApiConst.ACCESS_TOKEN) && !post.ContainsKey ("project") && !post.ContainsKey ("access_data") && baseParams != null)
+			{
 				foreach (KeyValuePair<string, object> kv in baseParams)
 					post.Add (kv.Key, kv.Value);//.Add (XsollaApiConst.ACCESS_TOKEN, _accessToken);
+				if (!post.ContainsKey(XsollaApiConst.ACCESS_TOKEN) && !baseParams.ContainsKey(XsollaApiConst.ACCESS_TOKEN) && (_accessToken != ""))
+					post.Add(XsollaApiConst.ACCESS_TOKEN, _accessToken);
+
+			}
 			if (type == DIRECTPAYMENT_STATUS)
 				TransactionHelper.SaveRequest (post);
 			if(!post.ContainsKey("alternative_platform"))
@@ -387,6 +392,9 @@ namespace Xsolla
 								projectId = utils.GetProject().id.ToString();
 
 								OnUtilsRecieved(utils);
+								// if base param not containKey access token, then add token from util
+								if (!baseParams.ContainsKey(XsollaApiConst.ACCESS_TOKEN))
+									_accessToken = utils.GetAcceessToken();
 								OnTranslationRecieved(utils.GetTranslations());
 							} else {
 								XsollaError error = new XsollaError();
