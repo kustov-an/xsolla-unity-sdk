@@ -155,7 +155,7 @@ namespace Xsolla
 			GetComponentInParent<XsollaPaystationController> ().UpdateCountries (countryIso);
 		}
 
-		public bool IsQuiqckPayments()
+		public bool IsQuickPayments()
 		{
 			return _quickPayments != null;
 		}

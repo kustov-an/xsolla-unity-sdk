@@ -138,7 +138,7 @@ namespace Xsolla
 		protected override void ShowQuickPaymentsList (XsollaUtils utils, XsollaQuickPayments quickPayments)
 		{
 			DrawPaymentListScreen ();
-			if (!_paymentListScreenController.IsQuiqckPayments()) {
+			if (!_paymentListScreenController.IsQuickPayments()) {
 				_paymentListScreenController.InitScreen (utils);
 				_paymentListScreenController.SetQuickPayments (quickPayments);
 //				LoadPaymentMethods ();

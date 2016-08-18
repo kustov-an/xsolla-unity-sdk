@@ -55,9 +55,9 @@ namespace Xsolla
 			// Set method
 			controller.setMethod(pMethod);
 			// Set name 
-			controller._nameMethod.text = pMethod.GetName();
+			controller.setNameMethod(pMethod.GetName());
 			// Set Type
-			controller._nameType.text = pMethod.GetPsName();
+			controller.setNameType(pMethod.GetPsName());
 			// Set icon
 			imageLoader.LoadImage(controller._iconMethod, pMethod.GetImageUrl());		
 			// Set BtnList

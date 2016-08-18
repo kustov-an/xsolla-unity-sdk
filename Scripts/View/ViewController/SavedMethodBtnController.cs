@@ -23,6 +23,16 @@ namespace Xsolla
 		{
 			return _method;
 		}
+
+		public void setNameMethod(String pNameMethod)
+		{
+			_nameMethod.text = pNameMethod;
+		}
+
+		public void setNameType(String pNametype)
+		{
+			_nameType.text = pNametype;
+		}
 	}
 }
 

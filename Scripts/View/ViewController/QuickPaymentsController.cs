@@ -10,11 +10,14 @@ namespace Xsolla{
 		public ImageLoader imageLoader;
 		public GameObject[] quiсk;// max 2
 		public GameObject[] popular;//max 6
+		public GameObject quickPanel;
 		public GameObject showMore;
 		public GameObject back;
 		public GameObject title;
 
 		private XsollaUtils utilsLink;
+		private int countQuickBtn = 3;
+
 
 //		private XsollaQuickPayments quickPayments;
 //		private XsollaPaymentMethods paymentMethods;
@@ -30,7 +33,27 @@ namespace Xsolla{
 				
 		}
 
-		public void SetQuickMethods(XsollaQuickPayments quickPayments){
+		public void SetQuickMethods(XsollaQuickPayments quickPayments)
+		{
+			if (quickPayments != null)
+			{
+				List<XsollaPaymentMethod> paymentList = quickPayments.GetItemsList();
+
+				for (int i=0; i < countQuickBtn; i++)
+				{
+					if (i < paymentList.Count)
+					{
+						CreateQuickBtn(paymentList[i]);	
+					}
+					else
+					{
+						CreateQuickBtn(null);	
+					}
+				}
+			}
+
+			return;
+
 			if (quickPayments != null) {
 				List<XsollaPaymentMethod> paymentList = quickPayments.GetItemsList ();
 				quiсk [0].SetActive (true);
@@ -56,6 +79,29 @@ namespace Xsolla{
 				quiсk [0].SetActive (false);
 				quiсk [1].SetActive (false);
 			}
+		}
+
+		private void CreateQuickBtn(XsollaPaymentMethod pMethod)
+		{
+			GameObject quickBtn = Instantiate(Resources.Load("Prefabs/SimpleView/_PaymentFormElements/QuickPaymentBtn")) as GameObject;
+			quickBtn.transform.SetParent(quickPanel.transform);
+			QuickPaymentBtnController controller = quickBtn.GetComponent<QuickPaymentBtnController>();
+
+			if (pMethod == null)
+			{
+				controller.Hide();
+				return;
+			}
+
+			// Set method
+			controller.setMethod(pMethod);
+			// Set name 
+			controller.setLable(pMethod.GetName());
+			// Set icon
+			//if (!pMethod.imgUrl.Equals(""))
+			//	imageLoader.LoadImage(controller._iconMethod, pMethod.GetImageUrl());		
+			// Set BtnList
+			controller._btnMethod.onClick.AddListener(() => OnChoosePaymentMethod(controller.getMethod().id));
 		}
 
 		public void SetAllMethods(XsollaPaymentMethods paymentMethods)
