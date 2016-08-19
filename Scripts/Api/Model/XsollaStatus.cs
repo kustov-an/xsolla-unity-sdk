@@ -286,7 +286,7 @@ namespace Xsolla
 		private long paymentSystemId;
 
 		public enum Status {
-			INVOICE, DONE, CANCELED, UNKNOWN
+			CREATED, INVOICE, DONE, CANCELED, UNKNOWN
 		}
 
 		public XsollaStatusData(JSONNode statusDataNode){
@@ -297,6 +297,9 @@ namespace Xsolla
 			this.currencyAmount = statusDataNode[SD_OUT];
 			switch (statusDataNode [SD_STATE].AsInt) 
 			{
+				case 0:
+					this.status = Status.CREATED;
+					break;
 				case 1:
 					this.status = Status.CANCELED;
 					break;

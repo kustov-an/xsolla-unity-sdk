@@ -198,12 +198,12 @@ namespace Xsolla
 					validators.Add(validator);
 			}
 			// Toggle allowSubscription
+			// get toggle object
+			Toggle toggle = cardViewObj.GetComponentInChildren<Toggle> ();
 			if (xsollaForm.Contains(XsollaApiConst.ALLOW_SUBSCRIPTION))
 			{
 				XsollaFormElement ToggleElement = null;
 				ToggleElement = xsollaForm.GetItem(XsollaApiConst.ALLOW_SUBSCRIPTION);
-				// get toggle object
-				Toggle toggle = cardViewObj.GetComponentInChildren<Toggle> ();
 				// set label name 
 				Text lable = toggle.transform.GetComponentInChildren<Text>();
 				lable.text = ToggleElement.GetTitle();
@@ -212,6 +212,11 @@ namespace Xsolla
 					OnValueChange(ToggleElement.GetName(), b?"1":"0");
 				});
 			}
+			else
+			{
+				GameObject.Find(toggle.transform.parent.name).SetActive(false);
+			}
+
 
 			return cardViewObj;
 		}
