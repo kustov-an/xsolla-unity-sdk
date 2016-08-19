@@ -332,7 +332,7 @@ namespace Xsolla
 		{
 			if (!pCountryIso.Equals(null) && !pCountryIso.Equals(""))
 				pRequestParams[XsollaApiConst.R_CONTEXT] = pCountryIso;
-			POST (PAYMENT_LIST_NEW, GetPaymentsNew(), pRequestParams);
+			//POST (PAYMENT_LIST_NEW, GetPaymentsNew(), pRequestParams);
 		}
 
 		public void GetSavedPayments(Dictionary<string, object> requestParams)
@@ -484,7 +484,7 @@ namespace Xsolla
 						break;
 					case PAYMENT_LIST_NEW:
 						{
-							XsollaPaymentMethods paymentMethods = new XsollaPaymentMethods;
+							XsollaPaymentMethods paymentMethods = new XsollaPaymentMethods();
 							break;
 						}
 					case SAVED_PAYMENT_LIST:
