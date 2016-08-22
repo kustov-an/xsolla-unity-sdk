@@ -152,6 +152,11 @@ namespace Xsolla
 		protected override void ShowPaymentsList (XsollaPaymentMethods paymentMethods)
 		{
 			DrawPaymentListScreen ();
+			_paymentListScreenController.SetPaymentsMethods (paymentMethods);
+			_paymentListScreenController.OpenQuickPayments();
+			SetLoading (false);
+			return;
+
 			if (!_paymentListScreenController.IsAllPayments ()) {
 				_paymentListScreenController.SetPaymentsMethods (paymentMethods);
 //				LoadCountries ();

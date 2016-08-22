@@ -41,6 +41,30 @@ namespace Xsolla
 			canvas.alpha = 1f;
 			canvas.blocksRaycasts = true;
 		}
+
+		public void setIcon(long pMethodID)
+		{
+			switch (pMethodID)
+			{
+			case 1380:
+				{
+					_iconMethod.sprite = Resources.Load<Sprite> ("Images/ic_cc");
+					break;
+				}
+			case 1738:
+				{
+					_iconMethod.sprite = Resources.Load<Sprite> ("Images/ic_mobile");
+					break;
+				}
+			case 3012:
+				{
+					_iconMethod.sprite = Resources.Load<Sprite> ("Images/ic_giftCard");
+					break;
+				}
+			}
+		
+
+		}
 	}
 }
 

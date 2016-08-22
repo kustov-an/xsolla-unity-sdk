@@ -177,14 +177,11 @@ namespace  Xsolla
 			}
 
 			//TODO On new version API
-
-
-
 			LoadSavedPaymentMethods();
 			LoadPaymentMethods ();
 			LoadCountries ();
 			SetLoading (true);
-			Payment.GetQuickPayments (null, currentPurchase.GetMergedMap());
+			//Payment.GetQuickPayments (null, currentPurchase.GetMergedMap());
 		}
 
 		public void LoadPaymentMethods()

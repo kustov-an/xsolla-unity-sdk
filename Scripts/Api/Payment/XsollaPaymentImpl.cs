@@ -22,7 +22,6 @@ namespace Xsolla
 		private const int GOODS_ITEMS 			= 52;
 		private const int PAYMENT_LIST 			= 6;
 		private const int SAVED_PAYMENT_LIST	= 61;
-		private const int PAYMENT_LIST_NEW		= 62;
 		private const int QUICK_PAYMENT_LIST 	= 7;
 		private const int COUNTRIES 			= 8;
 		private const int VIRTUAL_PAYMENT_SUMMARY 	= 9;
@@ -40,6 +39,7 @@ namespace Xsolla
 		public Action<XsollaPaymentMethods> 		PaymentMethodsRecieved;
 		public Action<XsollaSavedPaymentMethods>    SavedPaymentMethodsRecieved;
 		public Action<XsollaQuickPayments> 			QuickPaymentMethodsRecieved;
+		public Action<XsollaQuickPayments>			QuickPaymentMethodsRecievedNew;
 		public Action<XsollaCountries> 				CountriesRecieved;
 
 		public Action<XsollaForm> 					FormReceived;
@@ -184,6 +184,12 @@ namespace Xsolla
 				QuickPaymentMethodsRecieved(quickPayments);
 		}
 
+		private void OnQuickPaymentMethodsRecievedNew(XsollaQuickPayments quickPayments)
+		{
+			if(QuickPaymentMethodsRecievedNew != null)
+				QuickPaymentMethodsRecievedNew(quickPayments);
+		}
+
 		private void OnCountriesRecieved(XsollaCountries countries)
 		{
 			if(CountriesRecieved != null)
@@ -325,14 +331,6 @@ namespace Xsolla
 				requestParams["country"] = countryIso;
 			}
 			POST (PAYMENT_LIST, GetPaymentListUrl(), requestParams);
-		}
-
-		// TODO NEW API
-		public void GetPaymentsNew(string pCountryIso, Dictionary<string, object> pRequestParams)
-		{
-			if (!pCountryIso.Equals(null) && !pCountryIso.Equals(""))
-				pRequestParams[XsollaApiConst.R_CONTEXT] = pCountryIso;
-			//POST (PAYMENT_LIST_NEW, GetPaymentsNew(), pRequestParams);
 		}
 
 		public void GetSavedPayments(Dictionary<string, object> requestParams)
@@ -482,11 +480,6 @@ namespace Xsolla
 							OnPaymentMethodsRecieved(paymentMethods);
 						}
 						break;
-					case PAYMENT_LIST_NEW:
-						{
-							XsollaPaymentMethods paymentMethods = new XsollaPaymentMethods();
-							break;
-						}
 					case SAVED_PAYMENT_LIST:
 						{
 							XsollaSavedPaymentMethods savedPaymentsMethods = new XsollaSavedPaymentMethods();
@@ -805,14 +798,14 @@ namespace Xsolla
 		/*		PAYMENT METHODS LINKS	 */
 
 		// TODO New version API 
-		private string GetPaymentListUrlv2()
+		private string GetPaymentListUrl()
 		{
 			return DOMAIN + "/paystation2/api/paymentlist/payment_methods";
 		}
 
-		private string GetPaymentListUrl(){
-			return DOMAIN + "/paystation2/api/paymentlist";
-		}
+//		private string GetPaymentListUrl(){
+//			return DOMAIN + "/paystation2/api/paymentlist";
+//		}
 
 		private string GetSavedPaymentListUrl(){
 			return DOMAIN + "/paystation2/api/savedmethods";
