@@ -48,6 +48,7 @@ namespace Xsolla
 			_paymentMethods = paymentMethods;
 			quickController.SetQuickMethods(_paymentMethods.GetListOnType(XsollaPaymentMethod.TypePayment.QUICK));
 			quickController.SetAllMethods(_paymentMethods.GetListOnType(XsollaPaymentMethod.TypePayment.REGULAR));
+			allController.SetPaymentMethods(_paymentMethods.GetListOnType(XsollaPaymentMethod.TypePayment.REGULAR));
 //			LoadElement ();
 		}
 
@@ -79,6 +80,7 @@ namespace Xsolla
 			_paymentMethods = paymentMethods;
 			//FIX this
 			//quickController.SetAllMethods (paymentMethods);
+
 			allController.UpdatePaymentMethods (paymentMethods);
 		}
 
