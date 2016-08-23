@@ -92,7 +92,7 @@ namespace  Xsolla
 				FillPurchase(ActivePurchase.Part.XPS, form.GetXpsMap());
 				ShowPaymentStatus (Utils.GetTranslations (), status); 
 			};
-			Payment.StatusChecked += (status, elapsedTime) => WaitingStatus(status, elapsedTime);
+			Payment.StatusChecked += (status) => WaitingStatus(status);
 			
 			Payment.QuickPaymentMethodsRecieved += (quickpayments) => ShowQuickPaymentsList(Utils, quickpayments);
 			Payment.PaymentMethodsRecieved += ShowPaymentsList;
@@ -385,10 +385,10 @@ namespace  Xsolla
 		protected abstract void ShowVPError (XsollaUtils utils, string error);
 		protected abstract void ShowVPStatus (XsollaUtils utils, XVPStatus status);
 
-		protected void WaitingStatus (string status, int elapsedTime) {
+		protected void WaitingStatus (XsollaStatusPing pStatus) {
 			Logger.Log ("Waiting payment status");
-			if (!"done".Equals (status) && !"cancel".Equals (status) && elapsedTime < 1200) {
-				if (chancelStatusCheck) {
+			if (XsollaStatus.Group.DONE != pStatus.GetGroup() && XsollaStatus.Group.TROUBLED != pStatus.GetGroup() && pStatus.GetElapsedTiem() < 1200) {
+				if (pStatus.isFinal()) {
 //					Payment.InitPaystation(currentPurchase.GetMergedMap());
 					LoadShopPricepoints ();
 					chancelStatusCheck = false;

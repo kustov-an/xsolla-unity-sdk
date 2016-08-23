@@ -434,12 +434,9 @@ namespace Xsolla
 						Logger.Log ("Have no OkHandler");
 					break;
 				case XsollaStatus.Group.TROUBLED:
-					Logger.Log ("Status TROUBLED");
-					break;
 				case XsollaStatus.Group.INVOICE:
 				case XsollaStatus.Group.UNKNOWN:
 				default:
-					Logger.Log ("Status in proccess");
 					result.invoice = invoice;
 					result.status = status;
 					Logger.Log("Ivoice ID " + result.invoice);

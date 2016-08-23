@@ -61,7 +61,7 @@ namespace Xsolla
 					return Group.DONE;
 				case "delivering":
 					return Group.DELIVERING;
-				case "trobled":
+				case "troubled":
 					return Group.TROUBLED;
 				default:
 					return Group.UNKNOWN;
@@ -301,10 +301,10 @@ namespace Xsolla
 					this.status = Status.CREATED;
 					break;
 				case 1:
-					this.status = Status.CANCELED;
+					this.status = Status.INVOICE;
 					break;
 				case 2:
-					this.status = Status.INVOICE;
+					this.status = Status.CANCELED;
 					break;
 				case 3:
 					this.status = Status.DONE;
