@@ -434,14 +434,19 @@ namespace Xsolla
 						Logger.Log ("Have no OkHandler");
 					break;
 				case XsollaStatus.Group.TROUBLED:
-					Logger.Log ("Status TROUBLED");
-					TryAgain();
-					break;
 				case XsollaStatus.Group.INVOICE:
 				case XsollaStatus.Group.UNKNOWN:
 				default:
-					Logger.Log ("Status in proccess");
-					TryAgain();
+					result.invoice = invoice;
+					result.status = status;
+					Logger.Log("Ivoice ID " + result.invoice);
+					Logger.Log("Status " + result.status);
+					Logger.Log("Bought", result.purchases);
+					TransactionHelper.Clear ();
+					if (OkHandler != null)
+						OkHandler (result);
+					else 
+						Logger.Log ("Have no OkHandler");
 					break;
 			}
 		}
@@ -451,8 +456,7 @@ namespace Xsolla
 			menuTransform.gameObject.SetActive (true);
 			Restart ();
 		}
-		
-		
+
 		private void OnErrorRecivied(XsollaError xsollaError)
 		{
 			Logger.Log("ErrorRecivied " + xsollaError.ToString());
