@@ -10,12 +10,19 @@ namespace Xsolla
 		public PaymentListView paymenListView;
 		public GameObject dropDownContainer;
 		public DropDownController dropDownController;
-		public Button back;
+		public GameObject back;
 		private XsollaCountries _countries;
+		private XsollaUtils utilsLink;
 
 		public void SetPaymentMethods(XsollaPaymentMethods paymentMethods){
 			paymenListView.SetPaymentMethods(paymentMethods);
 			SetUpNavButtons();
+		}
+
+		public void InitScreen(XsollaUtils pUtils)
+		{
+			utilsLink = pUtils;
+			back.GetComponent<Text>().text = utilsLink.GetTranslations().Get(XsollaTranslations.BACK_TO_LIST);
 		}
 
 		public void SetCountries(string currentCountryIso, XsollaCountries countries)
@@ -49,7 +56,7 @@ namespace Xsolla
 
 		public void SetUpNavButtons()
 		{
-			back.onClick.AddListener (() => { GetComponentInParent<PaymentListScreenController>().OpenQuickPayments(); });
+			back.GetComponent<Button>().onClick.AddListener (() => { GetComponentInParent<PaymentListScreenController>().OpenQuickPayments(); });
 		}
 
 	}

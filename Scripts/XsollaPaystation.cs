@@ -50,6 +50,7 @@ namespace  Xsolla
 		//KVvI4jVlPaTbre4IAD2chJWTBRqQPkCD
 		public void OpenPaystation (string accessToken, bool isSandbox)
 		{
+			AddHttpRequestObj();
 			SetLoading (isSandbox);
 			Logger.isLogRequired = true;//isSandbox;
 			Logger.Log ("Paystation initiated current mode sandbox");
@@ -68,7 +69,15 @@ namespace  Xsolla
 			StartPayment (dict, isSandbox);
 		}
 
-
+		public static void AddHttpRequestObj(){
+			GameObject loader = GameObject.Find(HttpTlsRequest.loaderGameObjName);
+			if (loader == null)
+			{
+				GameObject loaderObj = Instantiate(Resources.Load("Prefabs/GameLoader")) as GameObject;
+				loaderObj.name = HttpTlsRequest.loaderGameObjName;
+			}
+		}
+			
 		private void StartPayment(Dictionary<string, object> dict, bool isSandbox){
 			Logger.Log ("Request prepared");
 			currentPurchase.Add(ActivePurchase.Part.TOKEN, dict);
@@ -83,10 +92,11 @@ namespace  Xsolla
 				FillPurchase(ActivePurchase.Part.XPS, form.GetXpsMap());
 				ShowPaymentStatus (Utils.GetTranslations (), status); 
 			};
-			Payment.StatusChecked += (status, elapsedTime) => WaitingStatus(status, elapsedTime);
+			Payment.StatusChecked += (status) => WaitingStatus(status);
 			
 			Payment.QuickPaymentMethodsRecieved += (quickpayments) => ShowQuickPaymentsList(Utils, quickpayments);
 			Payment.PaymentMethodsRecieved += ShowPaymentsList;
+			Payment.SavedPaymentMethodsRecieved += ShowSavedPaymentsList;
 			Payment.CountriesRecieved += ShowCountries;
 			
 			Payment.PricepointsRecieved += (pricepoints) => ShowPricepoints(Utils, pricepoints);
@@ -165,6 +175,8 @@ namespace  Xsolla
 				currentPurchase.Remove (ActivePurchase.Part.PID);
 				currentPurchase.Remove (ActivePurchase.Part.XPS);
 			}
+			//FIX First we must check savemethod, and if we not have those, we draw all methods
+			LoadSavedPaymentMethods();
 			LoadPaymentMethods ();
 			LoadCountries ();
 			SetLoading (true);
@@ -176,6 +188,13 @@ namespace  Xsolla
 			Logger.Log ("Load Payment Methods request");
 			SetLoading (true);
 			Payment.GetPayments (null, currentPurchase.GetMergedMap());
+		}
+
+		public void LoadSavedPaymentMethods()
+		{
+			Logger.Log ("Load saved payments methods");
+			SetLoading(true);
+			Payment.GetSavedPayments(currentPurchase.GetMergedMap());
 		}
 
 		public void LoadCountries()
@@ -354,6 +373,7 @@ namespace  Xsolla
 		
 		protected abstract void ShowQuickPaymentsList (XsollaUtils utils, XsollaQuickPayments paymentMethods);
 		protected abstract void ShowPaymentsList (XsollaPaymentMethods paymentMethods);
+		protected abstract void ShowSavedPaymentsList(XsollaSavedPaymentMethods savedPaymentsMethods);
 		protected abstract void ShowCountries (XsollaCountries paymentMethods);
 
 		protected abstract void ShowPaymentForm (XsollaUtils utils, XsollaForm form);
@@ -365,10 +385,10 @@ namespace  Xsolla
 		protected abstract void ShowVPError (XsollaUtils utils, string error);
 		protected abstract void ShowVPStatus (XsollaUtils utils, XVPStatus status);
 
-		protected void WaitingStatus (string status, int elapsedTime) {
+		protected void WaitingStatus (XsollaStatusPing pStatus) {
 			Logger.Log ("Waiting payment status");
-			if (!"done".Equals (status) && !"cancel".Equals (status) && elapsedTime < 1200) {
-				if (chancelStatusCheck) {
+			if (XsollaStatus.Group.DONE != pStatus.GetGroup() && XsollaStatus.Group.TROUBLED != pStatus.GetGroup() && pStatus.GetElapsedTiem() < 1200) {
+				if (pStatus.isFinal()) {
 //					Payment.InitPaystation(currentPurchase.GetMergedMap());
 					LoadShopPricepoints ();
 					chancelStatusCheck = false;

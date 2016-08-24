@@ -120,9 +120,9 @@ namespace Xsolla {
 		{
 			GameObject newItem = Instantiate(checkBoxPrefab) as GameObject;
 			Toggle toggle = newItem.GetComponentInChildren<Toggle> ();
-			OnEndEdit(element.GetName(), toggle.isOn.ToString());
+			OnEndEdit(element.GetName(), toggle.isOn?"1":"0");
 			toggle.onValueChanged.AddListener ((b) => {
-				OnEndEdit(element.GetName(), b.ToString());
+				OnEndEdit(element.GetName(), b?"1":"0");
 			});
 			newItem.GetComponentInChildren<Text> ().text = element.GetTitle ();
 			return newItem;

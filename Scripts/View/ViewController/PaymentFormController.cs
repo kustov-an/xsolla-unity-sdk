@@ -26,6 +26,19 @@ namespace Xsolla
 		public void InitView(XsollaTranslations translations, XsollaForm form)
 		{
 			_form = form;
+			// if have skipCheckout and this checkout form
+			if ((form.GetCurrentCommand() == XsollaForm.CurrentCommand.CHECKOUT) && form.GetSkipChekout()){
+				string checkoutToken = _form.GetCheckoutToken();
+				bool isLinkRequired = checkoutToken != null 
+					&& !"".Equals(checkoutToken) 
+					&& !"null".Equals(checkoutToken)
+					&& !"false".Equals(checkoutToken);
+				if (isLinkRequired){
+					OnClickPay(isLinkRequired);
+					return;
+				}
+			}
+
 			string pattern = "{{.*?}}";
 			Regex regex = new Regex (pattern);
 			string title = regex.Replace (translations.Get(XsollaTranslations.PAYMENT_PAGE_TITLE_VIA), form.GetTitle (), 1);
@@ -100,7 +113,7 @@ namespace Xsolla
 		}
 	
 		public GameObject GetFormView(XsollaForm xsollaForm, XsollaTranslations translations){
-			bool isCcRender = xsollaForm.GetCurrentCommand() == XsollaForm.CurrentCommand.FORM && xsollaForm.IsValidPaymentSystem();
+			bool isCcRender = xsollaForm.GetCurrentCommand() == XsollaForm.CurrentCommand.FORM && xsollaForm.IsCreditCard();
 			if (isCcRender)
 			{
 				return GetCardViewWeb(xsollaForm, translations);
@@ -173,7 +186,8 @@ namespace Xsolla
 				if(element != null){
 					//		input.text = element.GetTitle();
 					//						input.GetComponentInChildren<MainValidator>().setErrorMsg(newErrorMsg);
-					input.GetComponentInChildren<Text>().text = element.GetExample();
+					if (element.GetName() != XsollaApiConst.CARD_CVV)
+						input.GetComponentInChildren<Text>().text = element.GetExample();
 					// FIX update with unity 5.2 
 					input.onValueChanged.AddListener(delegate{OnValueChange(input, element.GetName());});
 				} else {
@@ -183,12 +197,38 @@ namespace Xsolla
 				if(validator != null)
 					validators.Add(validator);
 			}
+			// Toggle allowSubscription
+			// get toggle object
+			Toggle toggle = cardViewObj.GetComponentInChildren<Toggle> ();
+			if (xsollaForm.Contains(XsollaApiConst.ALLOW_SUBSCRIPTION))
+			{
+				XsollaFormElement ToggleElement = null;
+				ToggleElement = xsollaForm.GetItem(XsollaApiConst.ALLOW_SUBSCRIPTION);
+				// set label name 
+				Text lable = toggle.transform.GetComponentInChildren<Text>();
+				lable.text = ToggleElement.GetTitle();
+				OnValueChange(ToggleElement.GetName(), toggle.isOn?"1":"0");
+				toggle.onValueChanged.AddListener ((b) => {
+					OnValueChange(ToggleElement.GetName(), b?"1":"0");
+				});
+			}
+			else
+			{
+				GameObject.Find(toggle.transform.parent.name).SetActive(false);
+			}
+
+
 			return cardViewObj;
 		}
 
 		private void OnValueChange(InputField _input, string elemName)
 		{
 			_form.UpdateElement(elemName, _input.text);
+		}
+
+		private void OnValueChange(string elemName, string pValue)
+		{
+			_form.UpdateElement(elemName, pValue);
 		}
 
 		//TODO make new window non blocking

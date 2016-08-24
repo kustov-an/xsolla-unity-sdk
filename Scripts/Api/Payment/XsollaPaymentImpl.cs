@@ -11,7 +11,7 @@ namespace Xsolla
 
 		private string DOMAIN = "https://secure.xsolla.com";
 
-		private const string SDK_VERSION = "1.2.7";
+		private const string SDK_VERSION = "1.3.1";
 
 		private const int TRANSLATIONS 		 	= 0;
 		private const int DIRECTPAYMENT_FORM 	= 1;
@@ -21,6 +21,7 @@ namespace Xsolla
 		private const int GOODS_GROUPS 			= 51;
 		private const int GOODS_ITEMS 			= 52;
 		private const int PAYMENT_LIST 			= 6;
+		private const int SAVED_PAYMENT_LIST	= 61;
 		private const int QUICK_PAYMENT_LIST 	= 7;
 		private const int COUNTRIES 			= 8;
 		private const int VIRTUAL_PAYMENT_SUMMARY 	= 9;
@@ -28,25 +29,26 @@ namespace Xsolla
 		private const int VIRTUAL_STATUS 			= 21;
 
 
-		public Action<XsollaUtils> 				UtilsRecieved;
-		public Action<XsollaTranslations> 		TranslationRecieved;
+		public Action<XsollaUtils> 					UtilsRecieved;
+		public Action<XsollaTranslations> 			TranslationRecieved;
 
-		public Action<XsollaPricepointsManager> PricepointsRecieved;
-		public Action<XsollaGroupsManager> 		GoodsGroupsRecieved;
-		public Action<XsollaGoodsManager> 		GoodsRecieved;
+		public Action<XsollaPricepointsManager> 	PricepointsRecieved;
+		public Action<XsollaGroupsManager> 			GoodsGroupsRecieved;
+		public Action<XsollaGoodsManager> 			GoodsRecieved;
 
-		public Action<XsollaPaymentMethods> 	PaymentMethodsRecieved;
-		public Action<XsollaQuickPayments> 		QuickPaymentMethodsRecieved;
-		public Action<XsollaCountries> 			CountriesRecieved;
+		public Action<XsollaPaymentMethods> 		PaymentMethodsRecieved;
+		public Action<XsollaSavedPaymentMethods>    SavedPaymentMethodsRecieved;
+		public Action<XsollaQuickPayments> 			QuickPaymentMethodsRecieved;
+		public Action<XsollaCountries> 				CountriesRecieved;
 
-		public Action<XsollaForm> 				FormReceived;
-		public Action<XsollaStatus, XsollaForm> StatusReceived;
-		public Action<string, int> 				StatusChecked;
-		public Action<XsollaError> 				ErrorReceived;
+		public Action<XsollaForm> 					FormReceived;
+		public Action<XsollaStatus, XsollaForm> 	StatusReceived;
+		public Action<XsollaStatusPing> 			StatusChecked;
+		public Action<XsollaError> 					ErrorReceived;
 
-		public Action<XVirtualPaymentSummary> 	VirtualPaymentSummaryRecieved;
-		public Action<string> 					VirtualPaymentProceedError;
-		public Action<XVPStatus> 				VirtualPaymentStatusRecieved;
+		public Action<XVirtualPaymentSummary> 		VirtualPaymentSummaryRecieved;
+		public Action<string> 						VirtualPaymentProceedError;
+		public Action<XVPStatus> 					VirtualPaymentStatusRecieved;
 
 		//TODO CHANGE PARAMS
 		protected string _accessToken;
@@ -56,7 +58,6 @@ namespace Xsolla
 		}
 
 		public XsollaPaymentImpl(string accessToken){
-			//accessToken = "KhevmS4ddZ3lmzZKU4yBlmKwTeKO3bTY";
 			this._accessToken = accessToken;
 
 		}
@@ -170,6 +171,12 @@ namespace Xsolla
 				PaymentMethodsRecieved(paymentMethods);
 		}
 
+		private void OnSavedPaymentMethodsRecieved(XsollaSavedPaymentMethods pMethods)
+		{
+			if (SavedPaymentMethodsRecieved != null)
+				SavedPaymentMethodsRecieved(pMethods);
+		}
+
 		private void OnQuickPaymentMethodsRecieved(XsollaQuickPayments quickPayments)
 		{
 			if(QuickPaymentMethodsRecieved != null)
@@ -202,10 +209,10 @@ namespace Xsolla
 				StatusReceived(status, form);
 		}
 
-		protected virtual void OnStatusChecked(string status, int elapsedTime)
+		protected virtual void OnStatusChecked(XsollaStatusPing pStatus)
 		{
 			if (StatusChecked != null)
-				StatusChecked(status, elapsedTime);
+				StatusChecked(pStatus);
 		}
 
 		protected virtual void OnErrorReceived(XsollaError error) 
@@ -319,6 +326,11 @@ namespace Xsolla
 			POST (PAYMENT_LIST, GetPaymentListUrl(), requestParams);
 		}
 
+		public void GetSavedPayments(Dictionary<string, object> requestParams)
+		{
+			POST(SAVED_PAYMENT_LIST, GetSavedPaymentListUrl(), requestParams);
+		}
+
 		public void GetCountries(Dictionary<string, object> requestParams)
 		{
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
@@ -330,8 +342,13 @@ namespace Xsolla
 			WWWForm form = new WWWForm();
 			StringBuilder sb = new StringBuilder ();
 			if (!post.ContainsKey (XsollaApiConst.ACCESS_TOKEN) && !post.ContainsKey ("project") && !post.ContainsKey ("access_data") && baseParams != null)
+			{
 				foreach (KeyValuePair<string, object> kv in baseParams)
 					post.Add (kv.Key, kv.Value);//.Add (XsollaApiConst.ACCESS_TOKEN, _accessToken);
+				if (!post.ContainsKey(XsollaApiConst.ACCESS_TOKEN) && !baseParams.ContainsKey(XsollaApiConst.ACCESS_TOKEN) && (_accessToken != ""))
+					post.Add(XsollaApiConst.ACCESS_TOKEN, _accessToken);
+
+			}
 			if (type == DIRECTPAYMENT_STATUS)
 				TransactionHelper.SaveRequest (post);
 			if(!post.ContainsKey("alternative_platform"))
@@ -346,7 +363,7 @@ namespace Xsolla
 
 			}
 				
-			HttpTlsRequest httpreq = GameObject.Find("GameLoader").GetComponent<HttpTlsRequest>();
+			HttpTlsRequest httpreq = GameObject.Find(HttpTlsRequest.loaderGameObjName).GetComponent<HttpTlsRequest>();
 			StartCoroutine(httpreq.Request(url, post, (value) => ProcessingRequestResult(type, value, post)));
 
 //			Debug.Log (url);
@@ -375,6 +392,9 @@ namespace Xsolla
 								projectId = utils.GetProject().id.ToString();
 
 								OnUtilsRecieved(utils);
+								// if base param not containKey access token, then add token from util
+								if (!baseParams.ContainsKey(XsollaApiConst.ACCESS_TOKEN))
+									_accessToken = utils.GetAcceessToken();
 								OnTranslationRecieved(utils.GetTranslations());
 							} else {
 								XsollaError error = new XsollaError();
@@ -413,7 +433,9 @@ namespace Xsolla
 									break;
 								}
 							} else {
-								OnStatusChecked(rootNode["status"], rootNode["elapsedTime"].AsInt);
+								XsollaStatusPing statusPing = new XsollaStatusPing();
+								statusPing.Parse(rootNode);
+								OnStatusChecked(statusPing);
 							}
 						}
 						break;
@@ -459,6 +481,13 @@ namespace Xsolla
 							XsollaPaymentMethods paymentMethods = new XsollaPaymentMethods();
 							paymentMethods.Parse(rootNode);
 							OnPaymentMethodsRecieved(paymentMethods);
+						}
+						break;
+					case SAVED_PAYMENT_LIST:
+						{
+							XsollaSavedPaymentMethods savedPaymentsMethods = new XsollaSavedPaymentMethods();
+							savedPaymentsMethods.Parse(rootNode);
+							OnSavedPaymentMethodsRecieved(savedPaymentsMethods);
 						}
 						break;
 					case QUICK_PAYMENT_LIST:
@@ -542,190 +571,190 @@ namespace Xsolla
 				LogEvent ("UNITY " + SDK_VERSION + " REQUEST", "undefined", pRequestResult.Url);
 		}
 		
-		private IEnumerator WaitForRequest(int type, WWW www, Dictionary<string, object> post)
-		{
-			yield return www;
-			// check for errors
-			if (www.error == null)
-			{
-				Debug.Log("Type -> " + type);
-				Debug.Log("WWW_request -> " + www.text);
-
-				string data = www.text;
-				JSONNode rootNode = JSON.Parse(www.text);
-				if(rootNode != null && rootNode.Count > 2 || rootNode["error"] == null) {
-					switch(type)
-					{
-						case TRANSLATIONS:
-							{
-								if(rootNode.Count > 2){
-									XsollaUtils utils = new XsollaUtils().Parse(rootNode) as XsollaUtils;
-									projectId = utils.GetProject().id.ToString();
-									OnUtilsRecieved(utils);
-									OnTranslationRecieved(utils.GetTranslations());
-								} else {
-									XsollaError error = new XsollaError();
-									error.Parse(rootNode);
-									OnErrorReceived(error);
-								}
-							}
-							break;
-						case DIRECTPAYMENT_FORM:
-								{
-									if(rootNode.Count > 8) {
-										XsollaForm form = new XsollaForm();
-										form.Parse(rootNode);
-										switch (form.GetCurrentCommand()) {
-											case XsollaForm.CurrentCommand.STATUS:
-												GetStatus(form.GetXpsMap());
-												break;
-											case XsollaForm.CurrentCommand.CHECKOUT:
-											case XsollaForm.CurrentCommand.CHECK:
-											case XsollaForm.CurrentCommand.FORM:
-											case XsollaForm.CurrentCommand.CREATE:
-											case XsollaForm.CurrentCommand.ACCOUNT:
-												OnFormReceived(form);
-												break;
-											case XsollaForm.CurrentCommand.UNKNOWN:
-												if(rootNode.Count > 10)
-												{
-													OnFormReceived(form);
-												} else {
-													XsollaError error = new XsollaError();
-													error.Parse(rootNode);
-													OnErrorReceived(error);
-												}
-												break;
-											default:
-												break;
-										}
-									} else {
-										OnStatusChecked(rootNode["status"], rootNode["elapsedTime"].AsInt);
-									}
-							}
-							break;
-						case DIRECTPAYMENT_STATUS:
-							{
-								XsollaForm form = new XsollaForm();
-								form.Parse(rootNode);
-								XsollaStatus status = new XsollaStatus();
-								status.Parse(rootNode);
-								OnStatusReceived(status, form);
-							}
-							break;
-						case PRICEPOINTS:
-							{
-								XsollaPricepointsManager pricepoints = new XsollaPricepointsManager();
-								pricepoints.Parse(rootNode);
-								OnPricepointsRecieved(pricepoints);
-							}
-							break;
-						case GOODS:
-							{
-								XsollaGoodsManager goods = new XsollaGoodsManager();
-								goods.Parse(rootNode);
-								OnGoodsRecieved(goods);
-							}
-							break;
-						case GOODS_GROUPS:
-							{
-								XsollaGroupsManager groups = new XsollaGroupsManager();
-								groups.Parse(rootNode);
-								OnGoodsGroupsRecieved(groups);
-							}
-							break;
-						case GOODS_ITEMS:
-							{
-								XsollaGoodsManager goods = new XsollaGoodsManager();
-								goods.Parse(rootNode);
-								OnGoodsRecieved(goods);
-							}
-							break;
-						case PAYMENT_LIST:
-							{
-								XsollaPaymentMethods paymentMethods = new XsollaPaymentMethods();
-								paymentMethods.Parse(rootNode);
-								OnPaymentMethodsRecieved(paymentMethods);
-							}
-							break;
-						case QUICK_PAYMENT_LIST:
-							{
-								XsollaQuickPayments quickPayments = new XsollaQuickPayments();
-								quickPayments.Parse(rootNode);
-								OnQuickPaymentMethodsRecieved(quickPayments);
-							}
-							break;
-						case COUNTRIES:
-							{
-								XsollaCountries countries = new XsollaCountries();
-								countries.Parse(rootNode);
-								OnCountriesRecieved(countries);
-							}
-							break;
-						case VIRTUAL_PAYMENT_SUMMARY:
-							{
-								XVirtualPaymentSummary summary = new XVirtualPaymentSummary();
-								summary.Parse(rootNode);
-								Logger.Log("VIRTUAL_PAYMENT_SUMMARY " + summary.ToString());
-								if(summary.IsSkipConfirmation) {
-									Logger.Log("IsSkipConfirmation true");
-									post.Add("dont_ask_again", 0);
-									ProceedVPayment(post);
-								} else {
-									Logger.Log("IsSkipConfirmation false");							
-									OnVPSummaryRecieved(summary);
-								}
-							}
-							break;
-						case VIRTUAL_PROCEED:
-							{
-								XProceed proceed = new XProceed();
-								proceed.Parse(rootNode);
-								Logger.Log ("VIRTUAL_PROCEED " + proceed.ToString());
-								if(proceed.IsInvoiceCreated) {
-									Logger.Log ("VIRTUAL_PROCEED 1");
-									long operationId = proceed.OperationId;
-									post.Add("operation_id", operationId);
-									VPaymentStatus(post);
-								} else {
-									Logger.Log ("VIRTUAL_PROCEED 0 ");
-									OnVPProceedError(proceed.Error);
-								}
-							}
-							break;
-					case VIRTUAL_STATUS:
-						{
-							XVPStatus vpStatus = new XVPStatus();
-							vpStatus.Parse(rootNode);
-							//{"errors":[ {"message":"Insufficient balance to complete operation"} ], "api":{"ver":"1.0.1"}, "invoice_created":"false", "operation_id":"0", "code":"0"}
-							Logger.Log ("VIRTUAL_STATUS" + vpStatus.ToString());
-							OnVPStatusRecieved(vpStatus);
-						}
-						break;
-						default:
-							break;
-					}
-				} else {
-					XsollaError error = new XsollaError();
-					error.Parse(rootNode);
-					OnErrorReceived(error);
-				}
-			} else {
-				JSONNode errorNode = JSON.Parse(www.text);
-				string errorMsg = errorNode["errors"].AsArray[0]["message"].Value 
-					+ ". Support code " + errorNode["errors"].AsArray[0]["support_code"].Value;
-				int errorCode = 0;
-				if(www.error.Length > 3)
-					errorCode = int.Parse(www.error.Substring(0, 3));
-				else
-					errorCode = int.Parse(www.error);
-				OnErrorReceived(new XsollaError(errorCode, errorMsg));
-			}    
-			if(projectId != null && !"".Equals(projectId))
-				LogEvent ("UNITY " + SDK_VERSION + " REQUEST", projectId, www.url);
-			else 
-				LogEvent ("UNITY " + SDK_VERSION + " REQUEST", "undefined", www.url);
-		}
+//		private IEnumerator WaitForRequest(int type, WWW www, Dictionary<string, object> post)
+//		{
+//			yield return www;
+//			// check for errors
+//			if (www.error == null)
+//			{
+//				Debug.Log("Type -> " + type);
+//				Debug.Log("WWW_request -> " + www.text);
+//
+//				string data = www.text;
+//				JSONNode rootNode = JSON.Parse(www.text);
+//				if(rootNode != null && rootNode.Count > 2 || rootNode["error"] == null) {
+//					switch(type)
+//					{
+//						case TRANSLATIONS:
+//							{
+//								if(rootNode.Count > 2){
+//									XsollaUtils utils = new XsollaUtils().Parse(rootNode) as XsollaUtils;
+//									projectId = utils.GetProject().id.ToString();
+//									OnUtilsRecieved(utils);
+//									OnTranslationRecieved(utils.GetTranslations());
+//								} else {
+//									XsollaError error = new XsollaError();
+//									error.Parse(rootNode);
+//									OnErrorReceived(error);
+//								}
+//							}
+//							break;
+//						case DIRECTPAYMENT_FORM:
+//								{
+//									if(rootNode.Count > 8) {
+//										XsollaForm form = new XsollaForm();
+//										form.Parse(rootNode);
+//										switch (form.GetCurrentCommand()) {
+//											case XsollaForm.CurrentCommand.STATUS:
+//												GetStatus(form.GetXpsMap());
+//												break;
+//											case XsollaForm.CurrentCommand.CHECKOUT:
+//											case XsollaForm.CurrentCommand.CHECK:
+//											case XsollaForm.CurrentCommand.FORM:
+//											case XsollaForm.CurrentCommand.CREATE:
+//											case XsollaForm.CurrentCommand.ACCOUNT:
+//												OnFormReceived(form);
+//												break;
+//											case XsollaForm.CurrentCommand.UNKNOWN:
+//												if(rootNode.Count > 10)
+//												{
+//													OnFormReceived(form);
+//												} else {
+//													XsollaError error = new XsollaError();
+//													error.Parse(rootNode);
+//													OnErrorReceived(error);
+//												}
+//												break;
+//											default:
+//												break;
+//										}
+//									} else {
+//										OnStatusChecked(rootNode["status"], rootNode["elapsedTime"].AsInt);
+//									}
+//							}
+//							break;
+//						case DIRECTPAYMENT_STATUS:
+//							{
+//								XsollaForm form = new XsollaForm();
+//								form.Parse(rootNode);
+//								XsollaStatus status = new XsollaStatus();
+//								status.Parse(rootNode);
+//								OnStatusReceived(status, form);
+//							}
+//							break;
+//						case PRICEPOINTS:
+//							{
+//								XsollaPricepointsManager pricepoints = new XsollaPricepointsManager();
+//								pricepoints.Parse(rootNode);
+//								OnPricepointsRecieved(pricepoints);
+//							}
+//							break;
+//						case GOODS:
+//							{
+//								XsollaGoodsManager goods = new XsollaGoodsManager();
+//								goods.Parse(rootNode);
+//								OnGoodsRecieved(goods);
+//							}
+//							break;
+//						case GOODS_GROUPS:
+//							{
+//								XsollaGroupsManager groups = new XsollaGroupsManager();
+//								groups.Parse(rootNode);
+//								OnGoodsGroupsRecieved(groups);
+//							}
+//							break;
+//						case GOODS_ITEMS:
+//							{
+//								XsollaGoodsManager goods = new XsollaGoodsManager();
+//								goods.Parse(rootNode);
+//								OnGoodsRecieved(goods);
+//							}
+//							break;
+//						case PAYMENT_LIST:
+//							{
+//								XsollaPaymentMethods paymentMethods = new XsollaPaymentMethods();
+//								paymentMethods.Parse(rootNode);
+//								OnPaymentMethodsRecieved(paymentMethods);
+//							}
+//							break;
+//						case QUICK_PAYMENT_LIST:
+//							{
+//								XsollaQuickPayments quickPayments = new XsollaQuickPayments();
+//								quickPayments.Parse(rootNode);
+//								OnQuickPaymentMethodsRecieved(quickPayments);
+//							}
+//							break;
+//						case COUNTRIES:
+//							{
+//								XsollaCountries countries = new XsollaCountries();
+//								countries.Parse(rootNode);
+//								OnCountriesRecieved(countries);
+//							}
+//							break;
+//						case VIRTUAL_PAYMENT_SUMMARY:
+//							{
+//								XVirtualPaymentSummary summary = new XVirtualPaymentSummary();
+//								summary.Parse(rootNode);
+//								Logger.Log("VIRTUAL_PAYMENT_SUMMARY " + summary.ToString());
+//								if(summary.IsSkipConfirmation) {
+//									Logger.Log("IsSkipConfirmation true");
+//									post.Add("dont_ask_again", 0);
+//									ProceedVPayment(post);
+//								} else {
+//									Logger.Log("IsSkipConfirmation false");							
+//									OnVPSummaryRecieved(summary);
+//								}
+//							}
+//							break;
+//						case VIRTUAL_PROCEED:
+//							{
+//								XProceed proceed = new XProceed();
+//								proceed.Parse(rootNode);
+//								Logger.Log ("VIRTUAL_PROCEED " + proceed.ToString());
+//								if(proceed.IsInvoiceCreated) {
+//									Logger.Log ("VIRTUAL_PROCEED 1");
+//									long operationId = proceed.OperationId;
+//									post.Add("operation_id", operationId);
+//									VPaymentStatus(post);
+//								} else {
+//									Logger.Log ("VIRTUAL_PROCEED 0 ");
+//									OnVPProceedError(proceed.Error);
+//								}
+//							}
+//							break;
+//					case VIRTUAL_STATUS:
+//						{
+//							XVPStatus vpStatus = new XVPStatus();
+//							vpStatus.Parse(rootNode);
+//							//{"errors":[ {"message":"Insufficient balance to complete operation"} ], "api":{"ver":"1.0.1"}, "invoice_created":"false", "operation_id":"0", "code":"0"}
+//							Logger.Log ("VIRTUAL_STATUS" + vpStatus.ToString());
+//							OnVPStatusRecieved(vpStatus);
+//						}
+//						break;
+//						default:
+//							break;
+//					}
+//				} else {
+//					XsollaError error = new XsollaError();
+//					error.Parse(rootNode);
+//					OnErrorReceived(error);
+//				}
+//			} else {
+//				JSONNode errorNode = JSON.Parse(www.text);
+//				string errorMsg = errorNode["errors"].AsArray[0]["message"].Value 
+//					+ ". Support code " + errorNode["errors"].AsArray[0]["support_code"].Value;
+//				int errorCode = 0;
+//				if(www.error.Length > 3)
+//					errorCode = int.Parse(www.error.Substring(0, 3));
+//				else
+//					errorCode = int.Parse(www.error);
+//				OnErrorReceived(new XsollaError(errorCode, errorMsg));
+//			}    
+//			if(projectId != null && !"".Equals(projectId))
+//				LogEvent ("UNITY " + SDK_VERSION + " REQUEST", projectId, www.url);
+//			else 
+//				LogEvent ("UNITY " + SDK_VERSION + " REQUEST", "undefined", www.url);
+//		}
 
 
 
@@ -773,6 +802,10 @@ namespace Xsolla
 
 		private string GetPaymentListUrl(){
 			return DOMAIN + "/paystation2/api/paymentlist";
+		}
+
+		private string GetSavedPaymentListUrl(){
+			return DOMAIN + "/paystation2/api/savedmethods";
 		}
 
 		private string GetQuickPaymentsUrl(){

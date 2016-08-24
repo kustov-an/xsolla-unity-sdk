@@ -11,7 +11,7 @@ namespace Xsolla {
 		public bool isSandbox = false;
 		public CCPayment payment;
 		private string token;
-	
+
 		public string getToken()
 		{
 			return token;
@@ -42,8 +42,9 @@ namespace Xsolla {
 			// Prepare args
 			Dictionary<string, object> dataArgs = new Dictionary<string, object>();
 			dataArgs.Add("data", request);
+			XsollaPaystation.AddHttpRequestObj();
 			// Get object to request 
-			HttpTlsRequest httpreq = GameObject.Find("GameLoader").GetComponent<HttpTlsRequest>();
+			HttpTlsRequest httpreq = GameObject.Find(HttpTlsRequest.loaderGameObjName).GetComponent<HttpTlsRequest>();
 			StartCoroutine(httpreq.Request("https://livedemo.xsolla.com/sdk/token/", dataArgs, (value) => {
 				if (!value.HasError)
 				{
@@ -115,6 +116,5 @@ namespace Xsolla {
 			XsollaPaystationController formController = paystationobject.GetComponent<XsollaPaystationController> ();
 			return formController;
 		}
-
 	}
 }

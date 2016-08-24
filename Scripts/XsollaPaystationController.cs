@@ -75,7 +75,7 @@ namespace Xsolla
 		{
 			Logger.Log ("Goods recived");
 			// SetVirtual curr name
-			goods.setItemVirtCurrName("Деньга");
+			goods.setItemVirtCurrName(Utils.GetProject().virtualCurrencyName);
 			_shopViewController.UpdateGoods(goods, Utils.GetTranslations().Get(XsollaTranslations.VIRTUAL_ITEM_OPTION_BUTTON));
 			SetLoading (false);
 		}
@@ -86,7 +86,7 @@ namespace Xsolla
 			DrawForm (utils, form);
 			SetLoading (false);
 		}
-
+			
 		protected override void ShowPaymentStatus (XsollaTranslations translations, XsollaStatus status)
 		{
 			Logger.Log ("Status recived");
@@ -159,6 +159,17 @@ namespace Xsolla
 				//_paymentListScreenController.SetPaymentsMethods(paymentMethods);
 				_paymentListScreenController.UpdateRecomended(paymentMethods);
 			}
+			if(_paymentListScreenController.IsAllLoaded())
+				SetLoading (false);
+		}
+
+		protected override void ShowSavedPaymentsList (XsollaSavedPaymentMethods savedPaymentsMethods)
+		{
+			DrawPaymentListScreen ();
+			if (!_paymentListScreenController.IsSavedPayments())
+				_paymentListScreenController.SetSavedPaymentsMethods(savedPaymentsMethods);
+			else
+				_paymentListScreenController.UpdateSavedMethods(savedPaymentsMethods);
 			if(_paymentListScreenController.IsAllLoaded())
 				SetLoading (false);
 		}
@@ -423,14 +434,19 @@ namespace Xsolla
 						Logger.Log ("Have no OkHandler");
 					break;
 				case XsollaStatus.Group.TROUBLED:
-					Logger.Log ("Status TROUBLED");
-					TryAgain();
-					break;
 				case XsollaStatus.Group.INVOICE:
 				case XsollaStatus.Group.UNKNOWN:
 				default:
-					Logger.Log ("Status in proccess");
-					TryAgain();
+					result.invoice = invoice;
+					result.status = status;
+					Logger.Log("Ivoice ID " + result.invoice);
+					Logger.Log("Status " + result.status);
+					Logger.Log("Bought", result.purchases);
+					TransactionHelper.Clear ();
+					if (OkHandler != null)
+						OkHandler (result);
+					else 
+						Logger.Log ("Have no OkHandler");
 					break;
 			}
 		}
@@ -440,8 +456,7 @@ namespace Xsolla
 			menuTransform.gameObject.SetActive (true);
 			Restart ();
 		}
-		
-		
+
 		private void OnErrorRecivied(XsollaError xsollaError)
 		{
 			Logger.Log("ErrorRecivied " + xsollaError.ToString());

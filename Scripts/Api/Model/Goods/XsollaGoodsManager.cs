@@ -20,8 +20,7 @@ namespace Xsolla
 			}
 			return this;
 		}
-
-
+			
 		public void setItemVirtCurrName(string pName){
 			foreach(XsollaShopItem item in this.GetItemsList()){
 				item.SetVirtCurrName(pName);

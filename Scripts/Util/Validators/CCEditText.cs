@@ -9,6 +9,9 @@ public class CCEditText : MonoBehaviour{
     private List<CardType> mTypes;
     private Type currentType = Type.WRONG;
     private string mask;
+	private bool doCorrect = true;
+	private InputField inputField;
+
 	string text;
 
 	public string getMask()
@@ -18,12 +21,26 @@ public class CCEditText : MonoBehaviour{
 
 	void Awake()
 	{
-		GetComponent<InputField>().onValueChanged.AddListener(delegate { Correct(); }); 
+		inputField = GetComponent<InputField>();
+		inputField.onValueChanged.AddListener(delegate { Correct(); }); 
+		inputField.onValidateInput += ValidateInput;
 	}
 
+	private char ValidateInput(string text, int charIndex, char addedChar)
+	{
+		int tryInt;
+		if (int.TryParse(addedChar.ToString(),out tryInt) || (addedChar.Equals(' ')))
+			return addedChar;
+		else
+			return '\0';
+	} 
+
     public void Correct() {
-		text = transform.GetComponent<InputField>().text;
-        chooseMask(text);
+		if (doCorrect)
+		{
+			text = inputField.text;
+        	chooseMask(text);
+		}
     }
 
     public void updateMask(string mask)
@@ -48,8 +65,12 @@ public class CCEditText : MonoBehaviour{
 				else
 					break;
 			}
-			transform.GetComponent<InputField>().text = text;
-			transform.GetComponent<InputField>().MoveTextEnd(false);
+			// Disable correct
+			doCorrect = false;
+			inputField.text = text;
+			inputField.MoveTextEnd(false);
+			// Enable correct
+			doCorrect = true;
 		}
     }
 

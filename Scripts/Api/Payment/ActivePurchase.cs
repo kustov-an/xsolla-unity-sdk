@@ -70,6 +70,7 @@ namespace Xsolla
 			IEnumerator<KeyValuePair<Part, Dictionary<string, object>>> enumerator = purchase.GetEnumerator ();
 			while(enumerator.MoveNext())
 			{
+				Logger.Log(enumerator.Current.ToString());
 				finalPurchase = finalPurchase.Concat(enumerator.Current.Value)
 					.ToDictionary (d => d.Key, d => d.Value);
 //					.GroupBy(d => d.Key)

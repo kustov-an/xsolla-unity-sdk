@@ -9,6 +9,7 @@ namespace Xsolla {
 	public class HttpTlsRequest: MonoBehaviour {
 				
 		private static String outputFileName = "requestResult.x";
+		public static String loaderGameObjName = "HttpRequestLoader";
 
 		// Method to get http tls request
 		public IEnumerator Request(string pUrl, Dictionary<string, object> pDataDic, Action<RequestClass> onReturnRes)
@@ -21,10 +22,11 @@ namespace Xsolla {
 			// Get data paremetrs
 			foreach(KeyValuePair<string, object> dicItem in pDataDic)
 			{
-				urldata += dicItem.Key + "=" + Uri.EscapeDataString(dicItem.Value.ToString()) + "&";
+				urldata += dicItem.Key + "=" + Uri.EscapeDataString((dicItem.Value==null)?"":dicItem.Value.ToString()) + "&";
 			}
 			urldata = "?" + urldata.Substring(0, urldata.Length - 1);
 			args = pUrl + urldata;
+			Logger.Log(this.GetType().Name + " -> " + args);
 
 
 			// Platform switcher
@@ -44,7 +46,7 @@ namespace Xsolla {
 			case RuntimePlatform.WindowsPlayer:
 			case RuntimePlatform.WindowsWebPlayer:
 				{
-					CaptureConsoleCmdOutput(@"" + Application.dataPath +"/Plugins/" + "ExecConnectWin.dll", args, out res);
+					CaptureConsoleCmdOutputWin(@"" + Application.dataPath +"/Plugins/" + "ExecConnectWin.dll", args, out res);
 					break;
 				}
 			case RuntimePlatform.Android:
@@ -88,6 +90,34 @@ namespace Xsolla {
 				onComplite(new RequestClass(www.text, pUrl));
 			} else {
 				onComplite(new RequestClass(www.text,pUrl,true,www.error));
+			}
+		}
+
+		private static void CaptureConsoleCmdOutputWin(string pExeName, string pArgs, out RequestClass pRes)
+		{
+			string result = "";
+			ProcessStartInfo start = new ProcessStartInfo();
+			start.FileName = pExeName;
+			start.Arguments = pArgs;
+			start.UseShellExecute = false;
+			start.RedirectStandardOutput = true;
+			start.CreateNoWindow = true;
+			try
+			{
+				Process process = Process.Start(start);
+				using (StreamReader sr = process.StandardOutput)
+				{
+					// Read the stream to a string, and write the string to the console.
+					result = sr.ReadToEnd();
+				}
+
+				process.WaitForExit();
+				pRes = new RequestClass(result, pArgs, false, "");
+			}
+			catch (Exception e)
+			{
+				Logger.Log(e.Message);
+				pRes = new RequestClass("",pArgs,true,e.Message.ToString());
 			}
 		}
 

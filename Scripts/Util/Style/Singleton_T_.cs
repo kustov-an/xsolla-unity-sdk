@@ -58,7 +58,8 @@ namespace Xsolla {
 		private static bool applicationIsQuitting = false;
 
 		public void OnDestroy () {
-			applicationIsQuitting = true;
+			//applicationIsQuitting = true;
+			_instance = null;
 		}
 	}
 }
