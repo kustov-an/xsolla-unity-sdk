@@ -15,12 +15,15 @@ namespace Xsolla
 		public GameObject screenHider;
 
 		private string startCountryIso;
-		private XsollaQuickPayments _quickPayments;
 		private XsollaPaymentMethods _paymentMethods;
 		private XsollaSavedPaymentMethods _savedPaymetnsMethods;
 		private XsollaCountries _countries;
-		private int loadingProgress = 0; // 4 - full loaded with savedmethods
 		private XsollaUtils utilsLink;
+
+		public bool isPaymentMethodsLoaded()
+		{
+			return _paymentMethods != null;
+		}
 
 		public override void InitScreen (XsollaTranslations translations, object model)
 		{
@@ -34,13 +37,7 @@ namespace Xsolla
 			startCountryIso = utils.GetUser ().GetCountryIso ();
 			savedPayController.InitScreen(utilsLink);
 			quickController.InitScreen(utilsLink);
-			//allController.InitScreen(utilsLink);
-		}
-
-		public void SetQuickPayments(XsollaQuickPayments quickPayments)
-		{
-//			_quickPayments = quickPayments;
-//			LoadElement ();
+			allController.InitScreen(utilsLink);
 		}
 
 		public void SetPaymentsMethods(XsollaPaymentMethods paymentMethods)
@@ -48,8 +45,7 @@ namespace Xsolla
 			_paymentMethods = paymentMethods;
 			quickController.SetQuickMethods(_paymentMethods.GetListOnType(XsollaPaymentMethod.TypePayment.QUICK));
 			quickController.SetAllMethods(_paymentMethods.GetListOnType(XsollaPaymentMethod.TypePayment.REGULAR));
-			allController.SetPaymentMethods(_paymentMethods.GetListOnType(XsollaPaymentMethod.TypePayment.REGULAR));
-//			LoadElement ();
+			allController.SetPayemtnMethods(_paymentMethods.GetListOnType(XsollaPaymentMethod.TypePayment.REGULAR));;
 		}
 
 		public void SetCountries(XsollaCountries countries)
@@ -58,51 +54,20 @@ namespace Xsolla
 			if (utilsLink.GetUser ().IsAllowChangeCountry ()) { 
 				allController.SetCountries (startCountryIso, _countries);
 			}
-//			LoadElement ();
-//			OpenAllPayments ();
 		}
 
 		public void SetSavedPaymentsMethods(XsollaSavedPaymentMethods paymentMethods)
 		{
 			_savedPaymetnsMethods = paymentMethods;
 			savedPayController.SetSavedMethods(_savedPaymetnsMethods);
-//			LoadElement();
 		}
 
-		public void UpdateQuick(XsollaQuickPayments quickPayments)
+		public void OpenPayments()
 		{
-			_quickPayments = quickPayments;
-			//quickController.SetQuickMethods (quickPayments);
-		}
-
-		public void UpdateRecomended(XsollaPaymentMethods paymentMethods)
-		{
-			_paymentMethods = paymentMethods;
-			//FIX this
-			//quickController.SetAllMethods (paymentMethods);
-
-			allController.UpdatePaymentMethods (paymentMethods);
-		}
-
-		public void UpdateSavedMethods(XsollaSavedPaymentMethods paymentMethods)
-		{
-			_savedPaymetnsMethods = paymentMethods;
-			//quickController.SetSavedMethods(paymentMethods);
-			//allController.UpdatePaymentMethods(paymentMethods)
-		}
-
-		private void InitChildView(){
-//			Resizer.ResizeToParrent (gameObject);
-			//quickController.SetQuickMethods(_paymentMethods.GetListOnType(XsollaPaymentMethod.TypePayment.QUICK));
-			//quickController.SetAllMethods (_paymentMethods.GetListOnType(XsollaPaymentMethod.TypePayment.REGULAR));
-
- 			//quickController.SetQuickMethods (_quickPayments);
-			//quickController.SetAllMethods (_paymentMethods);
-			//allController.SetPaymentMethods (_paymentMethods);
-//			if (utilsLink.GetUser ().IsAllowChangeCountry ()) { 
-//				allController.SetCountries (startCountryIso, _countries);
-//			}
-			savedPayController.SetSavedMethods(_savedPaymetnsMethods);
+			if (_savedPaymetnsMethods.Count != 0)
+				OpenSavedMethod();
+			else
+				OpenQuickPayments();
 		}
 
 		public void OpenQuickPayments()
@@ -115,6 +80,10 @@ namespace Xsolla
 
 		public void OpenAllPayments()
 		{
+			// load country if controller don't have it
+			if (allController.GetCountrysList() == null)
+				GetComponentInParent<XsollaPaystationController> ().LoadCountries();
+
 			savedPayController.gameObject.SetActive(false);
 			screenHider.SetActive (false);
 			quickController.gameObject.SetActive(false);
@@ -127,43 +96,9 @@ namespace Xsolla
 			quickController.gameObject.SetActive(false);
 			allController.gameObject.SetActive(false);
 		}
-
-		private void LoadElement(){
-			if (_paymentMethods != null)
-			{
-				InitChildView ();
-				OpenQuickPayments ();
-			}
-
-			return;
-
-			loadingProgress++;
-			if(IsAllLoaded()){
-				InitChildView ();
-				// if count savedMethods equal 0, we open Auick methods, else we open saved methods 
-				if (_savedPaymetnsMethods.GetCount() == 0)
-					OpenQuickPayments ();
-				else 
-					OpenSavedMethod ();
-
-			}
-		}
-
-		public bool IsAllLoaded()
-		{
-			return loadingProgress == 4;
-		}
-
-		public void ChoosePaymentMethod(long paymentMethodId)
-		{
-//			if (_purchase.ContainsKey ("pid"))
-//				_purchase ["pid"] = paymentMethodId;
-//			else
-//				_purchase.Add ("pid", paymentMethodId);
-//
-//			if (!_purchase.ContainsKey ("hidden"))
-//				_purchase.Add ("hidden", "out");
 			
+		public void ChoosePaymentMethod(long paymentMethodId)
+		{			
 			Dictionary<string, object> purchase = new Dictionary<string, object>();
 			purchase.Add ("pid", paymentMethodId);
 			purchase.Add ("hidden", "out");
@@ -173,11 +108,6 @@ namespace Xsolla
 		public void ChangeCountry(string countryIso)
 		{
 			GetComponentInParent<XsollaPaystationController> ().UpdateCountries (countryIso);
-		}
-
-		public bool IsQuickPayments()
-		{
-			return _quickPayments != null;
 		}
 
 		public bool IsAllPayments()

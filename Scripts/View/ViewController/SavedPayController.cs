@@ -16,6 +16,7 @@ namespace Xsolla
 		public GameObject self;
 
 		private XsollaUtils utilsLink;
+		private List<SavedMethodBtnController> listBtns;
 
 		public void InitScreen(XsollaUtils utils)
 		{
@@ -29,6 +30,11 @@ namespace Xsolla
 		{
 			if (pMethods != null)
 			{
+				if (listBtns == null)
+					listBtns = new List<SavedMethodBtnController>();
+				else
+					ClearBtnsContainer();
+
 				List<XsollaSavedPaymentMethod> paymentList = pMethods.GetItemList();
 				// For each method we create btn
 				foreach(XsollaSavedPaymentMethod method in paymentList)
@@ -45,13 +51,22 @@ namespace Xsolla
 			}
 		}
 
+		private void ClearBtnsContainer()
+		{
+			listBtns.ForEach(delegate(SavedMethodBtnController btn)
+				{
+					Destroy(btn._self);
+				});
+			listBtns.Clear();
+		}
+
 		private void CreateMethodBtn(XsollaSavedPaymentMethod pMethod)
 		{
 			// Create object
 			GameObject methodBtn = Instantiate(Resources.Load("Prefabs/SimpleView/_PaymentFormElements/SavedMethodBtn")) as GameObject;
 			methodBtn.transform.SetParent(methodsGrid.transform);
 			SavedMethodBtnController controller = methodBtn.GetComponent<SavedMethodBtnController>();
-
+			listBtns.Add(controller);
 			// Set method
 			controller.setMethod(pMethod);
 			// Set name 

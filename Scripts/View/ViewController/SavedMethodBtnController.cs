@@ -11,6 +11,7 @@ namespace Xsolla
 		public Text _nameMethod;
 		public Text _nameType;
 		public Button _btnMethod;
+		public GameObject _self;
 
 		private XsollaSavedPaymentMethod _method;
 

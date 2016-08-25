@@ -8,6 +8,7 @@ namespace Xsolla
 	{
 		public Button _btn;
 		public Image  _icon;
+		public GameObject _self;
 
 		private XsollaPaymentMethod _method;
 

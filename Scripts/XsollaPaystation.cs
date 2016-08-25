@@ -208,7 +208,7 @@ namespace  Xsolla
 		public void UpdateCountries(string countryIso)
 		{
 			Logger.Log ("Update Countries request");
-			Payment.GetQuickPayments (countryIso, currentPurchase.GetMergedMap());
+			//Payment.GetQuickPayments (countryIso, currentPurchase.GetMergedMap());
 			Payment.GetPayments (countryIso, currentPurchase.GetMergedMap());
 		}
 

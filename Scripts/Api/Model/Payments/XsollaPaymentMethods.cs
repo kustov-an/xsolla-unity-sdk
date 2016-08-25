@@ -94,10 +94,10 @@ namespace Xsolla
 			
 		public string GetImageUrl()
 		{
-			if(imgUrl.StartsWith("https:"))
-				return imgUrl;
+			if(imgUrl2x.StartsWith("https:"))
+				return imgUrl2x;
 			else 
-				return "https:" + imgUrl;
+				return "https:" + imgUrl2x;
 		}
 
 		public string GetKey()

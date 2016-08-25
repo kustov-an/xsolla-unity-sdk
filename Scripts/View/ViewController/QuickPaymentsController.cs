@@ -19,6 +19,8 @@ namespace Xsolla{
 		private XsollaUtils utilsLink;
 		private int countQuickBtn = 3;
 		private int countPopBtn = 6;
+		private List<QuickPaymentBtnController> listQuickBtns;
+		private List<ShopPaymentBtnController> listPopularBtns;
 
 		public void DrawLayout(XsollaPaymentMethods paymentMethods){
 		}
@@ -34,8 +36,12 @@ namespace Xsolla{
 		{
 			if (pQuickPayments != null)
 			{
-				List<XsollaPaymentMethod> paymentList = pQuickPayments;
+				if (listQuickBtns == null)
+					listQuickBtns = new List<QuickPaymentBtnController>();
+				else
+					ClearBtnQuickContainer();
 
+				List<XsollaPaymentMethod> paymentList = pQuickPayments;
 				for (int i=0; i < countQuickBtn; i++)
 				{
 					if (i < paymentList.Count)
@@ -50,12 +56,21 @@ namespace Xsolla{
 			}
 		}
 
+		private void ClearBtnQuickContainer()
+		{
+			listQuickBtns.ForEach(delegate(QuickPaymentBtnController btn)
+				{
+					Destroy (btn._self);
+				});
+			listQuickBtns.Clear();
+		}
+
 		private void CreateQuickBtn(XsollaPaymentMethod pMethod)
 		{
 			GameObject quickBtn = Instantiate(Resources.Load("Prefabs/SimpleView/_PaymentFormElements/QuickPaymentBtn")) as GameObject;
 			quickBtn.transform.SetParent(quickPanel.transform);
 			QuickPaymentBtnController controller = quickBtn.GetComponent<QuickPaymentBtnController>();
-
+			listQuickBtns.Add(controller);
 			if (pMethod == null)
 			{
 				controller.Hide();
@@ -70,12 +85,31 @@ namespace Xsolla{
 			controller.setIcon(pMethod.id);
 			controller._btnMethod.onClick.AddListener(() => OnChoosePaymentMethod(controller.getMethod().id));
 		}
+			
+		public void SetAllMethods(List<XsollaPaymentMethod> paymentMethods)
+		{
+			if (paymentMethods != null)
+			{
+				if (listPopularBtns == null)
+					listPopularBtns = new List<ShopPaymentBtnController>();
+				else
+					ClearBtnPopularConatiner();
+
+				for (int i = 0; i < countPopBtn; i++)
+				{
+					CreatePopularBtn(paymentMethods[i]);
+				}
+			}
+			SetUpNavButtons ();
+			return;
+		}
 
 		private void CreatePopularBtn(XsollaPaymentMethod pMethod)
 		{
 			GameObject popularBtn = Instantiate(Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ShopPaymentBtn")) as GameObject;
 			popularBtn.transform.SetParent(recPanel.transform);
 			ShopPaymentBtnController controller = popularBtn.GetComponent<ShopPaymentBtnController>();
+			listPopularBtns.Add(controller);
 			// Set method
 			controller.setMethod(pMethod);
 			// Set icon
@@ -84,31 +118,13 @@ namespace Xsolla{
 			controller._btn.onClick.AddListener(() => OnChoosePaymentMethod(controller.getMethod().id));
 		}
 
-		public void SetAllMethods(List<XsollaPaymentMethod> paymentMethods)
+		private void ClearBtnPopularConatiner()
 		{
-			for (int i = 0; i < countPopBtn; i++)
-			{
-				CreatePopularBtn(paymentMethods[i]);
-			}
-			SetUpNavButtons ();
-			return;
-
-//			popular [0].SetActive (false);
-//			popular [1].SetActive (false);
-//			popular [2].SetActive (false);
-//			popular [3].SetActive (false);
-//			popular [4].SetActive (false);
-//			popular [5].SetActive (false);
-//			List<XsollaPaymentMethod> paymentList = paymentMethods;
-//			int count = paymentMethods.GetRecomendedItems ().Count < 6 ? paymentMethods.GetRecomendedItems ().Count : 6;
-//			for(int i = 0; i < count; i++)
-//			{
-//				popular [i].SetActive(true);
-//				XsollaPaymentMethod paymentMethod =  paymentList[i];
-//				imageLoader.LoadImage(popular [i].GetComponentsInChildren<Image> (true)[2], paymentMethod.GetImageUrl());
-//				popular [i].GetComponentsInChildren<Button>(true)[0].onClick.AddListener(() => OnChoosePaymentMethod(paymentMethod.id));
-//			}
-//			SetUpNavButtons ();
+			listPopularBtns.ForEach(delegate(ShopPaymentBtnController btn)
+				{
+					Destroy (btn._self);
+				});
+			listPopularBtns.Clear();
 		}
 
 		public void SetUpNavButtons()

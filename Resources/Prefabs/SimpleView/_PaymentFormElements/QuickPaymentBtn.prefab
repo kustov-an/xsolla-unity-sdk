@@ -151,6 +151,7 @@ MonoBehaviour:
   _iconMethod: {fileID: 11489344}
   _labelMethod: {fileID: 11483376}
   _btnMethod: {fileID: 11488856}
+  _self: {fileID: 113552}
 --- !u!114 &11483376
 MonoBehaviour:
   m_ObjectHideFlags: 1

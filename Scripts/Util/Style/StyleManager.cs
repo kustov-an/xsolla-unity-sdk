@@ -59,12 +59,14 @@ namespace Xsolla {
 		
 		public Dictionary<BaseColor, Color32> colorsMap;
 		public Themes CurrentTheme;  // this public var should appear as a drop down
+		public Color32 invisColor;
 
 		static BaseColor[] myColors = Enum.GetValues(typeof(BaseColor)) as BaseColor[];
 
 		protected StyleManager() {}
 
 		private void GetColors(){
+			invisColor = new Color32(0,0,0,1);
 			string theme;
 			if (CurrentTheme == Themes.Black) {
 				theme = "dark";
@@ -85,7 +87,10 @@ namespace Xsolla {
 		}
 
 		public Color32 GetColor(BaseColor color){
-			return colorsMap[color];
+			if (colorsMap != null && colorsMap.ContainsKey(color))
+				return colorsMap[color];
+			else
+				return invisColor;
 		}
 
 		public Color32 ToColor(int HexVal)

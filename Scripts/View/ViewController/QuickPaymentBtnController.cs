@@ -10,6 +10,7 @@ namespace Xsolla
 		public Image _iconMethod;
 		public Text  _labelMethod;
 		public Button _btnMethod;
+		public GameObject _self; 
 
 		private XsollaPaymentMethod _method;
 
