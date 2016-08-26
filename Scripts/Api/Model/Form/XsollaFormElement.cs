@@ -3,6 +3,7 @@ using SimpleJSON;
 using System.Collections;
 using System.Text;
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 namespace Xsolla
 {
@@ -52,7 +53,7 @@ namespace Xsolla
 
 		public string GetTitle()
 		{
-			return title;
+			return GetFormatString(title);
 		}
 
 		public string GetValue()
@@ -107,6 +108,11 @@ namespace Xsolla
 		
 		public void SetValue(string value){
 			this.value = value;
+		}
+
+		private string GetFormatString(string pStr)
+		{
+			return Regex.Replace(pStr, @"<[^>]*>", string.Empty);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * *
