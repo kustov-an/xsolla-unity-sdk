@@ -13,7 +13,7 @@ namespace  Xsolla
 		private bool IsSandbox;
 		protected XsollaUtils Utils;
 		private ActivePurchase currentPurchase;
-		private bool chancelStatusCheck = false;
+		private bool cancelStatusCheck = false;
 		private bool isSimple = false;
 
 		private XsollaPaymentImpl __payment;
@@ -275,7 +275,7 @@ namespace  Xsolla
 		protected void Restart (){
 			Logger.Log ("Restart payment");
 			currentPurchase.RemoveAllExceptToken ();
-			chancelStatusCheck = true;
+			cancelStatusCheck = true;
 		}
 
 		public void RetryPayment()
@@ -391,7 +391,7 @@ namespace  Xsolla
 				if (pStatus.isFinal()) {
 //					Payment.InitPaystation(currentPurchase.GetMergedMap());
 					LoadShopPricepoints ();
-					chancelStatusCheck = false;
+					cancelStatusCheck = false;
 				} else {
 					StartCoroutine (Test ());
 				}

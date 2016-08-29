@@ -38,7 +38,7 @@ namespace Xsolla
 
 		enum ActiveScreen
 		{
-			SHOP, P_LIST, VP_PAYMENT, PAYMENT, STATUS, ERROR, UNKNOWN, FAV_ITEMS_LIST
+			SHOP, P_LIST, VP_PAYMENT, PAYMENT, STATUS, ERROR, UNKNOWN, FAV_ITEMS_LIST, REDEEM_COUPONS
 		}
 
 		protected override void RecieveUtils (XsollaUtils utils)
@@ -248,7 +248,11 @@ namespace Xsolla
 			controller.InitScreen(translations, status);
 		}
 
-
+		private void ShowRedeemCoupon()
+		{
+			currentActive = ActiveScreen.REDEEM_COUPONS;
+		}
+			
 		private void DrawError(XsollaError error)
 		{
 			if (mainScreenContainer != null) {
@@ -386,6 +390,20 @@ namespace Xsolla
 				menuItemPricepoints.transform.SetParent(menuTransform);	
 				controller.AddButton(menuItemPricepoints.GetComponent<RadioButton>());
 			} 
+
+			if (components.ContainsKey("coupons") && components["coupons"].IsEnabled)
+			{
+				GameObject menuItemCoupons = Instantiate(menuItemPrefab) as GameObject;
+				Text[] texts = menuItemCoupons.GetComponentsInChildren<Text>();
+				texts[0].text = "";
+				texts[1].text = utils.GetTranslations().Get(XsollaTranslations.STATE_NAME_COUPONS);
+				menuItemCoupons.GetComponent<Button>().onClick.AddListener(delegate {
+					ShowRedeemCoupon();
+					controller.SelectItem(1);
+				});
+				menuItemCoupons.transform.SetParent(menuTransform);	
+				controller.AddButton(menuItemCoupons.GetComponent<RadioButton>());
+			}
 
 			GameObject menuItemEmpty = Instantiate (menuItemEmptyPrefab);
 			menuItemEmpty.transform.SetParent (menuTransform);

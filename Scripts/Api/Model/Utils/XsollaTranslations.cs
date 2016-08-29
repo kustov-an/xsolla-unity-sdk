@@ -88,6 +88,7 @@ using System.Collections;namespace Xsolla {
 		public static string STATE_NAME_SAVEDMETHOD = "state_name_savedmethod";//"Saved Methods"
 		public static string STATE_NAME_SUBSCRIPTION = "state_name_subscription";//"Subscriptions"
 		public static string STATE_NAME_VIRTUALITEM = "state_name_virtualitem";//"Item Shop"
+		public static string STATE_NAME_COUPONS = "state_name_coupon";//"Redeem Coupon"
 		public static string STATUS_DONE_DESCRIPTION = "status_done_description";//"Successful purchase!"
 		public static string STATUS_PAGE_TITLE = "status_page_title";//"Payment Status"
 		public static string STATUS_PURCHASED_DESCRIPTION = "status_purchased_description";//"You purchased {{itemDescription}} for {{amount}}"
