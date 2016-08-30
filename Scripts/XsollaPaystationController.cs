@@ -13,6 +13,7 @@ namespace Xsolla
 		private const string PREFAB_SCREEN_ERROR_MAIN 	 = "Prefabs/Screens/MainScreenError";
 		private const string PREFAB_SCREEN_CHECKOUT 	 = "Prefabs/SimpleView/_ScreenCheckout/ScreenCheckout";
 		private const string PREFAB_SCREEN_VP_SUMMARY 	 = "Prefabs/SimpleView/_ScreenVirtualPaymentSummary/ScreenVirtualPaymentSummary";
+		private const string PREFAB_SCREEN_REDEEM_COUPON = "Prefabs/SimpleView/_ScreenShop/RedeemCouponView";
 
 		private const string PREFAB_VIEW_MENU_ITEM		 = "Prefabs/SimpleView/MenuItem";
 		private const string PREFAB_VIEW_MENU_ITEM_ICON	 = "Prefabs/SimpleView/MenuItemIcon";
@@ -251,6 +252,24 @@ namespace Xsolla
 		private void ShowRedeemCoupon()
 		{
 			currentActive = ActiveScreen.REDEEM_COUPONS;
+			GameObject screenRedeemCoupons = Instantiate(Resources.Load(PREFAB_SCREEN_REDEEM_COUPON)) as GameObject;
+			// clear container
+			Resizer.DestroyChilds(mainScreenContainer.transform);
+			screenRedeemCoupons.transform.SetParent (mainScreenContainer.transform);
+			screenRedeemCoupons.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+			Resizer.ResizeToParrent (screenRedeemCoupons);
+			mainScreenContainer.GetComponentInParent<ScrollRect> ().content = screenRedeemCoupons.GetComponent<RectTransform> ();
+			RedeemCouponViewController controller = screenRedeemCoupons.GetComponent<RedeemCouponViewController>();
+			controller.InitScreen(base.Utils);
+			controller._btnApply.onClick.AddListener(delegate
+				{
+					CouponApplyClick(controller.GetCode());
+				});
+		}
+
+		private void CouponApplyClick(string pCode)
+		{
+			Logger.Log("ClickApply" + " - " + pCode);
 		}
 			
 		private void DrawError(XsollaError error)
@@ -396,10 +415,10 @@ namespace Xsolla
 				GameObject menuItemCoupons = Instantiate(menuItemPrefab) as GameObject;
 				Text[] texts = menuItemCoupons.GetComponentsInChildren<Text>();
 				texts[0].text = "";
-				texts[1].text = utils.GetTranslations().Get(XsollaTranslations.STATE_NAME_COUPONS);
+				texts[1].text = utils.GetTranslations().Get(XsollaTranslations.COUPON_PAGE_TITLE);
 				menuItemCoupons.GetComponent<Button>().onClick.AddListener(delegate {
 					ShowRedeemCoupon();
-					controller.SelectItem(1);
+					controller.SelectItem(2);
 				});
 				menuItemCoupons.transform.SetParent(menuTransform);	
 				controller.AddButton(menuItemCoupons.GetComponent<RadioButton>());
