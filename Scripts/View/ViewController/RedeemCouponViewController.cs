@@ -36,6 +36,11 @@ namespace Xsolla
 			_errorPanel.SetActive(true);	
 		}
 
+		public void HideError()
+		{
+			_errorPanel.SetActive(false);
+		}
+
 		public string GetCode()
 		{
 			return _inputField.text;

@@ -32,6 +32,7 @@ namespace Xsolla
 
 		private PaymentListScreenController _paymentListScreenController;
 		private ShopViewController 			_shopViewController;
+		private RedeemCouponViewController  _couponController;
 
 		private static ActiveScreen 		currentActive = ActiveScreen.UNKNOWN;
 		private Transform 					menuTransform;
@@ -198,6 +199,16 @@ namespace Xsolla
 			SetLoading (false);
 			DrawVPStatus (utils, status);
 		}
+
+		protected override void GetCouponErrorProceed (XsollaCouponProceedResult pResult)
+		{
+			Logger.Log(pResult.ToString());
+			if(_couponController != null)
+			{
+				_couponController.ShowError(pResult._error);
+				return;
+			}
+		}
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<< PAYMENT METHODS <<<<<<<<<<<<<<<<<<<<<<<<<<<< 
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -259,17 +270,18 @@ namespace Xsolla
 			screenRedeemCoupons.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
 			Resizer.ResizeToParrent (screenRedeemCoupons);
 			mainScreenContainer.GetComponentInParent<ScrollRect> ().content = screenRedeemCoupons.GetComponent<RectTransform> ();
-			RedeemCouponViewController controller = screenRedeemCoupons.GetComponent<RedeemCouponViewController>();
-			controller.InitScreen(base.Utils);
-			controller._btnApply.onClick.AddListener(delegate
+			_couponController = screenRedeemCoupons.GetComponent<RedeemCouponViewController>();
+			_couponController.InitScreen(base.Utils);
+			_couponController._btnApply.onClick.AddListener(delegate
 				{
-					CouponApplyClick(controller.GetCode());
+					CouponApplyClick(_couponController.GetCode());
 				});
 		}
 
 		private void CouponApplyClick(string pCode)
 		{
 			Logger.Log("ClickApply" + " - " + pCode);
+			GetCouponProceed(pCode);
 		}
 			
 		private void DrawError(XsollaError error)
@@ -433,7 +445,7 @@ namespace Xsolla
 			menuItemFavorite.GetComponent<Button>().onClick.AddListener(delegate {
 				_shopViewController.SetTitle(utils.GetTranslations().Get(XsollaTranslations.VIRTUALITEMS_TITLE_FAVORITE));
 				LoadFavorites();
-				controller.SelectItem(2);
+				controller.SelectItem(3);
 			});
 			menuItemFavorite.transform.SetParent (menuTransform);
 			controller.AddButton(menuItemFavorite.GetComponent<RadioButton>());
@@ -452,19 +464,24 @@ namespace Xsolla
 			}
 		}
 
-		private void OnUserStatusExit(XsollaStatus.Group group, string invoice, Xsolla.XsollaStatusData.Status status)
+		private void OnUserStatusExit(XsollaStatus.Group group, string invoice, Xsolla.XsollaStatusData.Status status, Dictionary<string, object> pPurchase = null)
 		{
 			Logger.Log ("On user exit status screen");
 			switch (group){
 				case XsollaStatus.Group.DONE:
 					Logger.Log ("Status Done");
 					menuTransform.gameObject.SetActive (true);
+					if (result == null)
+						result = new XsollaResult();
 					result.invoice = invoice;
 					result.status = status;
+					if (pPurchase != null)
+						result.purchases = pPurchase;
 					Logger.Log("Ivoice ID " + result.invoice);
 					Logger.Log("Status " + result.status);
 					Logger.Log("Bought", result.purchases);
 					TransactionHelper.Clear ();
+				
 					if (OkHandler != null)
 						OkHandler (result);
 					else 

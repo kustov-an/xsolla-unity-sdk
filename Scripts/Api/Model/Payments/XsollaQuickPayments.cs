@@ -24,7 +24,7 @@ namespace Xsolla {
 					AddItem(method);
 				}
 			}
-			api = new XsollaApi().Parse(quickPaymentsNode["api"]) as XsollaApi;
+			api = new XsollaApi().Parse(quickPaymentsNode[XsollaApiConst.R_API]) as XsollaApi;
 			return this;
 		}
 	}

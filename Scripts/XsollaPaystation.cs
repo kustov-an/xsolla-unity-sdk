@@ -44,6 +44,26 @@ namespace  Xsolla
 			return IsSandbox;
 		}
 
+		protected abstract void ShowPricepoints (XsollaUtils utils, XsollaPricepointsManager pricepoints);
+
+		protected abstract void ShowGoodsGroups (XsollaGroupsManager groups);
+		protected abstract void UpdateGoods (XsollaGoodsManager goods);
+
+		protected abstract void ShowQuickPaymentsList (XsollaUtils utils, XsollaQuickPayments paymentMethods);
+		protected abstract void ShowPaymentsList (XsollaPaymentMethods paymentMethods);
+		protected abstract void ShowSavedPaymentsList(XsollaSavedPaymentMethods savedPaymentsMethods);
+		protected abstract void ShowCountries (XsollaCountries paymentMethods);
+
+		protected abstract void ShowPaymentForm (XsollaUtils utils, XsollaForm form);
+
+		protected abstract void ShowPaymentStatus (XsollaTranslations translations, XsollaStatus status);
+		protected abstract void CheckUnfinishedPaymentStatus (XsollaStatus status, XsollaForm form);
+
+		protected abstract void ShowVPSummary (XsollaUtils utils, XVirtualPaymentSummary summary);
+		protected abstract void ShowVPError (XsollaUtils utils, string error);
+		protected abstract void ShowVPStatus (XsollaUtils utils, XVPStatus status);
+		protected abstract void GetCouponErrorProceed(XsollaCouponProceedResult presult);
+
 		//{"user":{ "id":{ "value":"1234567","hidden":true},"email":{"value":"support@xsolla.com"},"name":{"value":"Tardis"},"country":{"value":"US"} },"settings":{"project_id":15764,"language":"en","currency":"USD"}}
 		//jafS6nqbzRpZzA38
 		// BGKkyK2VetScsLgOcnchTB3r1XdkQaW4 - sandbox
@@ -106,6 +126,8 @@ namespace  Xsolla
 			Payment.VirtualPaymentSummaryRecieved += (summary) => ShowVPSummary(Utils, summary);
 			Payment.VirtualPaymentProceedError += (error) => ShowVPError(Utils, error);
 			Payment.VirtualPaymentStatusRecieved += (status) => ShowVPStatus(Utils, status);
+
+			Payment.CouponProceedErrorRecived += (proceed) => GetCouponErrorProceed(proceed); 
 			
 			Payment.ErrorReceived += ShowPaymentError;
 			Payment.SetModeSandbox (isSandbox);
@@ -158,6 +180,13 @@ namespace  Xsolla
 		{
 			Logger.Log ("Load Favorites request");
 			Payment.GetFavorites (currentPurchase.GetMergedMap());
+		}
+
+		public void GetCouponProceed(string pCouponCode)
+		{
+			Dictionary<string, object> map = new Dictionary<string, object>();
+			map.Add("coupon_code", pCouponCode);
+			Payment.GetCouponProceed(map);
 		}
 
 		public void SetFavorite(Dictionary<string, object> items)
@@ -365,25 +394,6 @@ namespace  Xsolla
 				}
 			}
 		}
-
-		protected abstract void ShowPricepoints (XsollaUtils utils, XsollaPricepointsManager pricepoints);
-		
-		protected abstract void ShowGoodsGroups (XsollaGroupsManager groups);
-		protected abstract void UpdateGoods (XsollaGoodsManager goods);
-		
-		protected abstract void ShowQuickPaymentsList (XsollaUtils utils, XsollaQuickPayments paymentMethods);
-		protected abstract void ShowPaymentsList (XsollaPaymentMethods paymentMethods);
-		protected abstract void ShowSavedPaymentsList(XsollaSavedPaymentMethods savedPaymentsMethods);
-		protected abstract void ShowCountries (XsollaCountries paymentMethods);
-
-		protected abstract void ShowPaymentForm (XsollaUtils utils, XsollaForm form);
-
-		protected abstract void ShowPaymentStatus (XsollaTranslations translations, XsollaStatus status);
-		protected abstract void CheckUnfinishedPaymentStatus (XsollaStatus status, XsollaForm form);
-
-		protected abstract void ShowVPSummary (XsollaUtils utils, XVirtualPaymentSummary summary);
-		protected abstract void ShowVPError (XsollaUtils utils, string error);
-		protected abstract void ShowVPStatus (XsollaUtils utils, XVPStatus status);
 
 		protected void WaitingStatus (XsollaStatusPing pStatus) {
 			Logger.Log ("Waiting payment status");
