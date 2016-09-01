@@ -63,7 +63,7 @@ namespace Xsolla {
 			if(statusText.backUrlCaption != null && !"".Equals(statusText.backUrlCaption))
 				statusViewExitButton.gameObject.GetComponent<Text> ().text = statusText.backUrlCaption;
 			else
-				statusViewExitButton.gameObject.GetComponent<Text> ().text = "< Back";
+				statusViewExitButton.gameObject.GetComponent<Text> ().text = translations.Get(XsollaTranslations.BACK_TO_STORE);
 			statusViewExitButton.onClick.AddListener (delegate {OnClickExit(currentStatus, xsollaStatus.GetStatusData().GetInvoice(), xsollaStatus.GetStatusData().GetStatus(), null);});
 
 		}
@@ -93,7 +93,7 @@ namespace Xsolla {
 				AddBigElement (translations.Get ("virtualstatus_check_vc_amount"), status.VcAmount + " " + utils.GetProject().virtualCurrencyName);
 			}
 			statusViewExitButton.gameObject.GetComponent<Text> ().text = translations.Get(XsollaTranslations.BACK_TO_STORE);
-			statusViewExitButton.onClick.AddListener (delegate {OnClickExit(currentStatus, status.OperationId, Xsolla.XsollaStatusData.Status.DONE, null);});
+			statusViewExitButton.onClick.AddListener (delegate {OnClickBack(currentStatus, status.OperationId, Xsolla.XsollaStatusData.Status.DONE, status.GetPurchaseList());});
 		}
 
 		public void PrepareStatus(XsollaStatus.Group group, string state, string purchase, string invoice){
@@ -183,10 +183,12 @@ namespace Xsolla {
 				GetComponentInParent<XsollaPaystationController> ().gameObject.GetComponentInChildren<Selfdestruction> ().DestroyRoot ();
 		}
 
-		private void OnClickBack(XsollaStatus.Group group ,string invoice, Xsolla.XsollaStatusData.Status status)
+		private void OnClickBack(XsollaStatus.Group group ,string invoice, Xsolla.XsollaStatusData.Status status, Dictionary<string, object> pPurchase)
 		{
 			if (StatusHandler != null)
-				StatusHandler (group, invoice, status, null);
+				StatusHandler (group, invoice, status, pPurchase);
+			if (GetComponentInParent<XsollaPaystationController> () != null)
+				GetComponentInParent<XsollaPaystationController> ().ShowRedeemCoupon();
 		}
 
 	}

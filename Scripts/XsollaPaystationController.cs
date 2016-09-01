@@ -260,7 +260,7 @@ namespace Xsolla
 			controller.InitScreen(translations, status);
 		}
 
-		private void ShowRedeemCoupon()
+		public void ShowRedeemCoupon()
 		{
 			currentActive = ActiveScreen.REDEEM_COUPONS;
 			GameObject screenRedeemCoupons = Instantiate(Resources.Load(PREFAB_SCREEN_REDEEM_COUPON)) as GameObject;

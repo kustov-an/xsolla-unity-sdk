@@ -76,6 +76,16 @@ namespace Xsolla {
 			}
 		}
 
+		public Dictionary<string, object> GetPurchaseList()
+		{
+			Dictionary<string, object> res = new Dictionary<string, object>();
+			if (Items.Count > 0)
+				res.Add("items",Items);
+			if (vCurr.Count > 0)
+				res.Add("vcur",vCurr);
+			return res;
+		}
+
 		public string GetPurchase(int i) {
 			if (Items.Count > 0)
 			{
