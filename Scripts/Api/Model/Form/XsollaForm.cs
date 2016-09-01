@@ -54,7 +54,7 @@ namespace Xsolla
 	    * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		public void AddElement(XsollaFormElement xsollaFormElement) {
 			elements.Add(xsollaFormElement);
-			if (xsollaFormElement.IsVisible() && !"couponCode".Equals(xsollaFormElement.GetName()))
+			if (xsollaFormElement.IsVisible() /*&& !"couponCode".Equals(xsollaFormElement.GetName())*/)
 				elementsVisible.Add(xsollaFormElement);
 			map.Add(xsollaFormElement.GetName(), xsollaFormElement);
 			if (xsollaFormElement.GetName () != null) 
