@@ -27,7 +27,7 @@ namespace Xsolla
 			SetUpNavButtons();
 		}
 
-		public void SetPayemtnMethods(List<XsollaPaymentMethod> pList)
+		public void SetPaymentMethods(List<XsollaPaymentMethod> pList)
 		{
 			if (listBtns == null)
 				listBtns = new List<ShopPaymentBtnController>();
@@ -55,8 +55,9 @@ namespace Xsolla
 			// Set method
 			controller.setMethod(pMethod);
 			// Set icon
-			if (pMethod.GetImageUrl() != "")
-				imageLoader.LoadImage(controller._icon, pMethod.GetImageUrl());
+			controller.setIcon(imageLoader);
+//			if (pMethod.GetImageUrl() != "")
+//				imageLoader.LoadImage(controller._icon, pMethod.GetImageUrl());
 			controller._btn.onClick.AddListener(() => OnChoosePaymentMethod(controller.getMethod().id));
 
 		}

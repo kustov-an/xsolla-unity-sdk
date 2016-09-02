@@ -19,13 +19,20 @@ namespace Xsolla
 			return lastPayment;
 		}
 
+
+
 		public List<XsollaPaymentMethod> GetListOnType(XsollaPaymentMethod.TypePayment pType)
 		{
+
 			return itemsList.FindAll (delegate(XsollaPaymentMethod xpm) 
 				{
 					return xpm.typePayment == pType;
 				});
-				
+		}
+
+		public List<XsollaPaymentMethod> GetListOnType()
+		{
+				return itemsList;	
 		}
 
 		public List<XsollaPaymentMethod> GetSortedItems(string s)

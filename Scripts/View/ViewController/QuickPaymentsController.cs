@@ -113,8 +113,7 @@ namespace Xsolla{
 			// Set method
 			controller.setMethod(pMethod);
 			// Set icon
-			if (pMethod.GetImageUrl() != "")
-				imageLoader.LoadImage(controller._icon, pMethod.GetImageUrl());
+			controller.setIcon(imageLoader);
 			controller._btn.onClick.AddListener(() => OnChoosePaymentMethod(controller.getMethod().id));
 		}
 

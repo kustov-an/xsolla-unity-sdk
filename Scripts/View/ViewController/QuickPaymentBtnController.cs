@@ -69,9 +69,6 @@ namespace Xsolla
 					break;
 				}
 			}
-
-		
-
 		}
 	}
 }

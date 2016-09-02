@@ -26,6 +26,34 @@ namespace Xsolla
 		{
 		}
 
+		public void setIcon(ImageLoader pLoader = null)
+		{
+			switch (_method.id)
+			{
+			case 1380:
+				{
+					_icon.sprite = Resources.Load<Sprite> ("Images/ic_cc");
+					break;
+				}
+			case 1738:
+				{
+					_icon.sprite = Resources.Load<Sprite> ("Images/ic_mobile");
+					break;
+				}
+			case 3012:
+				{
+					_icon.sprite = Resources.Load<Sprite> ("Images/ic_giftCard");
+					break;
+				}
+			default:
+				{
+					if (pLoader != null)
+						pLoader.LoadImage(_icon, _method.GetImageUrl());
+					break;
+				}
+			}
+		}
+
 
 	}
 }
