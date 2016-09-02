@@ -43,7 +43,7 @@ namespace Xsolla
 			canvas.blocksRaycasts = true;
 		}
 
-		public void setIcon(long pMethodID)
+		public void setIcon(long pMethodID, ImageLoader pLoader = null)
 		{
 			switch (pMethodID)
 			{
@@ -62,7 +62,14 @@ namespace Xsolla
 					_iconMethod.sprite = Resources.Load<Sprite> ("Images/ic_giftCard");
 					break;
 				}
+			default:
+				{
+					if (pLoader != null)
+						pLoader.LoadImage(_iconMethod, _method.GetImageUrl());
+					break;
+				}
 			}
+
 		
 
 		}

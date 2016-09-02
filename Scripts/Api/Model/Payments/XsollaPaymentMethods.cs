@@ -50,7 +50,12 @@ namespace Xsolla
 			while(paymentListEnumerator.MoveNext())
 			{
 				XsollaPaymentMethod method = new XsollaPaymentMethod().Parse(paymentListEnumerator.Current) as XsollaPaymentMethod;
-				method.SetType(XsollaPaymentMethod.TypePayment.QUICK);
+				// if count quick methods 3 then add to regular 
+				if (this.GetCount() <= 2)
+					method.SetType(XsollaPaymentMethod.TypePayment.QUICK);
+				else
+					method.SetType(XsollaPaymentMethod.TypePayment.REGULAR);
+				
 				if(method.id != 64 && method.id != 1738){
 					AddItem(method);
 				}
