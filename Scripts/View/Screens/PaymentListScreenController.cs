@@ -95,6 +95,7 @@ namespace Xsolla
 			screenHider.SetActive(true);
 			quickController.gameObject.SetActive(false);
 			allController.gameObject.SetActive(false);
+			savedPayController.gameObject.SetActive(true);
 		}
 			
 		public void ChoosePaymentMethod(long paymentMethodId)
