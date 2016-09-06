@@ -29,7 +29,9 @@ namespace Xsolla
 		private string type;
 		private string example; // placeholder
 		private string value;
-		//TODO  Type.SELECT - массив обьектов; Type.TABLE где то обьект объектов
+		//TODO  Type.SELECT - массив обьектов; 
+		//Type.TABLE где то обьект объектов
+		private Dictionary<string, List<object>> tableOptions;
 		private List<Option> options;
 		private bool isMandatory;
 		private bool isReadonly;
@@ -112,7 +114,10 @@ namespace Xsolla
 
 		private string GetFormatString(string pStr)
 		{
-			return Regex.Replace(pStr, @"<[^>]*>", string.Empty);
+			if (pStr != null)
+				return Regex.Replace(pStr, @"<[^>]*>", string.Empty);
+			else
+				return string.Empty;
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -141,12 +146,31 @@ namespace Xsolla
 
 		private void SetOptions(JSONNode optionsNode){
 			List<Option> options = new List<Option>(optionsNode.Count);
+			Dictionary<string, List<object>> tableOptions = new Dictionary<string, List<object>>();
 			IEnumerable<JSONNode> optionsEnumerable = optionsNode.Childs;
 			IEnumerator<JSONNode> optionsEnumerator = optionsEnumerable.GetEnumerator ();
 			while(optionsEnumerator.MoveNext()){
 				JSONNode optionNode = optionsEnumerator.Current;
-				options.Add(new Option(optionNode["value"], optionNode["label"]));
+				// if that element is TABLE
+				if (GetElementType() == XsollaFormElement.TYPE_TABLE)
+				{
+					List<object> listObj = new List<object>();
+					JSONArray jsonArray = optionNode["body"].AsArray;
+					foreach(JSONNode item in jsonArray)
+					{
+						listObj.Add(item);
+					}
+
+					tableOptions.Add(optionNode["head"].AsArray[0], listObj);
+				}
+				else
+				{
+					options.Add(new Option(optionNode["value"], optionNode["label"]));
+				}
 			}
+
+			if (tableOptions != null)
+				this.tableOptions = tableOptions;
 			this.options = options;
 		}
 
