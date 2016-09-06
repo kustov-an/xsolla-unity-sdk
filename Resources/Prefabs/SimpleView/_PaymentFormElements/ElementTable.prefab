@@ -32,6 +32,7 @@ GameObject:
   - 114: {fileID: 11416712}
   - 114: {fileID: 11434020}
   - 114: {fileID: 11462396}
+  - 114: {fileID: 11417360}
   m_Layer: 5
   m_Name: ElementTable
   m_TagString: Untagged
@@ -71,7 +72,7 @@ MonoBehaviour:
     m_Left: 20
     m_Right: 0
     m_Top: 10
-    m_Bottom: 0
+    m_Bottom: 10
   m_ChildAlignment: 0
   m_Spacing: 5
   m_ChildForceExpandWidth: 1
@@ -119,6 +120,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11417360
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 122092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6bdc4b1c3a904e248a6dc4249b424ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _title: {fileID: 11466988}
+  _container: {fileID: 107256}
 --- !u!114 &11424618
 MonoBehaviour:
   m_ObjectHideFlags: 1

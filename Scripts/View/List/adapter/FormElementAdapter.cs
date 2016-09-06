@@ -62,8 +62,9 @@ namespace Xsolla {
 		GameObject DrawTable(XsollaFormElement element)
 		{
 			GameObject newItem = Instantiate(tablePrefab) as GameObject;
-
-			return newItem;	
+			ElementTableController controller = newItem.GetComponent<ElementTableController>();
+            controller.InitScreen(element);
+			return newItem;
 		}
 
 		GameObject DrawLabel(XsollaFormElement element)
