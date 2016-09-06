@@ -216,6 +216,14 @@ namespace Xsolla
 			{
 				GameObject.Find(toggle.transform.parent.name).SetActive(false);
 			}
+				
+			if (xsollaForm.Contains("couponCode") && xsollaForm.GetItem("couponCode").IsVisible())
+			{
+				GameObject promoController = Instantiate(Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ContainerPromoCode")) as GameObject;
+				promoController.transform.SetParent(cardViewObj.transform);
+			}
+
+
 			return cardViewObj;
 		}
 
