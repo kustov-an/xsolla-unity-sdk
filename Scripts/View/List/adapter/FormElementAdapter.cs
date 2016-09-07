@@ -65,14 +65,28 @@ namespace Xsolla {
 
 		GameObject DrawInput(XsollaFormElement element)
         {
-			GameObject newItem = Instantiate(inputPrefab) as GameObject;
-			newItem.GetComponentInChildren<Text> ().text = element.GetTitle ();
-            InputField inputField = newItem.GetComponentInChildren<InputField> ();
-			inputField.GetComponentInChildren<Text>().text = element.GetExample ();
-			SetupValidation (element.GetName (), inputField);
-			//inputField.onValidateInput += ValidateInput;
-			inputField.onEndEdit.AddListener(delegate{OnEndEdit(element, inputField);});
-			return newItem;
+            // if this promo coupone code then draw another prefab
+            if (element.GetName() == "couponCode")
+            {
+            	GameObject newItem = Instantiate(Resources.Load("")) as GameObject;
+                PromoCodeController controller = newItem.GetComponent<PromoCodeController>();
+                return newItem;
+
+            }
+            else
+			{
+				GameObject newItem = Instantiate(inputPrefab) as GameObject;
+				newItem.GetComponentInChildren<Text>().text = element.GetTitle();
+				InputField inputField = newItem.GetComponentInChildren<InputField>();
+				inputField.GetComponentInChildren<Text>().text = element.GetExample();
+				SetupValidation(element.GetName(), inputField);
+				//inputField.onValidateInput += ValidateInput;
+				inputField.onEndEdit.AddListener(delegate
+				{
+					OnEndEdit(element, inputField);
+				});
+				return newItem;
+			}
 		}
 
 		void SetupValidation(string fieldName, InputField _inputField){

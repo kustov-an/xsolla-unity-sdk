@@ -11,20 +11,20 @@ namespace Xsolla
 		public GameObject _promoContainerInputApplyCode;
 		public Text 	  _promoDesc;
 		public Button     _promoCodeApply;
+        public InputField _inputField;
 
-		public void btnClick()
-		{
-			_promoContainerInputApplyCode.SetActive(!_promoContainerInputApplyCode.activeSelf);
-		}
 
-		public void show()
-		{
-			this.gameObject.SetActive(true);
-		}
+        public void InitScreen(XsollaUtils pUtils)
+        {
+            _promoBtn.GetComponent<Text>().text = pUtils.GetTranslations().Get("coupon_control_header");
+            _promoDesc.text = pUtils.GetTranslations().Get("coupon_control_hint");
+            _promoCodeApply.gameObject.GetComponentInChildren<Text>().text = pUtils.GetTranslations().Get("coupon_control_apply");
+            //pUtils.GetTranslations();
+        }
 
-		public void hide()
-		{
-			this.gameObject.SetActive(false);
+        public void btnClick()
+    {
+        _promoContainerInputApplyCode.SetActive(!_promoContainerInputApplyCode.activeSelf);
 		}
 
 		public PromoCodeController ()
