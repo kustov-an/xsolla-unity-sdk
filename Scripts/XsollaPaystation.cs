@@ -167,7 +167,7 @@ namespace  Xsolla
 		{
 			Logger.Log ("Load Goods Groups request");
 			SetLoading (true);
-			Payment.GetItemsGrous (currentPurchase.GetMergedMap());
+			Payment.GetItemsGroups (currentPurchase.GetMergedMap());
 		}
 
 		public void LoadGoods(long groupId)

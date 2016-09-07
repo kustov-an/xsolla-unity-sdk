@@ -282,7 +282,7 @@ namespace Xsolla
 			POST (GOODS, GetGoodsUrl(), requestParams);
 		}
 			
-		public void GetItemsGrous(Dictionary<string, object> requestParams)
+		public void GetItemsGroups(Dictionary<string, object> requestParams)
 		{
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
 			POST (GOODS_GROUPS, GetItemsGroupsUrl(), requestParams);
@@ -353,8 +353,8 @@ namespace Xsolla
 
 		public WWW POST(int type, string url, Dictionary<string, object> post)
 		{
-			WWWForm form = new WWWForm();
-			StringBuilder sb = new StringBuilder ();
+//			WWWForm form = new WWWForm();
+//			StringBuilder sb = new StringBuilder ();
 			if (!post.ContainsKey (XsollaApiConst.ACCESS_TOKEN) && !post.ContainsKey ("project") && !post.ContainsKey ("access_data") && baseParams != null)
 			{
 				foreach (KeyValuePair<string, object> kv in baseParams)
@@ -369,22 +369,21 @@ namespace Xsolla
 				post.Add ("alternative_platform", "unity/" + SDK_VERSION);
 
 
-			foreach(KeyValuePair<string,object> post_arg in post)
-			{
-				string argValue = post_arg.Value != null ? post_arg.Value.ToString() : "";
-				sb.Append(post_arg.Key).Append("=").Append(argValue).Append("&");
-				form.AddField(post_arg.Key, argValue);
-
-			}
+//			foreach(KeyValuePair<string,object> post_arg in post)
+//			{
+//				string argValue = post_arg.Value != null ? post_arg.Value.ToString() : "";
+//				sb.Append(post_arg.Key).Append("=").Append(argValue).Append("&");
+//				form.AddField(post_arg.Key, argValue);
+//			}
 				
 			HttpTlsRequest httpreq = GameObject.Find(HttpTlsRequest.loaderGameObjName).GetComponent<HttpTlsRequest>();
 			StartCoroutine(httpreq.Request(url, post, (value) => ProcessingRequestResult(type, value, post)));
 
 //			Debug.Log (url);
 //			Debug.Log (sb.ToString());
-			WWW www = new WWW(url, form);
-			//StartCoroutine(WaitForRequest(type, www, post));
-			return www; 
+//			WWW www = new WWW(url, form);
+//			StartCoroutine(WaitForRequest(type, www, post));
+			return null;
 		}
 
 		private void ProcessingRequestResult(int pType, RequestClass pRequestResult, Dictionary<string, object> pDataArgs)
@@ -570,6 +569,8 @@ namespace Xsolla
 							else
 							{
 								long operationId = couponProceed._operationId;
+                                if (pDataArgs.ContainsKey("coupon_code"))
+                                	pDataArgs.Remove("coupon_code");
 								pDataArgs.Add("operation_id", operationId);
 								VPaymentStatus(pDataArgs);
 							}

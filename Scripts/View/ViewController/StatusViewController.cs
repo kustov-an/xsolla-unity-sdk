@@ -188,7 +188,7 @@ namespace Xsolla {
 			if (StatusHandler != null)
 				StatusHandler (group, invoice, status, pPurchase);
 			if (GetComponentInParent<XsollaPaystationController> () != null)
-				GetComponentInParent<XsollaPaystationController> ().ShowRedeemCoupon();
+				GetComponentInParent<XsollaPaystationController> ().LoadGoodsGroups();
 		}
 
 	}

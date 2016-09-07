@@ -33,6 +33,7 @@ namespace Xsolla
 		private PaymentListScreenController _paymentListScreenController;
 		private ShopViewController 			_shopViewController;
 		private RedeemCouponViewController  _couponController;
+		private RadioGroupController 		_radioController;
 
 		private static ActiveScreen 		currentActive = ActiveScreen.UNKNOWN;
 		private Transform 					menuTransform;
@@ -241,6 +242,7 @@ namespace Xsolla
 			DrawShopScreen ();
 			LoadGoods (groups.GetItemByPosition(0).id);
 			_shopViewController.OpenGoods(groups);
+			_radioController.SelectItem(0);
 		}
 
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -280,6 +282,7 @@ namespace Xsolla
 
 		private void CouponApplyClick(string pCode)
 		{
+            _couponController.HideError();
 			Logger.Log("ClickApply" + " - " + pCode);
 			GetCouponProceed(pCode);
 		}
@@ -385,7 +388,7 @@ namespace Xsolla
 		//TODO minimize
 		private void InitMenu(XsollaUtils utils)
 		{
-			RadioGroupController controller = menuTransform.gameObject.AddComponent<RadioGroupController> ();
+			_radioController = menuTransform.gameObject.AddComponent<RadioGroupController> ();
 			GameObject menuItemPrefab 		= Resources.Load (PREFAB_VIEW_MENU_ITEM) as GameObject;
 			GameObject menuItemIconPrefab 	= Resources.Load (PREFAB_VIEW_MENU_ITEM_ICON) as GameObject;
 			GameObject menuItemEmptyPrefab 	= Resources.Load (PREFAB_VIEW_MENU_ITEM_EMPTY) as GameObject;
@@ -401,10 +404,10 @@ namespace Xsolla
 				texts[1].text = utils.GetTranslations().Get(XsollaTranslations.VIRTUALITEM_PAGE_TITLE);
 				menuItemGoods.GetComponent<Button>().onClick.AddListener(delegate {
 					LoadGoodsGroups();
-					controller.SelectItem(0);
+					_radioController.SelectItem(0);
 				});
 				menuItemGoods.transform.SetParent(menuTransform);
-				controller.AddButton(menuItemGoods.GetComponent<RadioButton>());
+				_radioController.AddButton(menuItemGoods.GetComponent<RadioButton>());
 			}
 			//HACK with Unity 5.3
 			//bool isPricepointsRequired = components.ContainsKey("virtual_currency") && components ["virtual_currency"].IsEnabled;
@@ -416,10 +419,10 @@ namespace Xsolla
 				texts[1].text = utils.GetTranslations().Get(XsollaTranslations.PRICEPOINT_PAGE_TITLE);
 				menuItemPricepoints.GetComponent<Button>().onClick.AddListener(delegate {
 					LoadShopPricepoints();
-					controller.SelectItem(1);
+					_radioController.SelectItem(1);
 				});
 				menuItemPricepoints.transform.SetParent(menuTransform);	
-				controller.AddButton(menuItemPricepoints.GetComponent<RadioButton>());
+				_radioController.AddButton(menuItemPricepoints.GetComponent<RadioButton>());
 			} 
 
 			if (components.ContainsKey("coupons") && components["coupons"].IsEnabled)
@@ -430,10 +433,10 @@ namespace Xsolla
 				texts[1].text = utils.GetTranslations().Get(XsollaTranslations.COUPON_PAGE_TITLE);
 				menuItemCoupons.GetComponent<Button>().onClick.AddListener(delegate {
 					ShowRedeemCoupon();
-					controller.SelectItem(2);
+					_radioController.SelectItem(2);
 				});
 				menuItemCoupons.transform.SetParent(menuTransform);	
-				controller.AddButton(menuItemCoupons.GetComponent<RadioButton>());
+				_radioController.AddButton(menuItemCoupons.GetComponent<RadioButton>());
 			}
 
 			GameObject menuItemEmpty = Instantiate (menuItemEmptyPrefab);
@@ -445,10 +448,10 @@ namespace Xsolla
 			menuItemFavorite.GetComponent<Button>().onClick.AddListener(delegate {
 				_shopViewController.SetTitle(utils.GetTranslations().Get(XsollaTranslations.VIRTUALITEMS_TITLE_FAVORITE));
 				LoadFavorites();
-				controller.SelectItem(3);
+				_radioController.SelectItem(3);
 			});
 			menuItemFavorite.transform.SetParent (menuTransform);
-			controller.AddButton(menuItemFavorite.GetComponent<RadioButton>());
+			_radioController.AddButton(menuItemFavorite.GetComponent<RadioButton>());
 
 		}
 
