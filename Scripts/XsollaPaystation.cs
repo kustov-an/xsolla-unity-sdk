@@ -15,7 +15,7 @@ namespace  Xsolla
 		private ActivePurchase currentPurchase;
 		private bool chancelStatusCheck = false;
 		private bool isSimple = false;
-		private string _countryCurr = "";
+		public string _countryCurr = "";
 
 		private XsollaPaymentImpl __payment;
 		private XsollaPaymentImpl Payment

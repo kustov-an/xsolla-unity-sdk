@@ -158,7 +158,7 @@ namespace Xsolla
 		protected override void ShowCountries (XsollaCountries countries)
 		{
 			DrawPaymentListScreen ();
-			_paymentListScreenController.SetCountries (countries);
+			_paymentListScreenController.SetCountries (_countryCurr, countries);
 		}
 
 		protected override void ShowVPSummary(XsollaUtils utils, XVirtualPaymentSummary summary) {
@@ -451,9 +451,12 @@ namespace Xsolla
 						controller.statusViewExitButton.onClick.Invoke();
 					break;
 				default:
+				{
 					Logger.Log ("Handle chancel");
-					ErrorHandler (XsollaError.GetCancelError());
+					if (ErrorHandler != null) 
+						ErrorHandler (XsollaError.GetCancelError());
 					break;
+				}
 			}
 		}
 	}
