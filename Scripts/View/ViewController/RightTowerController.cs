@@ -19,6 +19,7 @@ namespace Xsolla
 		public void InitView(XsollaTranslations translations, XsollaSummary summary)
 		{
 			_summary = summary;
+			this.gameObject.AddComponent<VerticalLayoutGroup>();
 			GameObject header = Instantiate (orderSummaryPrefab);
 			header.GetComponentsInChildren<Text> () [0].text = translations.Get (XsollaTranslations.PAYMENT_SUMMARY_HEADER);
 			linearLayout.AddObject(header);
