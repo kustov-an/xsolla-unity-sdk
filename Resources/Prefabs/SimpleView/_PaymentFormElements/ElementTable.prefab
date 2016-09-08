@@ -33,6 +33,7 @@ GameObject:
   - 114: {fileID: 11434020}
   - 114: {fileID: 11462396}
   - 114: {fileID: 11417360}
+  - 114: {fileID: 11414668}
   m_Layer: 5
   m_Name: ElementTable
   m_TagString: Untagged
@@ -127,6 +128,18 @@ MonoBehaviour:
   m_Spacing: 5
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
+--- !u!114 &11414668
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 122092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12b1035216067428b90780d61273e8a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alsoDisableScrolling: 1
 --- !u!114 &11416712
 MonoBehaviour:
   m_ObjectHideFlags: 1
