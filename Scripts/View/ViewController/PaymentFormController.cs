@@ -23,7 +23,7 @@ namespace Xsolla
 			throw new System.NotImplementedException ();
 		}
 
-		public void InitView(XsollaTranslations translations, XsollaForm form)
+		public void InitView(XsollaTranslations pTranslations, XsollaForm form)
 		{
 			_form = form;
 			// if have skipCheckout and this checkout form
@@ -41,12 +41,12 @@ namespace Xsolla
 
 			string pattern = "{{.*?}}";
 			Regex regex = new Regex (pattern);
-			string title = regex.Replace (translations.Get(XsollaTranslations.PAYMENT_PAGE_TITLE_VIA), form.GetTitle (), 1);
+			string title = regex.Replace (pTranslations.Get(XsollaTranslations.PAYMENT_PAGE_TITLE_VIA), form.GetTitle (), 1);
 			layout.AddObject (GetTitle (title));
 			layout.AddObject (GetError (form.GetError ()));
 			layout.AddObject (GetInfo (form.GetMessage ()));
 			if (form.GetVisible ().Count > 0) {
-				GameObject formView = GetFormView (form, translations);
+				GameObject formView = GetFormView (form, pTranslations);
 				layout.AddObject (formView);
 			}
 			if (form.GetAccountXsolla () != null && !"".Equals (form.GetAccountXsolla ()) && !"null".Equals (form.GetAccountXsolla ()))
@@ -54,7 +54,7 @@ namespace Xsolla
 			if (form.GetAccount () != null && !"".Equals (form.GetAccount ()) && !"null".Equals (form.GetAccount ()))
 				layout.AddObject (GetTwoTextPlate ("2pay number", form.GetAccount ()));
 			if (form.IsValidPaymentSystem ())
-				layout.AddObject (GetTextPlate (translations.Get (XsollaTranslations.FORM_CC_EULA)));
+				layout.AddObject (GetTextPlate (pTranslations.Get (XsollaTranslations.FORM_CC_EULA)));
 			GameObject footerInstance = Instantiate (footer);
 			Text[] footerTexts = footerInstance.GetComponentsInChildren<Text> ();
 //			footerTexts [0].text = "back";//back
@@ -77,7 +77,7 @@ namespace Xsolla
 				vecMin.x = vecMin.x - (buttonRect.anchorMax.x - vecMin.x)/2;
 				buttonRect.anchorMin = vecMin;
 			} else {
-				footerTexts [1].text = translations.Get (XsollaTranslations.TOTAL) + " " + form.GetSumTotal ();//total
+				footerTexts [1].text = pTranslations.Get (XsollaTranslations.TOTAL) + " " + form.GetSumTotal ();//total
 			}
 
 			layout.AddObject (footerInstance);
@@ -119,7 +119,7 @@ namespace Xsolla
 				return GetCardViewWeb(xsollaForm, translations);
 			} else {
 				FormElementAdapter adapter = GetComponent<FormElementAdapter>();
-				adapter.SetForm (xsollaForm);
+				adapter.SetForm (xsollaForm, translations);
 				GameObject list = GetList (adapter);
 				list.GetComponent<ListView>().DrawList(GetComponent<RectTransform> ());
 				return list;
@@ -220,6 +220,8 @@ namespace Xsolla
 			if (xsollaForm.Contains("couponCode") && xsollaForm.GetItem("couponCode").IsVisible())
 			{
 				GameObject promoController = Instantiate(Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ContainerPromoCode")) as GameObject;
+				PromoCodeController controller = promoController.GetComponent<PromoCodeController>();
+				controller.InitScreen(translations);
 				promoController.transform.SetParent(cardViewObj.transform);
 			}
 

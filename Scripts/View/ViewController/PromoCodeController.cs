@@ -14,11 +14,11 @@ namespace Xsolla
         public InputField _inputField;
 
 
-        public void InitScreen(XsollaUtils pUtils)
+        public void InitScreen(XsollaTranslations pTranslation)
         {
-            _promoBtn.GetComponent<Text>().text = pUtils.GetTranslations().Get("coupon_control_header");
-            _promoDesc.text = pUtils.GetTranslations().Get("coupon_control_hint");
-            _promoCodeApply.gameObject.GetComponentInChildren<Text>().text = pUtils.GetTranslations().Get("coupon_control_apply");
+			_promoBtn.GetComponent<Text>().text = pTranslation.Get("coupon_control_header");
+			_promoDesc.text = pTranslation.Get("coupon_control_hint");
+			_promoCodeApply.gameObject.GetComponentInChildren<Text>().text = pTranslation.Get("coupon_control_apply");
             //pUtils.GetTranslations();
         }
 

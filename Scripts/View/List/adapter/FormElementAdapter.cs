@@ -12,6 +12,7 @@ namespace Xsolla {
 
 		private XsollaForm form;
 		private List<XsollaFormElement> elements;
+		private XsollaTranslations _translation;
 
 		public object getSelectElemPrefab()
 		{
@@ -68,10 +69,10 @@ namespace Xsolla {
             // if this promo coupone code then draw another prefab
             if (element.GetName() == "couponCode")
             {
-            	GameObject newItem = Instantiate(Resources.Load("")) as GameObject;
+				GameObject newItem = Instantiate(Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ContainerPromoCode")) as GameObject;
                 PromoCodeController controller = newItem.GetComponent<PromoCodeController>();
+				controller.InitScreen(_translation);
                 return newItem;
-
             }
             else
 			{
@@ -174,10 +175,11 @@ namespace Xsolla {
 		}
 
 
-		public void SetForm(XsollaForm form)
+		public void SetForm(XsollaForm form, XsollaTranslations pTranslation = null)
 		{
 			this.form = form;
 			this.elements = form.GetVisible ();
+			this._translation = pTranslation;
 		}
 
 		public override GameObject GetNext ()
