@@ -222,10 +222,15 @@ namespace Xsolla
 				GameObject promoController = Instantiate(Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ContainerPromoCode")) as GameObject;
 				PromoCodeController controller = promoController.GetComponent<PromoCodeController>();
 				controller.InitScreen(translations);
+				controller._inputField.onValueChanged.AddListener((s) => {
+					OnValueChange("couponCode", s);
+				});
+				controller._promoCodeApply.onClick.AddListener(() => 
+					{
+						OnClickPay (false);
+					});
 				promoController.transform.SetParent(cardViewObj.transform);
 			}
-
-
 			return cardViewObj;
 		}
 

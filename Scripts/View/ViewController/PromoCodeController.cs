@@ -23,8 +23,8 @@ namespace Xsolla
         }
 
         public void btnClick()
-    {
-        _promoContainerInputApplyCode.SetActive(!_promoContainerInputApplyCode.activeSelf);
+    	{
+        	_promoContainerInputApplyCode.SetActive(!_promoContainerInputApplyCode.activeSelf);
 		}
 
 		public PromoCodeController ()

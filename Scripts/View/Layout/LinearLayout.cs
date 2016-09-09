@@ -89,9 +89,9 @@ namespace Xsolla
 				height += go.transform.localScale.y;
 			}
 			// offsetMin = Lower Left Corner
-			containerRectTransform.offsetMin = new Vector2 (containerRectTransform.offsetMin.x, (-containerFinalHeight + parentHeight / 2));
+			//containerRectTransform.offsetMin = new Vector2 (containerRectTransform.offsetMin.x, (-containerFinalHeight + parentHeight / 2));
 			// offsetMax = Upper Right Corner
-			containerRectTransform.offsetMax = new Vector2 (containerRectTransform.offsetMax.x, parentHeight / 2);//totalHeight / 2
+			//containerRectTransform.offsetMax = new Vector2 (containerRectTransform.offsetMax.x, parentHeight / 2);//totalHeight / 2
 //			RectTransform rect = this.GetComponent<RectTransform>();
 //			rect.position = new Vector3(0,0);
 		}
