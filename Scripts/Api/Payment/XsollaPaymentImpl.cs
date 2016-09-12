@@ -53,6 +53,7 @@ namespace Xsolla
 		//TODO CHANGE PARAMS
 		protected string _accessToken;
 		protected Dictionary<string, object> baseParams;
+		protected HttpTlsRequest httpreq;
 
 		public XsollaPaymentImpl(){
 		}
@@ -362,8 +363,9 @@ namespace Xsolla
 				form.AddField(post_arg.Key, argValue);
 
 			}
-				
-			HttpTlsRequest httpreq = GameObject.Find(HttpTlsRequest.loaderGameObjName).GetComponent<HttpTlsRequest>();
+			if (httpreq == null)	
+				httpreq = GameObject.Find(HttpTlsRequest.loaderGameObjName).GetComponent<HttpTlsRequest>();
+			
 			StartCoroutine(httpreq.Request(url, post, (value) => ProcessingRequestResult(type, value, post)));
 
 //			Debug.Log (url);
