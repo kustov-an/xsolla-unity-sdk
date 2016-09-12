@@ -171,7 +171,10 @@ namespace Xsolla
 
 		public string GetTitle()
 		{
-			return title;
+			if (title == null)
+				return "";
+			else
+				return title;
 		}
 
 		public string GetSumTotal()
