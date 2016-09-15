@@ -9,7 +9,6 @@ namespace Xsolla
 {
 	public class PaymentFormController : ScreenBaseConroller<object> 
 	{
-
 		public delegate void BackButtonHandler();
 		public BackButtonHandler OnClickBack;
 

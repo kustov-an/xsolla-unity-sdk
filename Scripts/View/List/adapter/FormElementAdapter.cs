@@ -8,7 +8,7 @@ namespace Xsolla {
 
 	public class FormElementAdapter : IBaseAdapter {
 		
-		private GameObject labelPrefab, inputPrefab, checkBoxPrefab, selectPrtefab, selectElementPrefab;
+		private GameObject labelPrefab, tablePrefab, inputPrefab, checkBoxPrefab, selectPrtefab, selectElementPrefab;
 
 		private XsollaForm form;
 		private List<XsollaFormElement> elements;
@@ -22,6 +22,7 @@ namespace Xsolla {
 		public void Awake()
 		{
 			labelPrefab = Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ElementLabel") as GameObject;
+			tablePrefab = Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ElementTable") as GameObject;
 			inputPrefab = Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ElementText") as GameObject;
 			checkBoxPrefab = Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ElementCheckBox") as GameObject;
 			selectPrtefab = Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ElementDropDown") as GameObject;
@@ -52,13 +53,26 @@ namespace Xsolla {
 					return DrawCheckBox(element);
 				case XsollaFormElement.TYPE_SELECT:
 					return DrawSelect(element);
+				case XsollaFormElement.TYPE_TABLE:
+					return DrawTable(element);
 				default:
 					return DrawLabel(element);
 			}
 		}
 
+		GameObject DrawTable(XsollaFormElement element)
+		{
+			GameObject newItem = Instantiate(tablePrefab) as GameObject;
+			ElementTableController controller = newItem.GetComponent<ElementTableController>();
+            controller.InitScreen(element);
+			return newItem;
+		}
+
 		GameObject DrawLabel(XsollaFormElement element)
         {
+			if (element.GetTitle() == "")
+				return null;
+
 			GameObject newItem = Instantiate(labelPrefab) as GameObject;
 			newItem.GetComponentInChildren<Text> ().text = element.GetTitle ();
 			return newItem;

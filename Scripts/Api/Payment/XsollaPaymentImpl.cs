@@ -39,6 +39,7 @@ namespace Xsolla
 		public Action<XsollaPaymentMethods> 		PaymentMethodsRecieved;
 		public Action<XsollaSavedPaymentMethods>    SavedPaymentMethodsRecieved;
 		public Action<XsollaQuickPayments> 			QuickPaymentMethodsRecieved;
+		public Action<XsollaQuickPayments>			QuickPaymentMethodsRecievedNew;
 		public Action<XsollaCountries> 				CountriesRecieved;
 
 		public Action<XsollaForm> 					FormReceived;
@@ -182,6 +183,12 @@ namespace Xsolla
 		{
 			if(QuickPaymentMethodsRecieved != null)
 				QuickPaymentMethodsRecieved(quickPayments);
+		}
+
+		private void OnQuickPaymentMethodsRecievedNew(XsollaQuickPayments quickPayments)
+		{
+			if(QuickPaymentMethodsRecievedNew != null)
+				QuickPaymentMethodsRecievedNew(quickPayments);
 		}
 
 		private void OnCountriesRecieved(XsollaCountries countries)
@@ -802,9 +809,15 @@ namespace Xsolla
 
 		/*		PAYMENT METHODS LINKS	 */
 
-		private string GetPaymentListUrl(){
-			return DOMAIN + "/paystation2/api/paymentlist";
+		// TODO New version API 
+		private string GetPaymentListUrl()
+		{
+			return DOMAIN + "/paystation2/api/paymentlist/payment_methods";
 		}
+
+//		private string GetPaymentListUrl(){
+//			return DOMAIN + "/paystation2/api/paymentlist";
+//		}
 
 		private string GetSavedPaymentListUrl(){
 			return DOMAIN + "/paystation2/api/savedmethods";

@@ -137,50 +137,28 @@ namespace Xsolla
 
 		protected override void ShowQuickPaymentsList (XsollaUtils utils, XsollaQuickPayments quickPayments)
 		{
-			DrawPaymentListScreen ();
-			if (!_paymentListScreenController.IsQuiqckPayments()) {
-				_paymentListScreenController.InitScreen (utils);
-				_paymentListScreenController.SetQuickPayments (quickPayments);
-//				LoadPaymentMethods ();
-			} else {
-				_paymentListScreenController.UpdateQuick(quickPayments);
-			}
-			if(_paymentListScreenController.IsAllLoaded())
-				SetLoading (false);
 		}
 
 		protected override void ShowPaymentsList (XsollaPaymentMethods paymentMethods)
 		{
 			DrawPaymentListScreen ();
-			if (!_paymentListScreenController.IsAllPayments ()) {
-				_paymentListScreenController.SetPaymentsMethods (paymentMethods);
-//				LoadCountries ();
-			} else {
-				//_paymentListScreenController.SetPaymentsMethods(paymentMethods);
-				_paymentListScreenController.UpdateRecomended(paymentMethods);
-			}
-			if(_paymentListScreenController.IsAllLoaded())
-				SetLoading (false);
+			_paymentListScreenController.InitScreen(base.Utils);
+			_paymentListScreenController.SetPaymentsMethods (paymentMethods);
+			_paymentListScreenController.OpenPayments();
+			SetLoading (false);
+			return;
 		}
 
 		protected override void ShowSavedPaymentsList (XsollaSavedPaymentMethods savedPaymentsMethods)
 		{
 			DrawPaymentListScreen ();
-			if (!_paymentListScreenController.IsSavedPayments())
-				_paymentListScreenController.SetSavedPaymentsMethods(savedPaymentsMethods);
-			else
-				_paymentListScreenController.UpdateSavedMethods(savedPaymentsMethods);
-			if(_paymentListScreenController.IsAllLoaded())
-				SetLoading (false);
+			_paymentListScreenController.SetSavedPaymentsMethods(savedPaymentsMethods);
 		}
 
 		protected override void ShowCountries (XsollaCountries countries)
 		{
 			DrawPaymentListScreen ();
-			_paymentListScreenController.SetCountries (countries);
-			if(_paymentListScreenController.IsAllLoaded())
-				SetLoading (false);
-//			throw new System.NotImplementedException ();
+			_paymentListScreenController.SetCountries (_countryCurr, countries);
 		}
 
 		protected override void ShowVPSummary(XsollaUtils utils, XVirtualPaymentSummary summary) {
@@ -477,9 +455,12 @@ namespace Xsolla
 						controller.statusViewExitButton.onClick.Invoke();
 					break;
 				default:
+				{
 					Logger.Log ("Handle chancel");
-					ErrorHandler (XsollaError.GetCancelError());
+					if (ErrorHandler != null) 
+						ErrorHandler (XsollaError.GetCancelError());
 					break;
+				}
 			}
 		}
 	}

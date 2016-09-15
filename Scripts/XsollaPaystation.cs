@@ -15,6 +15,7 @@ namespace  Xsolla
 		private ActivePurchase currentPurchase;
 		private bool chancelStatusCheck = false;
 		private bool isSimple = false;
+		public string _countryCurr = "";
 
 		private XsollaPaymentImpl __payment;
 		private XsollaPaymentImpl Payment
@@ -175,19 +176,20 @@ namespace  Xsolla
 				currentPurchase.Remove (ActivePurchase.Part.PID);
 				currentPurchase.Remove (ActivePurchase.Part.XPS);
 			}
-			//FIX First we must check savemethod, and if we not have those, we draw all methods
+
+			//TODO On new version API
 			LoadSavedPaymentMethods();
 			LoadPaymentMethods ();
 			LoadCountries ();
 			SetLoading (true);
-			Payment.GetQuickPayments (null, currentPurchase.GetMergedMap());
+			//Payment.GetQuickPayments (null, currentPurchase.GetMergedMap());
 		}
 
 		public void LoadPaymentMethods()
 		{
 			Logger.Log ("Load Payment Methods request");
 			SetLoading (true);
-			Payment.GetPayments (null, currentPurchase.GetMergedMap());
+			Payment.GetPayments (_countryCurr, currentPurchase.GetMergedMap());
 		}
 
 		public void LoadSavedPaymentMethods()
@@ -207,7 +209,7 @@ namespace  Xsolla
 		public void UpdateCountries(string countryIso)
 		{
 			Logger.Log ("Update Countries request");
-			Payment.GetQuickPayments (countryIso, currentPurchase.GetMergedMap());
+			_countryCurr = countryIso;
 			Payment.GetPayments (countryIso, currentPurchase.GetMergedMap());
 		}
 

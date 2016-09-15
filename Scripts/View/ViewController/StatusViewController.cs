@@ -56,6 +56,9 @@ namespace Xsolla {
 			element = statusText.Get ("merchant");
 			if(element != null)
 				AddElement (statusText.Get("merchant").GetPref(), statusText.Get("merchant").GetValue());
+			element = statusText.Get("userWallet");
+			if(element != null)
+				AddElement (statusText.Get("userWallet").GetPref(), statusText.Get("userWallet").GetValue());
 			AddLine ();
 			AddBigElement (statusText.Get("sum").GetPref(), statusText.Get("sum").GetValue());
 //			Debug.Log ("statusText.backUrlCaption " + statusText.backUrlCaption);
