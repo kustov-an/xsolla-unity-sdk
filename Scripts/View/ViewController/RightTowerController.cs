@@ -20,6 +20,8 @@ namespace Xsolla
 		{
 			_summary = summary;
 			this.gameObject.AddComponent<VerticalLayoutGroup>();
+			VerticalLayoutGroup obj = this.GetComponent<VerticalLayoutGroup>();
+			obj.childForceExpandHeight = false;
 			GameObject header = Instantiate (orderSummaryPrefab);
 			header.GetComponentsInChildren<Text> () [0].text = translations.Get (XsollaTranslations.PAYMENT_SUMMARY_HEADER);
 			linearLayout.AddObject(header);

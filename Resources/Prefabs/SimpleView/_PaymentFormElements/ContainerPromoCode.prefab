@@ -659,7 +659,7 @@ MonoBehaviour:
   m_PreferredWidth: -1
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
-  m_FlexibleHeight: 1
+  m_FlexibleHeight: 0
 --- !u!114 &11463034
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -86,6 +86,34 @@ namespace Xsolla {
 				GameObject newItem = Instantiate(Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ContainerPromoCode")) as GameObject;
                 PromoCodeController controller = newItem.GetComponent<PromoCodeController>();
 				controller.InitScreen(_translation);
+				controller._inputField.onEndEdit.AddListener(delegate 
+					{
+						OnEndEdit(element, controller._inputField);
+					});
+
+				controller._promoCodeApply.onClick.AddListener(delegate 
+					{
+						bool isLinkRequired = false;
+						if ((form.GetCurrentCommand() == XsollaForm.CurrentCommand.CHECKOUT) && form.GetSkipChekout()){
+							string checkoutToken = form.GetCheckoutToken();
+							isLinkRequired = checkoutToken != null 
+								&& !"".Equals(checkoutToken) 
+								&& !"null".Equals(checkoutToken)
+								&& !"false".Equals(checkoutToken);
+						}
+						if(isLinkRequired){
+							string link = "https://secure.xsolla.com/pages/checkout/?token=" + form.GetCheckoutToken();
+							if (Application.platform == RuntimePlatform.WebGLPlayer 
+								|| Application.platform == RuntimePlatform.OSXWebPlayer 
+								|| Application.platform == RuntimePlatform.WindowsWebPlayer) {
+								Application.ExternalEval("window.open('" + link + "','Window title')");
+							} else {
+								Application.OpenURL(link);
+							}
+						}
+						gameObject.GetComponentInParent<XsollaPaystationController> ().DoPayment (form.GetXpsMap ());
+					});
+
                 return newItem;
             }
             else
