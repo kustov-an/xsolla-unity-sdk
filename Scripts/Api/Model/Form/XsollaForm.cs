@@ -97,7 +97,23 @@ namespace Xsolla
 
 		public List<XsollaFormElement> GetVisible()
 		{
-			return elementsVisible;
+			List<XsollaFormElement> resList = new List<XsollaFormElement>();
+			XsollaFormElement couponCode = null;
+			elementsVisible.ForEach((item) => 
+				{
+					if (item.GetName().Equals("couponCode"))
+					{
+						couponCode = item;
+					}
+					else 
+					{
+						resList.Add(item);
+					}
+				});
+			if (couponCode != null)
+				resList.Add(couponCode);
+
+			return resList;
 		}
 
 		public Dictionary<string, object> GetXpsMap()
