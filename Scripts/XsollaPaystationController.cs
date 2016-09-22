@@ -48,7 +48,7 @@ namespace Xsolla
 			mainScreen.transform.SetParent (container.transform);
 			mainScreen.SetActive (true);
 			mainScreenContainer = mainScreen.GetComponentsInChildren<ScrollRect> ()[0].gameObject;
-			menuTransform = mainScreen.GetComponentsInChildren<RectTransform> ()[5].transform;
+			menuTransform = mainScreen.GetComponentsInChildren<RectTransform> ()[8].transform;
 			Resizer.ResizeToParrent (mainScreen);
 			base.RecieveUtils(utils);
 			InitHeader(utils);
@@ -343,8 +343,11 @@ namespace Xsolla
 
 		private void InitHeader(XsollaUtils utils)
 		{
-			Text[] texts = mainScreen.GetComponentsInChildren<Text> ();
-			texts [0].text = utils.GetProject ().name;
+			MainHeaderController controller = mainScreen.GetComponentInChildren<MainHeaderController>();
+			controller.InitScreen(utils);
+
+			//Text[] texts = mainScreen.GetComponentsInChildren<Text> ();
+			//texts [0].text = utils.GetProject ().name;
 		}
 
 		//TODO minimize
@@ -408,10 +411,10 @@ namespace Xsolla
 			if (utils != null) {
 				Text[] texts = mainScreen.GetComponentsInChildren<Text> ();
 				XsollaTranslations translatrions = utils.GetTranslations ();
-				texts [2].text = translatrions.Get (XsollaTranslations.SUPPORT_CUSTOMER_SUPPORT);
-				texts [3].text = translatrions.Get (XsollaTranslations.SUPPORT_CONTACT_US);
-				texts [5].text = translatrions.Get (XsollaTranslations.FOOTER_SECURED_CONNECTION);
-				texts [6].text = translatrions.Get (XsollaTranslations.FOOTER_AGREEMENT);
+				texts [4].text = translatrions.Get (XsollaTranslations.SUPPORT_CUSTOMER_SUPPORT);
+				texts [5].text = translatrions.Get (XsollaTranslations.SUPPORT_CONTACT_US);
+				texts [6].text = translatrions.Get (XsollaTranslations.FOOTER_SECURED_CONNECTION);
+				texts [7].text = translatrions.Get (XsollaTranslations.FOOTER_AGREEMENT);
 			}
 		}
 

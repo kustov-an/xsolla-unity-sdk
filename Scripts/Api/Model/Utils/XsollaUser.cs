@@ -21,6 +21,11 @@ namespace Xsolla
 			return country.allowModify;
 		}
 
+		public string GetName()
+		{
+			return requisites.value;
+		}
+
 		public IParseble Parse (SimpleJSON.JSONNode userNode)
 		{
 			if(userNode ["requisites"].Count > 1)
