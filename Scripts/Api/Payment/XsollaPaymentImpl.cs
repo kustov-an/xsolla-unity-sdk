@@ -27,6 +27,7 @@ namespace Xsolla
 		private const int VIRTUAL_PAYMENT_SUMMARY 	= 9;
 		private const int VIRTUAL_PROCEED 			= 10;
 		private const int VIRTUAL_STATUS 			= 21;
+		private const int HISTORY					= 22;
 
 
 		public Action<XsollaUtils> 					UtilsRecieved;
@@ -274,8 +275,6 @@ namespace Xsolla
 			POST (GOODS, GetGoodsUrl(), requestParams);
 		}
 
-
-
 		public void GetItemsGrous(Dictionary<string, object> requestParams)
 		{
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
@@ -335,6 +334,14 @@ namespace Xsolla
 		{
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
 			POST (COUNTRIES, GetCountriesListUrl(), requestParams);
+		}
+
+		public void GetHistory(Dictionary<string, object> pParams)
+		{
+			if (!pParams.ContainsKey(XsollaApiConst.ACCESS_TOKEN))
+				pParams.Add(XsollaApiConst.ACCESS_TOKEN, baseParams[XsollaApiConst.ACCESS_TOKEN]);
+
+			POST(HISTORY, GetHistoryUrl(), pParams);
 		}
 
 		public WWW POST(int type, string url, Dictionary<string, object> post)
@@ -795,6 +802,11 @@ namespace Xsolla
 		
 		private string GetItemsUrl(){
 			return DOMAIN + "/paystation2/api/virtualitems/items";
+		}
+
+		private string GetHistoryUrl()
+		{
+			return DOMAIN + "/paystation2/api/balance/history";
 		}
 
 

@@ -204,6 +204,11 @@ namespace  Xsolla
 			Payment.GetCountries (currentPurchase.GetMergedMap());
 		}
 
+		public void LoadHistory(Dictionary<string, object> pParams)
+		{
+			Payment.GetHistory(pParams);
+		}
+
 		public void UpdateCountries(string countryIso)
 		{
 			Logger.Log ("Update Countries request");
