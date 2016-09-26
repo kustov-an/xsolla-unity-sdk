@@ -175,6 +175,18 @@ namespace Xsolla
 			SetLoading (false);
 			DrawVPStatus (utils, status);
 		}
+
+		protected override void ApplyPromoCouponeCode (XsollaForm pForm)
+		{
+			Logger.Log("Apply promo recieved");
+			RightTowerController controller = mainScreenContainer.GetComponentInChildren<RightTowerController>();
+			// update rigth tower info, if we get rigth tower controller
+			if (controller != null)
+				controller.UpdateDiscont(Utils.GetTranslations(),pForm.GetSummary());
+			PromoCodeController promoController = mainScreenContainer.GetComponentInChildren<PromoCodeController>();
+			promoController.ApplySuccessful();
+
+		}
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<< PAYMENT METHODS <<<<<<<<<<<<<<<<<<<<<<<<<<<< 
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

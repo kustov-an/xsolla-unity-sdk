@@ -111,7 +111,7 @@ namespace Xsolla {
 								Application.OpenURL(link);
 							}
 						}
-						gameObject.GetComponentInParent<XsollaPaystationController> ().DoPayment (form.GetXpsMap ());
+						gameObject.GetComponentInParent<XsollaPaystationController> ().ApplyPromoCoupone (form.GetXpsMap ());
 					});
 
                 return newItem;

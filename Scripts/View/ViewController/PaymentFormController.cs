@@ -226,7 +226,25 @@ namespace Xsolla
 				});
 				controller._promoCodeApply.onClick.AddListener(() => 
 					{
-						OnClickPay (false);
+						bool isLinkRequired = false;
+						if ((_form.GetCurrentCommand() == XsollaForm.CurrentCommand.CHECKOUT) && _form.GetSkipChekout()){
+							string checkoutToken = _form.GetCheckoutToken();
+							isLinkRequired = checkoutToken != null 
+								&& !"".Equals(checkoutToken) 
+								&& !"null".Equals(checkoutToken)
+								&& !"false".Equals(checkoutToken);
+						}
+						if(isLinkRequired){
+							string link = "https://secure.xsolla.com/pages/checkout/?token=" + _form.GetCheckoutToken();
+							if (Application.platform == RuntimePlatform.WebGLPlayer 
+								|| Application.platform == RuntimePlatform.OSXWebPlayer 
+								|| Application.platform == RuntimePlatform.WindowsWebPlayer) {
+								Application.ExternalEval("window.open('" + link + "','Window title')");
+							} else {
+								Application.OpenURL(link);
+							}
+						}
+						gameObject.GetComponentInParent<XsollaPaystationController> ().ApplyPromoCoupone (_form.GetXpsMap ());
 					});
 				promoController.transform.SetParent(cardViewObj.transform);
 			}

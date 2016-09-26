@@ -15,6 +15,7 @@ namespace Xsolla
 
 		private const int TRANSLATIONS 		 	= 0;
 		private const int DIRECTPAYMENT_FORM 	= 1;
+		private const int APPLY_PROMO_COUPONE	= 12;
 		private const int DIRECTPAYMENT_STATUS 	= 2;
 		private const int PRICEPOINTS 			= 3;
 		private const int GOODS 				= 5;
@@ -44,6 +45,7 @@ namespace Xsolla
 
 		public Action<XsollaForm> 					FormReceived;
 		public Action<XsollaStatus, XsollaForm> 	StatusReceived;
+		public Action<XsollaForm>					ApplyCouponeCodeReceived;
 		public Action<XsollaStatusPing> 			StatusChecked;
 		public Action<XsollaError> 					ErrorReceived;
 
@@ -217,6 +219,12 @@ namespace Xsolla
 				StatusReceived(status, form);
 		}
 
+		protected virtual void OnApplyCouponeReceived(XsollaForm pForm)
+		{
+			if (ApplyCouponeCodeReceived != null)
+				ApplyCouponeCodeReceived(pForm);
+		}
+
 		protected virtual void OnStatusChecked(XsollaStatusPing pStatus)
 		{
 			if (StatusChecked != null)
@@ -343,6 +351,11 @@ namespace Xsolla
 		{
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
 			POST (COUNTRIES, GetCountriesListUrl(), requestParams);
+		}
+
+		public void ApplyPromoCoupone(Dictionary<string, object> pParams)
+		{
+			POST(APPLY_PROMO_COUPONE, GetDirectpaymentLink(), pParams);
 		}
 
 		public WWW POST(int type, string url, Dictionary<string, object> post)
@@ -551,6 +564,13 @@ namespace Xsolla
 							//{"errors":[ {"message":"Insufficient balance to complete operation"} ], "api":{"ver":"1.0.1"}, "invoice_created":"false", "operation_id":"0", "code":"0"}
 							Logger.Log ("VIRTUAL_STATUS" + vpStatus.ToString());
 							OnVPStatusRecieved(vpStatus);
+						}
+						break;
+					case APPLY_PROMO_COUPONE:
+						{
+							XsollaForm form = new XsollaForm();
+							form.Parse(rootNode);
+							OnApplyCouponeReceived(form);
 						}
 						break;
 					default:

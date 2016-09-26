@@ -93,6 +93,7 @@ namespace  Xsolla
 				FillPurchase(ActivePurchase.Part.XPS, form.GetXpsMap());
 				ShowPaymentStatus (Utils.GetTranslations (), status); 
 			};
+			Payment.ApplyCouponeCodeReceived += (form) => ApplyPromoCouponeCode(form);
 			Payment.StatusChecked += (status) => WaitingStatus(status);
 			
 			Payment.QuickPaymentMethodsRecieved += (quickpayments) => ShowQuickPaymentsList(Utils, quickpayments);
@@ -259,9 +260,34 @@ namespace  Xsolla
 			TryPay();
 		}
 
+		public void ApplyPromoCoupone(Dictionary<string, object> items)
+		{
+			Logger.Log("Apply promo-coupone");
+			if (!items.ContainsKey("xps_fix_command"))
+				items.Add("xps_fix_command", "calculate");
+			else
+				items["xps_fix_command"] = "calculate";
+
+			if (!items.ContainsKey("xps_change_element"))
+				items.Add("xps_change_element", "couponeCode");
+			else 
+				items["xps_change_element"] = "couponeCode";
+
+			FillPurchase(ActivePurchase.Part.XPS, items);
+			TryApplyCoupone();
+			
+		}
+
 		public void DoPayment(Dictionary<string, object> items)
 		{
 			Logger.Log ("Do payment");
+			if (items.ContainsKey("xps_fix_command"))
+				items["xps_fix_command"] = "check";
+			if (items.ContainsKey("xps_change_element"))
+				items.Remove("xps_change_element");
+
+
+
 			currentPurchase.Remove (ActivePurchase.Part.INVOICE);
 			FillPurchase (ActivePurchase.Part.XPS, items);
 			TryPay();
@@ -295,6 +321,11 @@ namespace  Xsolla
 				currentPurchase.Remove(part);
 				currentPurchase.Add(part, new Dictionary<string, object>(items));
 			}
+		}
+
+		private void TryApplyCoupone()
+		{
+			Payment.ApplyPromoCoupone(currentPurchase.GetMergedMap());
 		}
 
 		private void TryPay()
@@ -379,6 +410,7 @@ namespace  Xsolla
 		protected abstract void ShowCountries (XsollaCountries paymentMethods);
 
 		protected abstract void ShowPaymentForm (XsollaUtils utils, XsollaForm form);
+		protected abstract void ApplyPromoCouponeCode(XsollaForm pForm);
 
 		protected abstract void ShowPaymentStatus (XsollaTranslations translations, XsollaStatus status);
 		protected abstract void CheckUnfinishedPaymentStatus (XsollaStatus status, XsollaForm form);
