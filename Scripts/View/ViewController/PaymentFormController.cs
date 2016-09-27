@@ -220,9 +220,9 @@ namespace Xsolla
 			{
 				GameObject promoController = Instantiate(Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ContainerPromoCode")) as GameObject;
 				PromoCodeController controller = promoController.GetComponent<PromoCodeController>();
-				controller.InitScreen(translations);
+				controller.InitScreen(translations, xsollaForm.GetItem("couponCode"));
 				controller._inputField.onValueChanged.AddListener((s) => {
-					OnValueChange("couponCode", s);
+					OnValueChange("couponCode", s.Trim());
 				});
 				controller._promoCodeApply.onClick.AddListener(() => 
 					{

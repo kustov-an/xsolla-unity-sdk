@@ -85,7 +85,7 @@ namespace Xsolla {
             {
 				GameObject newItem = Instantiate(Resources.Load("Prefabs/SimpleView/_PaymentFormElements/ContainerPromoCode")) as GameObject;
                 PromoCodeController controller = newItem.GetComponent<PromoCodeController>();
-				controller.InitScreen(_translation);
+				controller.InitScreen(_translation, element);
 				controller._inputField.onEndEdit.AddListener(delegate 
 					{
 						OnEndEdit(element, controller._inputField);

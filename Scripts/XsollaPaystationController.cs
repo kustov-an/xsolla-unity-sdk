@@ -179,11 +179,30 @@ namespace Xsolla
 		protected override void ApplyPromoCouponeCode (XsollaForm pForm)
 		{
 			Logger.Log("Apply promo recieved");
+			PromoCodeController promoController = mainScreenContainer.GetComponentInChildren<PromoCodeController>();
+			if (pForm.GetError() != null)
+			{
+				if (pForm.GetError().elementName == XsollaApiConst.COUPON_CODE)
+				{
+					promoController.SetError(pForm.GetError());
+					return;
+				}
+				return;
+			}
+
 			RightTowerController controller = mainScreenContainer.GetComponentInChildren<RightTowerController>();
 			// update rigth tower info, if we get rigth tower controller
 			if (controller != null)
 				controller.UpdateDiscont(Utils.GetTranslations(),pForm.GetSummary());
-			PromoCodeController promoController = mainScreenContainer.GetComponentInChildren<PromoCodeController>();
+
+			// update total amount on payment form total
+			PaymentFormController paymentController = mainScreenContainer.GetComponentInChildren<PaymentFormController>();
+			if (paymentController != null)
+			{
+				Text[] footerTexts = paymentController.layout.objects[paymentController.layout.objects.Count - 1].gameObject.GetComponentsInChildren<Text> ();
+				footerTexts[1].text = Utils.GetTranslations().Get(XsollaTranslations.TOTAL) + " " + pForm.GetSumTotal ();
+			}
+
 			promoController.ApplySuccessful();
 
 		}

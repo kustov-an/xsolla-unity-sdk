@@ -83,6 +83,11 @@ namespace Xsolla
             return isVisible;
         }
 
+		public bool IsReadOnly()
+		{
+			return isReadonly;
+		}
+
         public bool IsPackets()
         {
             return isPakets;
