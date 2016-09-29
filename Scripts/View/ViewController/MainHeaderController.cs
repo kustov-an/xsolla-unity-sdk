@@ -9,7 +9,7 @@ namespace Xsolla
 	public class MainHeaderController: MonoBehaviour
 	{
 		public Text _titleProj;
-		//public Button _btnUserProfile;
+		public UserProfileController _btnUserProfile;
 		public Text _userName;
 
 		public void InitScreen(XsollaUtils pUtils)
