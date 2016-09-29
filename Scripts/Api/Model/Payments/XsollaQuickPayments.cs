@@ -16,7 +16,8 @@ namespace Xsolla {
 
 		public IParseble Parse(JSONNode quickPaymentsNode)
 		{
-			var paymentListEnumerator =  quickPaymentsNode["instances"].Childs.GetEnumerator();
+			//var paymentListEnumerator =  quickPaymentsNode["instances"].Childs.GetEnumerator();
+			var paymentListEnumerator =  quickPaymentsNode["quick_instances"].Childs.GetEnumerator();
 			while(paymentListEnumerator.MoveNext())
 			{
 				var method = new XsollaPaymentMethod().Parse(paymentListEnumerator.Current) as XsollaPaymentMethod;
@@ -24,7 +25,7 @@ namespace Xsolla {
 					AddItem(method);
 				}
 			}
-			api = new XsollaApi().Parse(quickPaymentsNode["api"]) as XsollaApi;
+			api = new XsollaApi().Parse(quickPaymentsNode[XsollaApiConst.R_API]) as XsollaApi;
 			return this;
 		}
 	}

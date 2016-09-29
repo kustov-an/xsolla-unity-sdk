@@ -13,8 +13,9 @@ namespace  Xsolla
 		private bool IsSandbox;
 		protected XsollaUtils Utils;
 		private ActivePurchase currentPurchase;
-		private bool chancelStatusCheck = false;
+		private bool cancelStatusCheck = false;
 		private bool isSimple = false;
+		public string _countryCurr = "";
 
 		private XsollaPaymentImpl __payment;
 		private XsollaPaymentImpl Payment
@@ -43,6 +44,27 @@ namespace  Xsolla
 		{
 			return IsSandbox;
 		}
+
+		protected abstract void ShowPricepoints (XsollaUtils utils, XsollaPricepointsManager pricepoints);
+
+		protected abstract void ShowGoodsGroups (XsollaGroupsManager groups);
+		protected abstract void UpdateGoods (XsollaGoodsManager goods);
+
+		protected abstract void ShowQuickPaymentsList (XsollaUtils utils, XsollaQuickPayments paymentMethods);
+		protected abstract void ShowPaymentsList (XsollaPaymentMethods paymentMethods);
+		protected abstract void ShowSavedPaymentsList(XsollaSavedPaymentMethods savedPaymentsMethods);
+		protected abstract void ShowCountries (XsollaCountries paymentMethods);
+		protected abstract void ApplyPromoCouponeCode(XsollaForm pForm);
+
+		protected abstract void ShowPaymentForm (XsollaUtils utils, XsollaForm form);
+
+		protected abstract void ShowPaymentStatus (XsollaTranslations translations, XsollaStatus status);
+		protected abstract void CheckUnfinishedPaymentStatus (XsollaStatus status, XsollaForm form);
+
+		protected abstract void ShowVPSummary (XsollaUtils utils, XVirtualPaymentSummary summary);
+		protected abstract void ShowVPError (XsollaUtils utils, string error);
+		protected abstract void ShowVPStatus (XsollaUtils utils, XVPStatus status);
+		protected abstract void GetCouponErrorProceed(XsollaCouponProceedResult presult);
 
 		//{"user":{ "id":{ "value":"1234567","hidden":true},"email":{"value":"support@xsolla.com"},"name":{"value":"Tardis"},"country":{"value":"US"} },"settings":{"project_id":15764,"language":"en","currency":"USD"}}
 		//jafS6nqbzRpZzA38
@@ -92,6 +114,7 @@ namespace  Xsolla
 				FillPurchase(ActivePurchase.Part.XPS, form.GetXpsMap());
 				ShowPaymentStatus (Utils.GetTranslations (), status); 
 			};
+			Payment.ApplyCouponeCodeReceived += (form) => ApplyPromoCouponeCode(form);
 			Payment.StatusChecked += (status) => WaitingStatus(status);
 			
 			Payment.QuickPaymentMethodsRecieved += (quickpayments) => ShowQuickPaymentsList(Utils, quickpayments);
@@ -106,6 +129,8 @@ namespace  Xsolla
 			Payment.VirtualPaymentSummaryRecieved += (summary) => ShowVPSummary(Utils, summary);
 			Payment.VirtualPaymentProceedError += (error) => ShowVPError(Utils, error);
 			Payment.VirtualPaymentStatusRecieved += (status) => ShowVPStatus(Utils, status);
+
+			Payment.CouponProceedErrorRecived += (proceed) => GetCouponErrorProceed(proceed); 
 			
 			Payment.ErrorReceived += ShowPaymentError;
 			Payment.SetModeSandbox (isSandbox);
@@ -145,7 +170,7 @@ namespace  Xsolla
 		{
 			Logger.Log ("Load Goods Groups request");
 			SetLoading (true);
-			Payment.GetItemsGrous (currentPurchase.GetMergedMap());
+			Payment.GetItemsGroups (currentPurchase.GetMergedMap());
 		}
 
 		public void LoadGoods(long groupId)
@@ -158,6 +183,13 @@ namespace  Xsolla
 		{
 			Logger.Log ("Load Favorites request");
 			Payment.GetFavorites (currentPurchase.GetMergedMap());
+		}
+
+		public void GetCouponProceed(string pCouponCode)
+		{
+			Dictionary<string, object> map = new Dictionary<string, object>();
+			map.Add("coupon_code", pCouponCode);
+			Payment.GetCouponProceed(map);
 		}
 
 		public void SetFavorite(Dictionary<string, object> items)
@@ -175,19 +207,20 @@ namespace  Xsolla
 				currentPurchase.Remove (ActivePurchase.Part.PID);
 				currentPurchase.Remove (ActivePurchase.Part.XPS);
 			}
-			//FIX First we must check savemethod, and if we not have those, we draw all methods
+
+			//TODO On new version API
 			LoadSavedPaymentMethods();
 			LoadPaymentMethods ();
 			LoadCountries ();
 			SetLoading (true);
-			Payment.GetQuickPayments (null, currentPurchase.GetMergedMap());
+			//Payment.GetQuickPayments (null, currentPurchase.GetMergedMap());
 		}
 
 		public void LoadPaymentMethods()
 		{
 			Logger.Log ("Load Payment Methods request");
 			SetLoading (true);
-			Payment.GetPayments (null, currentPurchase.GetMergedMap());
+			Payment.GetPayments (_countryCurr, currentPurchase.GetMergedMap());
 		}
 
 		public void LoadSavedPaymentMethods()
@@ -207,7 +240,7 @@ namespace  Xsolla
 		public void UpdateCountries(string countryIso)
 		{
 			Logger.Log ("Update Countries request");
-			Payment.GetQuickPayments (countryIso, currentPurchase.GetMergedMap());
+			_countryCurr = countryIso;
 			Payment.GetPayments (countryIso, currentPurchase.GetMergedMap());
 		}
 
@@ -257,9 +290,32 @@ namespace  Xsolla
 			TryPay();
 		}
 
+		public void ApplyPromoCoupone(Dictionary<string, object> items)
+		{
+			Logger.Log("Apply promo-coupone");
+			if (!items.ContainsKey(XsollaApiConst.XPS_FIX_COMMAND))
+				items.Add(XsollaApiConst.XPS_FIX_COMMAND, XsollaApiConst.COMMAND_CALCULATE);
+			else
+				items[XsollaApiConst.XPS_FIX_COMMAND] = XsollaApiConst.COMMAND_CALCULATE;
+
+			if (!items.ContainsKey(XsollaApiConst.XPS_CHANGE_ELEM))
+				items.Add(XsollaApiConst.XPS_CHANGE_ELEM, XsollaApiConst.COUPON_CODE);
+			else 
+				items[XsollaApiConst.XPS_CHANGE_ELEM] = XsollaApiConst.COUPON_CODE;
+
+			FillPurchase(ActivePurchase.Part.XPS, items);
+			TryApplyCoupone();
+			
+		}
+
 		public void DoPayment(Dictionary<string, object> items)
 		{
 			Logger.Log ("Do payment");
+			if (items.ContainsKey(XsollaApiConst.XPS_FIX_COMMAND))
+				items[XsollaApiConst.XPS_FIX_COMMAND] = XsollaApiConst.COMMAND_CHECK;
+			if (items.ContainsKey(XsollaApiConst.XPS_CHANGE_ELEM))
+				items.Remove(XsollaApiConst.XPS_CHANGE_ELEM);
+
 			currentPurchase.Remove (ActivePurchase.Part.INVOICE);
 			FillPurchase (ActivePurchase.Part.XPS, items);
 			TryPay();
@@ -275,7 +331,7 @@ namespace  Xsolla
 		protected void Restart (){
 			Logger.Log ("Restart payment");
 			currentPurchase.RemoveAllExceptToken ();
-			chancelStatusCheck = true;
+			cancelStatusCheck = true;
 		}
 
 		public void RetryPayment()
@@ -293,6 +349,11 @@ namespace  Xsolla
 				currentPurchase.Remove(part);
 				currentPurchase.Add(part, new Dictionary<string, object>(items));
 			}
+		}
+
+		private void TryApplyCoupone()
+		{
+			Payment.ApplyPromoCoupone(currentPurchase.GetMergedMap());
 		}
 
 		private void TryPay()
@@ -366,32 +427,13 @@ namespace  Xsolla
 			}
 		}
 
-		protected abstract void ShowPricepoints (XsollaUtils utils, XsollaPricepointsManager pricepoints);
-		
-		protected abstract void ShowGoodsGroups (XsollaGroupsManager groups);
-		protected abstract void UpdateGoods (XsollaGoodsManager goods);
-		
-		protected abstract void ShowQuickPaymentsList (XsollaUtils utils, XsollaQuickPayments paymentMethods);
-		protected abstract void ShowPaymentsList (XsollaPaymentMethods paymentMethods);
-		protected abstract void ShowSavedPaymentsList(XsollaSavedPaymentMethods savedPaymentsMethods);
-		protected abstract void ShowCountries (XsollaCountries paymentMethods);
-
-		protected abstract void ShowPaymentForm (XsollaUtils utils, XsollaForm form);
-
-		protected abstract void ShowPaymentStatus (XsollaTranslations translations, XsollaStatus status);
-		protected abstract void CheckUnfinishedPaymentStatus (XsollaStatus status, XsollaForm form);
-
-		protected abstract void ShowVPSummary (XsollaUtils utils, XVirtualPaymentSummary summary);
-		protected abstract void ShowVPError (XsollaUtils utils, string error);
-		protected abstract void ShowVPStatus (XsollaUtils utils, XVPStatus status);
-
 		protected void WaitingStatus (XsollaStatusPing pStatus) {
 			Logger.Log ("Waiting payment status");
 			if (XsollaStatus.Group.DONE != pStatus.GetGroup() && XsollaStatus.Group.TROUBLED != pStatus.GetGroup() && pStatus.GetElapsedTiem() < 1200) {
 				if (pStatus.isFinal()) {
 //					Payment.InitPaystation(currentPurchase.GetMergedMap());
 					LoadShopPricepoints ();
-					chancelStatusCheck = false;
+					cancelStatusCheck = false;
 				} else {
 					StartCoroutine (Test ());
 				}
