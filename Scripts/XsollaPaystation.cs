@@ -293,16 +293,6 @@ namespace  Xsolla
 		public void ApplyPromoCoupone(Dictionary<string, object> items)
 		{
 			Logger.Log("Apply promo-coupone");
-			if (!items.ContainsKey(XsollaApiConst.XPS_FIX_COMMAND))
-				items.Add(XsollaApiConst.XPS_FIX_COMMAND, XsollaApiConst.COMMAND_CALCULATE);
-			else
-				items[XsollaApiConst.XPS_FIX_COMMAND] = XsollaApiConst.COMMAND_CALCULATE;
-
-			if (!items.ContainsKey(XsollaApiConst.XPS_CHANGE_ELEM))
-				items.Add(XsollaApiConst.XPS_CHANGE_ELEM, XsollaApiConst.COUPON_CODE);
-			else 
-				items[XsollaApiConst.XPS_CHANGE_ELEM] = XsollaApiConst.COUPON_CODE;
-
 			FillPurchase(ActivePurchase.Part.XPS, items);
 			TryApplyCoupone();
 			
@@ -311,11 +301,6 @@ namespace  Xsolla
 		public void DoPayment(Dictionary<string, object> items)
 		{
 			Logger.Log ("Do payment");
-			if (items.ContainsKey(XsollaApiConst.XPS_FIX_COMMAND))
-				items[XsollaApiConst.XPS_FIX_COMMAND] = XsollaApiConst.COMMAND_CHECK;
-			if (items.ContainsKey(XsollaApiConst.XPS_CHANGE_ELEM))
-				items.Remove(XsollaApiConst.XPS_CHANGE_ELEM);
-
 			currentPurchase.Remove (ActivePurchase.Part.INVOICE);
 			FillPurchase (ActivePurchase.Part.XPS, items);
 			TryPay();
@@ -353,7 +338,17 @@ namespace  Xsolla
 
 		private void TryApplyCoupone()
 		{
-			Payment.ApplyPromoCoupone(currentPurchase.GetMergedMap());
+			Dictionary<string, object> items = currentPurchase.GetMergedMap();
+			if (!items.ContainsKey(XsollaApiConst.XPS_FIX_COMMAND))
+				items.Add(XsollaApiConst.XPS_FIX_COMMAND, XsollaApiConst.COMMAND_CALCULATE);
+			else
+				items[XsollaApiConst.XPS_FIX_COMMAND] = XsollaApiConst.COMMAND_CALCULATE;
+
+			if (!items.ContainsKey(XsollaApiConst.XPS_CHANGE_ELEM))
+				items.Add(XsollaApiConst.XPS_CHANGE_ELEM, XsollaApiConst.COUPON_CODE);
+			else 
+				items[XsollaApiConst.XPS_CHANGE_ELEM] = XsollaApiConst.COUPON_CODE;
+			Payment.ApplyPromoCoupone(items);
 		}
 
 		private void TryPay()
