@@ -15,7 +15,6 @@ namespace Xsolla
 
 		private const int TRANSLATIONS 		 	= 0;
 		private const int DIRECTPAYMENT_FORM 	= 1;
-		private const int APPLY_PROMO_COUPONE	= 12;
 		private const int DIRECTPAYMENT_STATUS 	= 2;
 		private const int PRICEPOINTS 			= 3;
 		private const int GOODS 				= 5;
@@ -27,7 +26,9 @@ namespace Xsolla
 		private const int COUNTRIES 			= 8;
 		private const int VIRTUAL_PAYMENT_SUMMARY 	= 9;
 		private const int VIRTUAL_PROCEED 			= 10;
-		private const int VIRTUAL_STATUS 			= 21;
+		private const int VIRTUAL_STATUS 			= 11;
+		private const int APPLY_PROMO_COUPONE		= 12;
+		private const int COUPON_PROCEED			= 13;
 
 
 		public Action<XsollaUtils> 					UtilsRecieved;
@@ -48,6 +49,7 @@ namespace Xsolla
 		public Action<XsollaForm>					ApplyCouponeCodeReceived;
 		public Action<XsollaStatusPing> 			StatusChecked;
 		public Action<XsollaError> 					ErrorReceived;
+		public Action<XsollaCouponProceedResult>	CouponProceedErrorRecived;							
 
 		public Action<XVirtualPaymentSummary> 		VirtualPaymentSummaryRecieved;
 		public Action<string> 						VirtualPaymentProceedError;
@@ -236,6 +238,12 @@ namespace Xsolla
 			if (ErrorReceived != null)
 				ErrorReceived(error);
 		}
+
+		protected virtual void OnCouponProceedErrorRecived(XsollaCouponProceedResult pCouponObj)
+		{
+			if (CouponProceedErrorRecived != null)
+				CouponProceedErrorRecived(pCouponObj);
+		}
 		
 		// ---------------------------------------------------------------------------
 
@@ -289,10 +297,8 @@ namespace Xsolla
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
 			POST (GOODS, GetGoodsUrl(), requestParams);
 		}
-
-
-
-		public void GetItemsGrous(Dictionary<string, object> requestParams)
+			
+		public void GetItemsGroups(Dictionary<string, object> requestParams)
 		{
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
 			POST (GOODS_GROUPS, GetItemsGroupsUrl(), requestParams);
@@ -309,6 +315,14 @@ namespace Xsolla
 		{
 			POST (GOODS_ITEMS, GetFavoritsUrl(), requestParams);
 		}
+
+		public void GetCouponProceed(Dictionary<string, object> pParams)
+		{
+			if (!pParams.ContainsKey(XsollaApiConst.ACCESS_TOKEN) && (baseParams.ContainsKey(XsollaApiConst.ACCESS_TOKEN)))
+				pParams.Add(XsollaApiConst.ACCESS_TOKEN, baseParams[XsollaApiConst.ACCESS_TOKEN]);
+
+			POST(COUPON_PROCEED, GetCouponProceed(), pParams);
+		}	
 
 		public void SetFavorite(Dictionary<string, object> requestParams)
 		{
@@ -360,8 +374,8 @@ namespace Xsolla
 
 		public WWW POST(int type, string url, Dictionary<string, object> post)
 		{
-			WWWForm form = new WWWForm();
-			StringBuilder sb = new StringBuilder ();
+//			WWWForm form = new WWWForm();
+//			StringBuilder sb = new StringBuilder ();
 			if (!post.ContainsKey (XsollaApiConst.ACCESS_TOKEN) && !post.ContainsKey ("project") && !post.ContainsKey ("access_data") && baseParams != null)
 			{
 				foreach (KeyValuePair<string, object> kv in baseParams)
@@ -375,24 +389,24 @@ namespace Xsolla
 			if(!post.ContainsKey("alternative_platform"))
 				post.Add ("alternative_platform", "unity/" + SDK_VERSION);
 
-
-			foreach(KeyValuePair<string,object> post_arg in post)
-			{
-				string argValue = post_arg.Value != null ? post_arg.Value.ToString() : "";
-				sb.Append(post_arg.Key).Append("=").Append(argValue).Append("&");
-				form.AddField(post_arg.Key, argValue);
-
-			}
+//			foreach(KeyValuePair<string,object> post_arg in post)
+//			{
+//				string argValue = post_arg.Value != null ? post_arg.Value.ToString() : "";
+//				sb.Append(post_arg.Key).Append("=").Append(argValue).Append("&");
+//				form.AddField(post_arg.Key, argValue);
+//
+//			}
+				
 			if (httpreq == null)	
 				httpreq = GameObject.Find(HttpTlsRequest.loaderGameObjName).GetComponent<HttpTlsRequest>();
-			
+
 			StartCoroutine(httpreq.Request(url, post, (value) => ProcessingRequestResult(type, value, post)));
 
 //			Debug.Log (url);
 //			Debug.Log (sb.ToString());
-			WWW www = new WWW(url, form);
-			//StartCoroutine(WaitForRequest(type, www, post));
-			return www; 
+//			WWW www = new WWW(url, form);
+//			StartCoroutine(WaitForRequest(type, www, post));
+			return null;
 		}
 
 		private void ProcessingRequestResult(int pType, RequestClass pRequestResult, Dictionary<string, object> pDataArgs)
@@ -566,11 +580,31 @@ namespace Xsolla
 							OnVPStatusRecieved(vpStatus);
 						}
 						break;
+
 					case APPLY_PROMO_COUPONE:
 						{
 							XsollaForm form = new XsollaForm();
 							form.Parse(rootNode);
 							OnApplyCouponeReceived(form);
+						}
+						break;
+					case COUPON_PROCEED:
+						{	
+							XsollaCouponProceedResult couponProceed = new XsollaCouponProceedResult();
+							couponProceed.Parse(rootNode);
+							if (couponProceed._error != null)
+							{
+								Logger.Log("COUPON_PROCEED ERROR: " + couponProceed._error);
+								OnCouponProceedErrorRecived(couponProceed);
+							}
+							else
+							{
+								long operationId = couponProceed._operationId;
+                                if (pDataArgs.ContainsKey("coupon_code"))
+                                	pDataArgs.Remove("coupon_code");
+								pDataArgs.Add("operation_id", operationId);
+								VPaymentStatus(pDataArgs);
+							}
 						}
 						break;
 					default:
@@ -821,6 +855,10 @@ namespace Xsolla
 			return DOMAIN + "/paystation2/api/virtualitems/groups";
 		}
 
+		private string GetCouponProceed()
+		{
+			return DOMAIN + "/paystation2/api/coupons/proceed";
+		}
 		
 		private string GetItemsUrl(){
 			return DOMAIN + "/paystation2/api/virtualitems/items";

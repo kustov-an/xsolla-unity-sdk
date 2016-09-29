@@ -8,7 +8,6 @@ using System;
 namespace Xsolla {
 	public class StyleManager : Singleton<StyleManager> {
 
-
 		public enum Themes // your custom enumeration
 		{
 			Black, 
