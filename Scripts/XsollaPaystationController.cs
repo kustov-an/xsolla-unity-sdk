@@ -206,8 +206,9 @@ namespace Xsolla
 				Text[] footerTexts = paymentController.layout.objects[paymentController.layout.objects.Count - 1].gameObject.GetComponentsInChildren<Text> ();
 				footerTexts[1].text = Utils.GetTranslations().Get(XsollaTranslations.TOTAL) + " " + pForm.GetSumTotal ();
 			}
-
 			promoController.ApplySuccessful();
+
+
 		}
 
 		protected override void GetCouponErrorProceed (XsollaCouponProceedResult pResult)
