@@ -88,6 +88,11 @@ using System.Collections;namespace Xsolla {
 		public static string STATE_NAME_SAVEDMETHOD = "state_name_savedmethod";//"Saved Methods"
 		public static string STATE_NAME_SUBSCRIPTION = "state_name_subscription";//"Subscriptions"
 		public static string STATE_NAME_VIRTUALITEM = "state_name_virtualitem";//"Item Shop"
+		public static string COUPON_PAGE_TITLE = "coupon_page_title"; //Redeem Coupon
+		public static string COUPON_DESCRIPTION = "coupon_description"; //Please enter the code to redeem it for game items, currency or other bonuses
+		public static string COUPON_CODE_TITLE = "coupon_code_title"; // Coupon Code
+		public static string COUPON_CODE_EXAMPLE = "coupon_code_example";//Enter Code
+		public static string COUPON_CONTROL_APPLY = "coupon_control_apply"; //Apply
 		public static string STATUS_DONE_DESCRIPTION = "status_done_description";//"Successful purchase!"
 		public static string STATUS_PAGE_TITLE = "status_page_title";//"Payment Status"
 		public static string STATUS_PURCHASED_DESCRIPTION = "status_purchased_description";//"You purchased {{itemDescription}} for {{amount}}"
