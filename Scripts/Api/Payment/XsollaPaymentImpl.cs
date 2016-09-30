@@ -26,16 +26,12 @@ namespace Xsolla
 		private const int COUNTRIES 			= 8;
 		private const int VIRTUAL_PAYMENT_SUMMARY 	= 9;
 		private const int VIRTUAL_PROCEED 			= 10;
-<<<<<<< HEAD
-		private const int VIRTUAL_STATUS 			= 21;
-		private const int HISTORY					= 22;
-=======
 		private const int VIRTUAL_STATUS 			= 11;
 		private const int APPLY_PROMO_COUPONE		= 12;
 		private const int COUPON_PROCEED			= 13;
->>>>>>> 8cafd547da566d654516ae09154aeeffe8a764d0
+		private const int HISTORY					= 22;
 
-
+	
 		public Action<XsollaUtils> 					UtilsRecieved;
 		public Action<XsollaTranslations> 			TranslationRecieved;
 
@@ -302,13 +298,7 @@ namespace Xsolla
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
 			POST (GOODS, GetGoodsUrl(), requestParams);
 		}
-<<<<<<< HEAD
-
-		public void GetItemsGrous(Dictionary<string, object> requestParams)
-=======
-			
 		public void GetItemsGroups(Dictionary<string, object> requestParams)
->>>>>>> 8cafd547da566d654516ae09154aeeffe8a764d0
 		{
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
 			POST (GOODS_GROUPS, GetItemsGroupsUrl(), requestParams);
@@ -376,19 +366,17 @@ namespace Xsolla
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
 			POST (COUNTRIES, GetCountriesListUrl(), requestParams);
 		}
-
-<<<<<<< HEAD
+			
 		public void GetHistory(Dictionary<string, object> pParams)
 		{
 			if (!pParams.ContainsKey(XsollaApiConst.ACCESS_TOKEN))
 				pParams.Add(XsollaApiConst.ACCESS_TOKEN, baseParams[XsollaApiConst.ACCESS_TOKEN]);
 
 			POST(HISTORY, GetHistoryUrl(), pParams);
-=======
+		}
 		public void ApplyPromoCoupone(Dictionary<string, object> pParams)
 		{
 			POST(APPLY_PROMO_COUPONE, GetDirectpaymentLink(), pParams);
->>>>>>> 8cafd547da566d654516ae09154aeeffe8a764d0
 		}
 
 		public WWW POST(int type, string url, Dictionary<string, object> post)
@@ -624,6 +612,12 @@ namespace Xsolla
 								pDataArgs.Add("operation_id", operationId);
 								VPaymentStatus(pDataArgs);
 							}
+						}
+						break;
+
+					case HISTORY:
+						{
+							
 						}
 						break;
 					default:

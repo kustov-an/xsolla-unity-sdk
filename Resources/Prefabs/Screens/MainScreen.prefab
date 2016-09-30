@@ -1452,6 +1452,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _titleProj: {fileID: 11405856}
+  _btnUserProfile: {fileID: 0}
   _userName: {fileID: 11462292}
 --- !u!114 &11465330
 MonoBehaviour:

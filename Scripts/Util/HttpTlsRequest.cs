@@ -58,7 +58,7 @@ namespace Xsolla {
 				{
 					Logger.Log("StartCoroutine");
 					// Coroutine request only for Iphone
-					StartCoroutine(GetWWWFormRequest(pUrl, pDataDic, (value) => onReturnRes(res)));
+					StartCoroutine(GetWWWFormRequest(pUrl, pDataDic, (value) => onReturnRes(value)));
 					break;
 				}
 			case RuntimePlatform.WebGLPlayer:
@@ -87,9 +87,17 @@ namespace Xsolla {
 			yield return www;	
 			if (www.error == null) 
 			{
-				onComplite(new RequestClass(www.text, pUrl));
+				if (onComplite != null)
+				{
+					Logger.Log("www.text -> " + www.text);
+					onComplite(new RequestClass(www.text, pUrl));
+				}
 			} else {
-				onComplite(new RequestClass(www.text,pUrl,true,www.error));
+				if (onComplite != null)
+				{
+					Logger.Log("www.text.error -> " + www.text);
+					onComplite(new RequestClass(www.text,pUrl,true,www.error));
+				}
 			}
 		}
 
