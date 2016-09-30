@@ -8,7 +8,7 @@ using System;
 namespace Xsolla {
 	public class StatusViewController : ScreenBaseConroller<XsollaStatus> {
 		
-		public event Action<XsollaStatus.Group, string, Xsolla.XsollaStatusData.Status> StatusHandler;
+		public event Action<XsollaStatus.Group, string, Xsolla.XsollaStatusData.Status, Dictionary<string, object>> StatusHandler;
 		public GameObject status;
 		public Transform checkListTransform;
 		public Button statusViewExitButton;
@@ -56,6 +56,9 @@ namespace Xsolla {
 			element = statusText.Get ("merchant");
 			if(element != null)
 				AddElement (statusText.Get("merchant").GetPref(), statusText.Get("merchant").GetValue());
+			element = statusText.Get("userWallet");
+			if(element != null)
+				AddElement (statusText.Get("userWallet").GetPref(), statusText.Get("userWallet").GetValue());
 			AddLine ();
 			AddBigElement (statusText.Get("sum").GetPref(), statusText.Get("sum").GetValue());
 //			Debug.Log ("statusText.backUrlCaption " + statusText.backUrlCaption);
@@ -63,14 +66,18 @@ namespace Xsolla {
 			if(statusText.backUrlCaption != null && !"".Equals(statusText.backUrlCaption))
 				statusViewExitButton.gameObject.GetComponent<Text> ().text = statusText.backUrlCaption;
 			else
-				statusViewExitButton.gameObject.GetComponent<Text> ().text = "< Back";
-			statusViewExitButton.onClick.AddListener (delegate {OnClickExit(currentStatus, xsollaStatus.GetStatusData().GetInvoice(), xsollaStatus.GetStatusData().GetStatus());});
+				statusViewExitButton.gameObject.GetComponent<Text> ().text = translations.Get(XsollaTranslations.BACK_TO_STORE);
+			statusViewExitButton.onClick.AddListener (delegate {OnClickExit(currentStatus, xsollaStatus.GetStatusData().GetInvoice(), xsollaStatus.GetStatusData().GetStatus(), null);});
 
 		}
 
 		public void DrawVpStatus(XsollaUtils utils, XVPStatus status){
 			XsollaTranslations translations = utils.GetTranslations ();
-			string input = translations.Get (XsollaTranslations.STATUS_PURCHASED_DESCRIPTION);
+			string input;
+			if (status.Status.HeaderDescription == null)
+				input = translations.Get (XsollaTranslations.STATUS_PURCHASED_DESCRIPTION);
+			else
+				input = status.Status.HeaderDescription;
 			XsollaStatus.Group currentStatus = status.GetGroup ();
 
 			PrepareStatus (currentStatus, status.Status.Header, input, "");
@@ -78,26 +85,40 @@ namespace Xsolla {
 			AddStatus (status.Status.Description);
 			AddElement (translations.Get ("virtualstatus_check_operation"), status.OperationId);
 			AddElement (translations.Get ("virtualstatus_check_time"), string.Format("{0:dd/MM/yyyy HH:mm}", DateTime.Parse(status.OperationCreated)));
-			AddElement (translations.Get ("virtualstatus_check_virtual_items"), status.GetPurchase(0));
-			AddLine ();
-			AddBigElement (translations.Get ("virtualstatus_check_vc_amount"), status.VcAmount + " " + utils.GetProject().virtualCurrencyName);
-			statusViewExitButton.gameObject.GetComponent<Text> ().text = "< Back";
-			statusViewExitButton.onClick.AddListener (delegate {OnClickExit(currentStatus, status.OperationId, Xsolla.XsollaStatusData.Status.DONE);});
+			if (status.Items.Count > 0)
+				AddElement (translations.Get ("virtualstatus_check_virtual_items"), status.GetPurchase(0));
+			if (status.vCurr.Count > 0)
+				AddElement (translations.Get ("virtualstatus_check_virtual_currency"), status.GetVCPurchase(0) + " " + utils.GetProject().virtualCurrencyName);
+
+			if (status.OperationType != "coupon")
+			{
+				AddLine ();
+				AddBigElement (translations.Get ("virtualstatus_check_vc_amount"), status.VcAmount + " " + utils.GetProject().virtualCurrencyName);
+			}
+			statusViewExitButton.gameObject.GetComponent<Text> ().text = translations.Get(XsollaTranslations.BACK_TO_STORE);
+			statusViewExitButton.onClick.AddListener (delegate {OnClickBack(currentStatus, status.OperationId, Xsolla.XsollaStatusData.Status.DONE, status.GetPurchaseList());});
 		}
 
 		public void PrepareStatus(XsollaStatus.Group group, string state, string purchase, string invoice){
-			Text[] texts = status.GetComponentsInChildren<Text> ();// [0] Icon [1] Title [2] purchse
+			Component[] texts = status.GetComponentsInChildren(typeof(Text),true);// [0] Icon [1] Title [2] purchse
 //  			Image bg = status.GetComponent<Image> ();
 			ColorController colorController = GetComponent<ColorController> ();
-			texts[1].text = state;
-//			texts[2].text = purchase;
+			((Text)texts[1]).text = state;
+			if (purchase != null && purchase != "")
+			{
+				((Text)texts[2]).text = purchase;
+				texts[2].gameObject.SetActive(true);
+			}
+			else
+				texts[2].gameObject.SetActive(false);
+
 			switch (group){
 				case XsollaStatus.Group.DONE:
-					texts[0].text = "";
+				((Text)texts[0]).text = "";
 					colorController.ChangeColor(1, StyleManager.BaseColor.bg_ok);
 					break;
 				case XsollaStatus.Group.TROUBLED:
-					texts[0].text = "";
+					((Text)texts[0]).text = "";
 					colorController.ChangeColor(1, StyleManager.BaseColor.bg_error);
 //					bg.color = new Color (0.980392157f, 0.454901961f, 0.392156863f);
 					break;
@@ -105,8 +126,8 @@ namespace Xsolla {
 				case XsollaStatus.Group.DELIVERING:
 				case XsollaStatus.Group.UNKNOWN:
 				default:
-					texts[0].text = "";
-					texts[0].gameObject.AddComponent<MyRotation>();
+					((Text)texts[0]).text = "";
+					((Text)texts[0]).gameObject.AddComponent<MyRotation>();
 					colorController.ChangeColor(1, StyleManager.BaseColor.selected);
 //					bg.color = new Color (0.639215686f, 0.552941176f, 0.847058824f);
 					StartCoroutine(UpdateStatus(invoice));
@@ -157,18 +178,20 @@ namespace Xsolla {
 			gameObject.GetComponentInParent<XsollaPaystationController> ().GetStatus (map);//DoPayment (new Dictionary<string, object>());
 		}
 
-		private void OnClickExit(XsollaStatus.Group group , string invoice, Xsolla.XsollaStatusData.Status status)
+		private void OnClickExit(XsollaStatus.Group group , string invoice, Xsolla.XsollaStatusData.Status status, Dictionary<string, object> pPurchase)
 		{
 			if (StatusHandler != null)
-				StatusHandler (group, invoice, status);
+				StatusHandler (group, invoice, status, pPurchase);
 			if (GetComponentInParent<XsollaPaystationController> () != null)
 				GetComponentInParent<XsollaPaystationController> ().gameObject.GetComponentInChildren<Selfdestruction> ().DestroyRoot ();
 		}
 
-		private void OnClickBack(XsollaStatus.Group group ,string invoice, Xsolla.XsollaStatusData.Status status)
+		private void OnClickBack(XsollaStatus.Group group ,string invoice, Xsolla.XsollaStatusData.Status status, Dictionary<string, object> pPurchase)
 		{
 			if (StatusHandler != null)
-				StatusHandler (group, invoice, status);
+				StatusHandler (group, invoice, status, pPurchase);
+			if (GetComponentInParent<XsollaPaystationController> () != null)
+				GetComponentInParent<XsollaPaystationController> ().LoadGoodsGroups();
 		}
 
 	}

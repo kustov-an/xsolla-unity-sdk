@@ -52,9 +52,11 @@ namespace Xsolla {
 
 		public XStatus 			 Status { get; private set; }
 		public List<SimpleVItem> Items { get; private set; }
+		public List<SimpleVCur>  vCurr { get; private set; }
 
 		public XVPStatus() {
 			Items = new List<SimpleVItem>();
+			vCurr = new List<SimpleVCur>();
 		}
 
 		public XsollaStatus.Group GetGroup()
@@ -74,9 +76,39 @@ namespace Xsolla {
 			}
 		}
 
+		public Dictionary<string, object> GetPurchaseList()
+		{
+			Dictionary<string, object> res = new Dictionary<string, object>();
+			if (Items.Count > 0)
+				res.Add("items",Items);
+			if (vCurr.Count > 0)
+				res.Add("vcur",vCurr);
+			return res;
+		}
+
 		public string GetPurchase(int i) {
-			SimpleVItem item = Items[i];
-			return item.Quantity + " x " + item.Name;
+			if (Items.Count > 0)
+			{
+				SimpleVItem item = Items[i];
+				return item.Quantity + " x " + item.Name;
+			}
+			else
+			{
+				return "";
+			}
+		}
+
+		public string GetVCPurchase(int i)
+		{
+			if (vCurr.Count > 0)
+			{
+				SimpleVCur item = vCurr[i];
+				return item.vcAmount;
+			}
+			else
+			{
+				return "";
+			}
 		}
 
 		public IParseble Parse (JSONNode rootNode)
@@ -96,8 +128,9 @@ namespace Xsolla {
 				                     statusNode["header_description"].Value);
 			}
 
+			IEnumerator<JSONNode> iEnumerator;
 			JSONArray jarrItems 	= rootNode["purchase"]["virtual_items"].AsArray;
-			IEnumerator<JSONNode> iEnumerator = jarrItems.Childs.GetEnumerator();
+			iEnumerator = jarrItems.Childs.GetEnumerator();
 			while (iEnumerator.MoveNext()) {
 				JSONNode itemNode = iEnumerator.Current;
 				SimpleVItem newItem = new SimpleVItem(itemNode["name"].Value, 
@@ -105,6 +138,14 @@ namespace Xsolla {
 				                                      itemNode["image_url"].Value, 
 				                                      itemNode["quantity"].AsInt);
 				Items.Add(newItem);
+			}
+
+			JSONArray jarrVC 	= rootNode["purchase"]["virtual_currency"].AsArray;
+			iEnumerator = jarrVC.Childs.GetEnumerator();
+			while (iEnumerator.MoveNext()) {
+				JSONNode itemNode = iEnumerator.Current;
+				SimpleVCur newItem = new SimpleVCur(itemNode["vc_amount"].Value);
+				vCurr.Add(newItem);
 			}
 
 			return this;
@@ -133,6 +174,16 @@ namespace Xsolla {
 			}
 			
 		} 
+
+		public struct SimpleVCur
+		{
+			public string vcAmount;
+
+			public SimpleVCur(string pVcAmount)
+			{
+				this.vcAmount = pVcAmount;
+			}
+		}
 
 
 		public struct XStatus {

@@ -52,7 +52,7 @@ namespace Xsolla {
 			case RuntimePlatform.Android:
 				//{
 					//CaptureConsoleCmdOutput(@"ExecConnect.dll", args, out exitcode, out res);
-					break;
+					//break;
 				//}
 			case RuntimePlatform.IPhonePlayer:
 				{
