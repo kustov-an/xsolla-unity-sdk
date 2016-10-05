@@ -14,10 +14,6 @@ namespace Xsolla
 			_title.text = pName;
 			_btn.onClick.AddListener(delegate {pAction();});
 		}
-
-		public UserProfileBtnController ()
-		{
-		}
 	}
 }
 

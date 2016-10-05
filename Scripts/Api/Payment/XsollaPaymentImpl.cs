@@ -617,7 +617,7 @@ namespace Xsolla
 
 					case HISTORY:
 						{
-							
+							XsollaHistoryList history = new XsollaHistoryList().Parse(rootNode["operations"]) as XsollaHistoryList;
 						}
 						break;
 					default:
