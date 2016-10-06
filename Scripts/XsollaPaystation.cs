@@ -55,6 +55,7 @@ namespace  Xsolla
 		protected abstract void ShowSavedPaymentsList(XsollaSavedPaymentMethods savedPaymentsMethods);
 		protected abstract void ShowCountries (XsollaCountries paymentMethods);
 		protected abstract void ApplyPromoCouponeCode(XsollaForm pForm);
+		protected abstract void ShowHistory(XsollaHistoryList pList);
 
 		protected abstract void ShowPaymentForm (XsollaUtils utils, XsollaForm form);
 
@@ -121,7 +122,8 @@ namespace  Xsolla
 			Payment.PaymentMethodsRecieved += ShowPaymentsList;
 			Payment.SavedPaymentMethodsRecieved += ShowSavedPaymentsList;
 			Payment.CountriesRecieved += ShowCountries;
-			
+			Payment.HistoryRecieved += ShowHistory;
+
 			Payment.PricepointsRecieved += (pricepoints) => ShowPricepoints(Utils, pricepoints);
 			Payment.GoodsGroupsRecieved += (goods) => ShowGoodsGroups(goods);
 			Payment.GoodsRecieved += (goods) => UpdateGoods(goods);

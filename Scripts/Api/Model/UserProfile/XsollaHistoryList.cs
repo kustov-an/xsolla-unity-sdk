@@ -59,12 +59,12 @@ namespace Xsolla
 
 		public string GetKey()
 		{
-			return "";
+			return date.ToString("u");
 		}
 
 		public string GetName()
 		{
-			return "";
+			return comment;
 		}
 	}
 

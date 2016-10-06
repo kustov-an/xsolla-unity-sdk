@@ -34,6 +34,7 @@ namespace Xsolla
 	
 		public Action<XsollaUtils> 					UtilsRecieved;
 		public Action<XsollaTranslations> 			TranslationRecieved;
+		public Action<XsollaHistoryList>			HistoryRecieved;
 
 		public Action<XsollaPricepointsManager> 	PricepointsRecieved;
 		public Action<XsollaGroupsManager> 			GoodsGroupsRecieved;
@@ -206,6 +207,12 @@ namespace Xsolla
 		{
 			if (TranslationRecieved != null)
 				TranslationRecieved(translations);
+		}
+
+		protected virtual void OnHistoryRecieved(XsollaHistoryList pHistoryList)
+		{
+			if (HistoryRecieved != null)
+				HistoryRecieved(pHistoryList);
 		}
 		
 		// ---------------------------------------------------------------------------
@@ -618,6 +625,8 @@ namespace Xsolla
 					case HISTORY:
 						{
 							XsollaHistoryList history = new XsollaHistoryList().Parse(rootNode["operations"]) as XsollaHistoryList;
+							OnHistoryRecieved(history);
+
 						}
 						break;
 					default:
