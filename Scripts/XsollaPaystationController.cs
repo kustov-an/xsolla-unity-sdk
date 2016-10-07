@@ -14,7 +14,7 @@ namespace Xsolla
 		private const string PREFAB_SCREEN_CHECKOUT 	 = "Prefabs/SimpleView/_ScreenCheckout/ScreenCheckout";
 		private const string PREFAB_SCREEN_VP_SUMMARY 	 = "Prefabs/SimpleView/_ScreenVirtualPaymentSummary/ScreenVirtualPaymentSummary";
 		private const string PREFAB_SCREEN_REDEEM_COUPON = "Prefabs/SimpleView/_ScreenShop/RedeemCouponView";
-		private const string PREFAB_SCREEN_HISTORY_USER  = "Prefabs/SimpleView/_ScreenShop/";
+		private const string PREFAB_SCREEN_HISTORY_USER  = "Prefabs/SimpleView/_ScreenShop/HistoryView";
 
 		private const string PREFAB_VIEW_MENU_ITEM		 = "Prefabs/SimpleView/MenuItem";
 		private const string PREFAB_VIEW_MENU_ITEM_ICON	 = "Prefabs/SimpleView/MenuItemIcon";
@@ -220,17 +220,21 @@ namespace Xsolla
 				_couponController.ShowError(pResult._error);
 				return;
 			}
-
 		}
 
 		protected override void ShowHistory (XsollaHistoryList pList)
 		{
 			currentActive = ActiveScreen.HISTORY_LIST;
-			GameObject screenRedeemCoupons = Instantiate(Resources.Load(PREFAB_SCREEN_REDEEM_COUPON)) as GameObject;
+			GameObject screenHistoryView = Instantiate(Resources.Load(PREFAB_SCREEN_HISTORY_USER)) as GameObject;
+
+			HistoryController controller = screenHistoryView.GetComponent<HistoryController>();
+			if (controller != null)
+				controller.InitScreen(Utils.GetTranslations(), pList);
 			// clear container
 			Resizer.DestroyChilds(mainScreenContainer.transform);
-
-			throw new NotImplementedException ();
+			screenHistoryView.transform.SetParent (mainScreenContainer.transform);
+			screenHistoryView.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+			Resizer.ResizeToParrent (screenHistoryView);
 		}
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<< PAYMENT METHODS <<<<<<<<<<<<<<<<<<<<<<<<<<<< 

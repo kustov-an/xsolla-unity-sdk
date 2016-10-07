@@ -64,6 +64,7 @@ GameObject:
   - 224: {fileID: 22483010}
   - 222: {fileID: 22266886}
   - 114: {fileID: 11487674}
+  - 114: {fileID: 11422942}
   m_Layer: 5
   m_Name: Type
   m_TagString: Untagged
@@ -118,6 +119,7 @@ GameObject:
   - 224: {fileID: 22497722}
   - 222: {fileID: 22217482}
   - 114: {fileID: 11428004}
+  - 114: {fileID: 11419410}
   m_Layer: 5
   m_Name: Balance
   m_TagString: Untagged
@@ -135,6 +137,7 @@ GameObject:
   - 224: {fileID: 22455468}
   - 222: {fileID: 22248314}
   - 114: {fileID: 11470636}
+  - 114: {fileID: 11490534}
   m_Layer: 5
   m_Name: Price
   m_TagString: Untagged
@@ -171,6 +174,7 @@ GameObject:
   - 224: {fileID: 22423394}
   - 222: {fileID: 22277482}
   - 114: {fileID: 11498448}
+  - 114: {fileID: 11446194}
   m_Layer: 5
   m_Name: Date
   m_TagString: Untagged
@@ -190,6 +194,7 @@ GameObject:
   - 114: {fileID: 11463640}
   - 114: {fileID: 11495616}
   - 114: {fileID: 11453422}
+  - 114: {fileID: 11490372}
   m_Layer: 5
   m_Name: HistoryView
   m_TagString: Untagged
@@ -243,6 +248,7 @@ GameObject:
   - 224: {fileID: 22486398}
   - 222: {fileID: 22282798}
   - 114: {fileID: 11438522}
+  - 114: {fileID: 11468260}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -287,7 +293,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 15
+  m_Spacing: 0
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 0
 --- !u!114 &11414136
@@ -362,6 +368,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11419410
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 164264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: 110
+  m_MinHeight: -1
+  m_PreferredWidth: 110
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
 --- !u!114 &11422724
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -389,6 +413,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11422942
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 151206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: 280
+  m_MinHeight: -1
+  m_PreferredWidth: 280
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
 --- !u!114 &11428004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -473,7 +515,7 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 0
   m_Spacing: 0
-  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
 --- !u!114 &11435628
 MonoBehaviour:
@@ -535,6 +577,24 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Item
+--- !u!114 &11446194
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: 110
+  m_MinHeight: -1
+  m_PreferredWidth: 110
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
 --- !u!114 &11451836
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -715,6 +775,24 @@ MonoBehaviour:
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: 0.058
+--- !u!114 &11468260
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 199726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: 110
+  m_MinHeight: -1
+  m_PreferredWidth: 110
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
 --- !u!114 &11470636
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -781,6 +859,42 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Type
+--- !u!114 &11490372
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 182376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e627e9aaebe5f4fada4fd6f45c5af997, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mTitle: {fileID: 11428320}
+  mHistroryContainer: {fileID: 155062}
+  mDateTitle: {fileID: 11498448}
+  mTypeTitle: {fileID: 11487674}
+  mItemTitle: {fileID: 11438522}
+  mBalanceTitle: {fileID: 11428004}
+  mPriceTitle: {fileID: 11470636}
+--- !u!114 &11490534
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 167038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: 110
+  m_MinHeight: -1
+  m_PreferredWidth: 110
+  m_PreferredHeight: -1
+  m_FlexibleWidth: 1
+  m_FlexibleHeight: -1
 --- !u!114 &11492932
 MonoBehaviour:
   m_ObjectHideFlags: 1
