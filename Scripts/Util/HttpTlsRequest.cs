@@ -54,15 +54,12 @@ namespace Xsolla {
 					//CaptureConsoleCmdOutput(@"ExecConnect.dll", args, out exitcode, out res);
 					//break;
 				//}
+			case RuntimePlatform.WebGLPlayer:
 			case RuntimePlatform.IPhonePlayer:
 				{
 					Logger.Log("StartCoroutine");
 					// Coroutine request only for Iphone
 					StartCoroutine(GetWWWFormRequest(pUrl, pDataDic, (value) => onReturnRes(value)));
-					break;
-				}
-			case RuntimePlatform.WebGLPlayer:
-				{
 					break;
 				}
 			default:

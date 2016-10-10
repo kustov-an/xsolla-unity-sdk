@@ -33,7 +33,7 @@ namespace Xsolla
 		public float userBalance{get; private set;}// userBalance:50
 		public string userCustom{get; private set;}// userCustom:""
 		public float vcAmount{get; private set;}// vcAmount:-50
-		public XsollaHystoryVirtualItems virtualItems{get; private set;}// virtualItems:[]
+		public XsollaHistoryVirtualItems virtualItems{get; private set;}// virtualItems:[]
 		public string virtualItemsOperationType{get; private set;}// virtualItemsOperationType:"remove"
 
 		public IParseble Parse(JSONNode pNode)
@@ -51,7 +51,7 @@ namespace Xsolla
 			userBalance = pNode["userBalance"].AsFloat;
 			userCustom = pNode["userCustom"];
 			vcAmount = pNode["vcAmount"].AsFloat;
-			virtualItems = new XsollaHystoryVirtualItems().Parse(pNode["virtualItems"]) as XsollaHystoryVirtualItems;
+			virtualItems = new XsollaHistoryVirtualItems().Parse(pNode["virtualItems"]) as XsollaHistoryVirtualItems;
 			virtualItemsOperationType = pNode["virtualItemsOperationType"];
 
 			return this;
@@ -68,7 +68,7 @@ namespace Xsolla
 		}
 	}
 
-	public class XsollaHystoryVirtualItems: IParseble
+	public class XsollaHistoryVirtualItems: IParseble
 	{
 		public string virtualItemsOperationType{get; private set;}//virtualItemsOperationType:"add"
 		public XsollaHistoryVirtualItemsList items;

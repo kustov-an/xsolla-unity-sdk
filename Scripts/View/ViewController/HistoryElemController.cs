@@ -11,9 +11,25 @@ namespace Xsolla
 		public Text mItem;
 		public Text mBalance;
 		public Text mPrice;
+		public GameObject mDevider;
 
-		public void Init(XsollaTranslations pTranslation, XsollaHistoryItem pItem)
+		public void Init(XsollaTranslations pTranslation, XsollaHistoryItem pItem, Boolean pHeader = false)
 		{
+			if (pHeader)
+			{
+				mDate.text = pTranslation.Get("balance_history_date");
+				mType.text = pTranslation.Get("balance_history_purpose");
+				mItem.text = pTranslation.Get("balance_history_item");
+				mBalance.text = pTranslation.Get("balance_history_vc_amount");
+				mPrice.text = pTranslation.Get("balance_history_payment_amount");
+
+				// Activate devider 
+				mDevider.SetActive(true);
+
+				return;
+			}
+
+
 			mDate.text = pItem.date.ToShortDateString();
 			// balance_history_payment_info:"Payment via {{paymentName}}, transaction ID {{transactionId}}"
 			// balance_history_payment_info_cancellation:"Refund. Payment via {{paymentName}}, transaction ID {{transactionId}}"

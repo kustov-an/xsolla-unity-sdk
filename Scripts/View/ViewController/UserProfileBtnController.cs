@@ -12,7 +12,7 @@ namespace Xsolla
 		public void InitScreen(String pName, Action pAction)
 		{
 			_title.text = pName;
-			_btn.onClick.AddListener(delegate {pAction();});
+			//_btn.onClick.AddListener(delegate {pAction();});
 		}
 	}
 }
