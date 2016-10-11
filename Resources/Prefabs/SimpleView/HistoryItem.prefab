@@ -53,7 +53,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &141852
 GameObject:
   m_ObjectHideFlags: 0
@@ -85,6 +85,7 @@ GameObject:
   - 114: {fileID: 11410064}
   - 114: {fileID: 11453204}
   - 114: {fileID: 11440550}
+  - 114: {fileID: 11485130}
   m_Layer: 5
   m_Name: HistoryItem
   m_TagString: Untagged
@@ -258,6 +259,7 @@ MonoBehaviour:
   mItem: {fileID: 11475366}
   mBalance: {fileID: 11483906}
   mPrice: {fileID: 11491038}
+  mDevider: {fileID: 123074}
 --- !u!114 &11447524
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -458,6 +460,30 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Balance
+--- !u!114 &11485130
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 143650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc117f59f61de4868b1f1d085ec2e3e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemsToColor:
+  - color: 15
+    whatToColor: {fileID: 11434128}
+  - color: 15
+    whatToColor: {fileID: 11473652}
+  - color: 15
+    whatToColor: {fileID: 11475366}
+  - color: 15
+    whatToColor: {fileID: 11483906}
+  - color: 15
+    whatToColor: {fileID: 11491038}
+  - color: 31
+    whatToColor: {fileID: 11452882}
 --- !u!114 &11491038
 MonoBehaviour:
   m_ObjectHideFlags: 1

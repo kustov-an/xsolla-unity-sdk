@@ -47,8 +47,7 @@ namespace Xsolla
 
 		protected override void RecieveUtils (XsollaUtils utils)
 		{
-			//StyleManager.Instance.ChangeTheme(utils.GetSettings().GetTheme());
-			StyleManager.Instance.ChangeTheme("default");
+			StyleManager.Instance.ChangeTheme(utils.GetSettings().GetTheme());
 			mainScreen = Instantiate (mainScreen);
 			mainScreen.transform.SetParent (container.transform);
 			mainScreen.SetActive (true);
@@ -225,17 +224,27 @@ namespace Xsolla
 
 		protected override void ShowHistory (XsollaHistoryList pList)
 		{
-			currentActive = ActiveScreen.HISTORY_LIST;
-			GameObject screenHistoryView = Instantiate(Resources.Load(PREFAB_SCREEN_HISTORY_USER)) as GameObject;
-
-			HistoryController controller = screenHistoryView.GetComponent<HistoryController>();
-			if (controller != null)
-				controller.InitScreen(Utils.GetTranslations(), pList);
-			// clear container
-			Resizer.DestroyChilds(mainScreenContainer.transform);
-			screenHistoryView.transform.SetParent (mainScreenContainer.transform);
-			screenHistoryView.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-			Resizer.ResizeToParrent (screenHistoryView);
+			GameObject screenHistoryView;
+			HistoryController controller;
+			// if 
+			if (currentActive == ActiveScreen.HISTORY_LIST)
+			{
+				controller = GameObject.FindObjectOfType<HistoryController>();
+				controller.AddListRows(Utils.GetTranslations(), pList);
+			}
+			else
+			{
+				currentActive = ActiveScreen.HISTORY_LIST;
+				screenHistoryView = Instantiate(Resources.Load(PREFAB_SCREEN_HISTORY_USER)) as GameObject;
+				controller = screenHistoryView.GetComponent<HistoryController>();	
+				if (controller != null)
+					controller.InitScreen(Utils.GetTranslations(), pList);
+				// clear container
+				Resizer.DestroyChilds(mainScreenContainer.transform);
+				screenHistoryView.transform.SetParent (mainScreenContainer.transform);
+				screenHistoryView.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+				Resizer.ResizeToParrent (screenHistoryView);
+			}
 		}
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<< PAYMENT METHODS <<<<<<<<<<<<<<<<<<<<<<<<<<<< 

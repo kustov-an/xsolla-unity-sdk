@@ -13,8 +13,39 @@ namespace Xsolla
 		public Text mPrice;
 		public GameObject mDevider;
 
-		public void Init(XsollaTranslations pTranslation, XsollaHistoryItem pItem, Boolean pHeader = false)
+		public String prepareTypeStr(String pStr)
 		{
+			String res = pStr;
+			int i = 0;
+			if (res.Contains("{{paymentName}}"))
+			{
+				res = res.Replace("{{paymentName}}", "{" + i + "}");
+				i ++;
+			}
+			if (res.Contains("{{transactionId}}"))
+			{
+				res = res.Replace("{{transactionId}}", "{" + i + "}"); 	
+				i ++;
+			}
+			if (res.Contains("{{comment}}"))
+			{
+				res = res.Replace("{{comment}}","{" + i + "}");
+				i ++;
+			}
+			if (res.Contains("{{code}}"))
+			{
+				res = res.Replace("{{code}}","{" + i + "}");
+				i ++;
+			}
+			return res;
+
+		}
+
+		public void Init(XsollaTranslations pTranslation, XsollaHistoryItem pItem, Boolean pEven, Boolean pHeader = false)
+		{
+			Image imgComp = this.GetComponent<Image>();
+			imgComp.enabled = pEven;
+	
 			if (pHeader)
 			{
 				mDate.text = pTranslation.Get("balance_history_date");
@@ -25,11 +56,11 @@ namespace Xsolla
 
 				// Activate devider 
 				mDevider.SetActive(true);
-
+				LayoutElement layout = this.transform.GetComponent<LayoutElement>();
+				layout.minHeight = 20;
 				return;
 			}
-
-
+				
 			mDate.text = pItem.date.ToShortDateString();
 			// balance_history_payment_info:"Payment via {{paymentName}}, transaction ID {{transactionId}}"
 			// balance_history_payment_info_cancellation:"Refund. Payment via {{paymentName}}, transaction ID {{transactionId}}"
@@ -44,47 +75,47 @@ namespace Xsolla
 			{
 			case "payment":
 				{
-					mType.text = String.Format(pTranslation.Get("balance_history_payment_info"), pItem.paymentName, pItem.invoiceId);
+					mType.text = String.Format(prepareTypeStr(pTranslation.Get("balance_history_payment_info")), pItem.paymentName, pItem.invoiceId);
 					break;
 				}
 			case "cancellation":
 				{
-					mType.text = String.Format(pTranslation.Get("balance_history_payment_info_cancellation"), pItem.paymentName, pItem.invoiceId);
+					mType.text = String.Format(prepareTypeStr(pTranslation.Get("balance_history_payment_info_cancellation")), pItem.paymentName, pItem.invoiceId);
 					break;
 				}
 			case "inGamePurchase":
 				{
-					mType.text = String.Format(pTranslation.Get("balance_history_ingame_info"));
+					mType.text = String.Format(prepareTypeStr(pTranslation.Get("balance_history_ingame_info")));
 					break;
 				}
 			case "internal":
 				{
-					mType.text = String.Format(pTranslation.Get("balance_history_internal_info"), pItem.comment);
+					mType.text = String.Format(prepareTypeStr(pTranslation.Get("balance_history_internal_info")), pItem.comment);
 					break;
 				}
 			case "coupon":
 				{
-					mType.text = String.Format(pTranslation.Get("balance_history_coupon_info"), pItem.couponeCode);
+					mType.text = String.Format(prepareTypeStr(pTranslation.Get("balance_history_coupon_info")), pItem.couponeCode);
 					break;
 				}
 			case "subscriptionRenew":
 				{
-					mType.text = String.Format(pTranslation.Get("balance_history_subscription_renew"), pItem.paymentName, pItem.invoiceId);
+					mType.text = String.Format(prepareTypeStr(pTranslation.Get("balance_history_subscription_renew")), pItem.paymentName, pItem.invoiceId);
 					break;
 				}
 			case "subscriptionCreate":
 				{
-					mType.text = String.Format(pTranslation.Get("balance_history_subscription_create"), pItem.paymentName, pItem.invoiceId);
+					mType.text = String.Format(prepareTypeStr(pTranslation.Get("balance_history_subscription_create")), pItem.paymentName, pItem.invoiceId);
 					break;
 				}
 			case "subscriptionChange":
 				{
-					mType.text = String.Format(pTranslation.Get("balance_history_subscription_change"), pItem.paymentName, pItem.invoiceId);
+					mType.text = String.Format(prepareTypeStr(pTranslation.Get("balance_history_subscription_change")), pItem.paymentName, pItem.invoiceId);
 					break;
 				}
 			case "subscriptionCancellation":
 				{
-					mType.text = String.Format(pTranslation.Get("balance_history_payment_info_cancellation"), pItem.paymentName, pItem.invoiceId);
+					mType.text = String.Format(prepareTypeStr(pTranslation.Get("balance_history_payment_info_cancellation")), pItem.paymentName, pItem.invoiceId);
 					break;
 				}
 			default:
