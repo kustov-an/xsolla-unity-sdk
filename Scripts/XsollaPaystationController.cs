@@ -208,8 +208,6 @@ namespace Xsolla
 				footerTexts[1].text = Utils.GetTranslations().Get(XsollaTranslations.TOTAL) + " " + pForm.GetSumTotal ();
 			}
 			promoController.ApplySuccessful();
-
-
 		}
 
 		protected override void GetCouponErrorProceed (XsollaCouponProceedResult pResult)
@@ -230,7 +228,10 @@ namespace Xsolla
 			if (currentActive == ActiveScreen.HISTORY_LIST)
 			{
 				controller = GameObject.FindObjectOfType<HistoryController>();
-				controller.AddListRows(Utils.GetTranslations(), pList);
+				if (!controller.isRefresh)
+					controller.AddListRows(Utils.GetTranslations(), pList);
+				else
+					controller.InitScreen(Utils.GetTranslations(), pList);
 			}
 			else
 			{

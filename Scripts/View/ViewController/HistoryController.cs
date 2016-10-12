@@ -9,16 +9,19 @@ namespace Xsolla
 	public class HistoryController: MonoBehaviour
 	{
 		public Text mTitle;
-		public GameObject mHistroryContainer;
+		public GameObject mHistoryContainer;
 		private const string PREFAB_HISTORY_ROW  = "Prefabs/SimpleView/HistoryItem";
 		private int mLimit = 0;
 		private int mCountMore = 20;
+		public bool isRefresh = false;
 
-		public Text mDateTitle;
-		public Text mTypeTitle;
-		public Text mItemTitle;
-		public Text mBalanceTitle;
-		public Text mPriceTitle;
+//		public Text mDateTitle;
+//		public Text mTypeTitle;
+//		public Text mItemTitle;
+//		public Text mBalanceTitle;
+//		public Text mPriceTitle;
+
+		public Button mBtnRefresh;
 
 		public void InitScreen(XsollaTranslations pTranslation, XsollaHistoryList pList)
 		{
@@ -31,6 +34,22 @@ namespace Xsolla
 				AddHistoryRow(pTranslation, item, mLimit%2 != 0, false);
 				mLimit ++;
 			}
+
+			mBtnRefresh.onClick.AddListener(delegate { OnRefreshHistory(); });
+			isRefresh = false;
+		}
+
+		private void ClearList()
+		{
+			mLimit = 0;
+			Resizer.DestroyChilds(mHistoryContainer.transform);
+			isRefresh = true;
+		}
+
+		private void OnRefreshHistory()
+		{
+			ClearList();
+			LoadMore();
 		}
 
 		public void AddListRows(XsollaTranslations pTranslation, XsollaHistoryList pList)
@@ -57,7 +76,7 @@ namespace Xsolla
 					controller.Init(pTranslation, pItem, pEven);
 				}
 			}
-			itemRow.transform.SetParent(mHistroryContainer.transform);
+			itemRow.transform.SetParent(mHistoryContainer.transform);
 		}
 
 		public void OnScrollChange(Vector2 pVector)
@@ -65,7 +84,8 @@ namespace Xsolla
 			if (pVector == new Vector2(0.0f, 0.0f))
 			{
 				Logger.Log("End scroll");
-				LoadMore();
+				if (!isRefresh)
+					LoadMore();
 			}
 		}
 
