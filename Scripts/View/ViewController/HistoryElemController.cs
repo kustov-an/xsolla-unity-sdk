@@ -41,7 +41,7 @@ namespace Xsolla
 
 		}
 
-		public void Init(XsollaTranslations pTranslation, XsollaHistoryItem pItem, Boolean pEven, Boolean pHeader = false)
+		public void Init(XsollaTranslations pTranslation, XsollaHistoryItem pItem, Boolean pEven, Action pSortAction, Boolean pHeader = false)
 		{
 			Image imgComp = this.GetComponent<Image>();
 			imgComp.enabled = pEven;
@@ -49,6 +49,13 @@ namespace Xsolla
 			if (pHeader)
 			{
 				mDate.text = pTranslation.Get("balance_history_date");
+				Button sortBtn = mDate.gameObject.AddComponent<Button>();
+				sortBtn.onClick.AddListener(delegate 
+					{
+						Logger.Log("On sort btn click");
+						pSortAction();
+					});
+
 				mType.text = pTranslation.Get("balance_history_purpose");
 				mItem.text = pTranslation.Get("balance_history_item");
 				mBalance.text = pTranslation.Get("balance_history_vc_amount");

@@ -14,6 +14,7 @@ namespace Xsolla
 		private int mLimit = 0;
 		private int mCountMore = 20;
 		public bool isRefresh = false;
+		public bool sortDesc = true;
 
 //		public Text mDateTitle;
 //		public Text mTypeTitle;
@@ -25,6 +26,7 @@ namespace Xsolla
 
 		public void InitScreen(XsollaTranslations pTranslation, XsollaHistoryList pList)
 		{
+			Logger.Log("Init history screen");
 			mTitle.text = pTranslation.Get("balance_history_page_title");
 
 			AddHistoryRow(pTranslation, null, false, true);
@@ -34,20 +36,28 @@ namespace Xsolla
 				AddHistoryRow(pTranslation, item, mLimit%2 != 0, false);
 				mLimit ++;
 			}
-
-			mBtnRefresh.onClick.AddListener(delegate { OnRefreshHistory(); });
+				
 			isRefresh = false;
+		}
+
+		public void SortHistory()
+		{
+			sortDesc = !sortDesc;
+			OnRefreshHistory();
 		}
 
 		private void ClearList()
 		{
+			Logger.Log("Clear histroy List");
 			mLimit = 0;
 			Resizer.DestroyChilds(mHistoryContainer.transform);
 			isRefresh = true;
 		}
 
-		private void OnRefreshHistory()
+		public void OnRefreshHistory()
 		{
+			//TODO: Fix error when we click refresh and get list on 40 elements
+			Logger.Log("Click refreshBtn");
 			ClearList();
 			LoadMore();
 		}
@@ -63,17 +73,18 @@ namespace Xsolla
 
 		public void AddHistoryRow(XsollaTranslations pTranslation, XsollaHistoryItem pItem, Boolean pEven, Boolean pHeader = false)
 		{
+			Logger.Log("AddHistoryRow");
 			GameObject itemRow = Instantiate(Resources.Load(PREFAB_HISTORY_ROW)) as GameObject;
 			HistoryElemController controller = itemRow.GetComponent<HistoryElemController>();
 			if (controller != null)
 			{
 				if (pHeader)
 				{
-					controller.Init(pTranslation, null, pEven, true);
+					controller.Init(pTranslation, null, pEven, SortHistory, true);
 				}
 				else
 				{
-					controller.Init(pTranslation, pItem, pEven);
+					controller.Init(pTranslation, pItem, pEven, null);
 				}
 			}
 			itemRow.transform.SetParent(mHistoryContainer.transform);
@@ -91,11 +102,12 @@ namespace Xsolla
 
 		private void LoadMore()
 		{
+			Logger.Log("Load more history. CurLimit:" + mLimit);
 			Dictionary<string, object> lParams = new Dictionary<string, object>();
 			// Load History
 			lParams.Add("offset", mLimit);
 			lParams.Add("limit", mCountMore);
-			lParams.Add("sortDesc", true);
+			lParams.Add("sortDesc", sortDesc.ToString().ToLower());
 			lParams.Add("sortKey", "dateTimestamp");
 			GetComponentInParent<XsollaPaystation> ().LoadHistory(lParams);
 		}
