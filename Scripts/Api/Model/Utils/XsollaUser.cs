@@ -10,6 +10,7 @@ namespace Xsolla
 		private int savedPaymentMethodCount;// "savedPaymentMethodCount":0,
 		private string acceptLanguage;// "acceptLanguage":"ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4,cs;q=0.2",
 		private string acceptEncoding; // "acceptEncoding":"gzip, deflate"
+		public VirtualCurrencyBalance virtualCurrencyBalance; // "virtual_currency_balance":{amount: 250}
 
 		public string GetCountryIso()
 		{
@@ -35,6 +36,10 @@ namespace Xsolla
 			savedPaymentMethodCount = userNode ["savedPaymentMethodCount"].AsInt;
 			acceptLanguage = userNode ["acceptLanguage"];
 			acceptEncoding = userNode ["acceptEncoding"];
+
+			if (userNode["virtual_currency_balance"]["amount"] != null)
+				virtualCurrencyBalance = new VirtualCurrencyBalance(userNode["virtual_currency_balance"]["amount"].AsDouble);
+
 			return this;
 		}
 
@@ -49,6 +54,16 @@ namespace Xsolla
 				isVisible = newIsVisible;
 			} 
 
+		}
+
+		public class VirtualCurrencyBalance
+		{
+			public double amount;
+
+			public VirtualCurrencyBalance(double pAmount)
+			{
+				amount = pAmount;
+			}
 		}
 
 		public struct Country

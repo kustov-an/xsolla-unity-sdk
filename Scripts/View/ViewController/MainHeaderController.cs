@@ -21,10 +21,13 @@ namespace Xsolla
 			// user name 
 			_userName.text = pUtils.GetUser().GetName();
 		
-			GameObject obj = Instantiate(Resources.Load(PREFAB_VIEW_MENU_ITEM_EMPTY)) as GameObject;
-			UserProfileBtnController controller = obj.GetComponentInChildren<UserProfileBtnController>();
-			controller.InitScreen("History", ShowHistory);
-			obj.transform.SetParent(_btnDropDownObj.transform);
+			if (pUtils.GetUser().virtualCurrencyBalance != null)
+			{
+				GameObject obj = Instantiate(Resources.Load(PREFAB_VIEW_MENU_ITEM_EMPTY)) as GameObject;
+				UserProfileBtnController controller = obj.GetComponentInChildren<UserProfileBtnController>();
+				controller.InitScreen("History", ShowHistory);
+				obj.transform.SetParent(_btnDropDownObj.transform);
+			}
 		}
 
 		public void ShowHistory()
