@@ -16,11 +16,43 @@ namespace Xsolla
 		public SubscriptionsAdapter sAdapter;
 		public GoodsAdapter 		gAdapter;
 
-		public void OpenPricepoints(string title, XsollaPricepointsManager pricepoints, string virtualCurrencyName, string buyBtnText)
+		public GameObject 			CustomAmountLink;
+		public GameObject 			CustomAmountScreen;
+		public GameObject			ShopPanel;
+
+
+		public void OpenPricepoints(string title, XsollaPricepointsManager pricepoints, string virtualCurrencyName, string buyBtnText, bool pCustomHref = false, XsollaUtils pUtils = null)
 		{
 			Resizer.ResizeToParrent (gameObject);
 			menu.transform.parent.parent.gameObject.SetActive (false);
 			SetTitle (title);
+			// if we have custom amount we need show link object 
+			if (pCustomHref)
+			{
+				string customAmountShowTitle = pUtils.GetTranslations().Get(XsollaTranslations.PRICEPOINT_PAGE_CUSTOM_AMOUNT_SHOW_TITLE);
+				string customAmountHideTitle = pUtils.GetTranslations().Get(XsollaTranslations.PRICEPOINT_PAGE_CUSTOM_AMOUNT_HIDE_TITLE);
+
+				Text titleCustomAmount = CustomAmountLink.GetComponent<Text>();
+				titleCustomAmount.text = customAmountShowTitle;
+
+				Toggle toggle = CustomAmountLink.GetComponent<Toggle>();
+				toggle.onValueChanged.AddListener((value) =>   
+					{
+						if (value)
+						{
+							titleCustomAmount.text = customAmountHideTitle;
+						}
+						else
+							titleCustomAmount.text = customAmountShowTitle;
+
+						CustomAmountScreen.SetActive(value);
+						ShopPanel.SetActive(!value);
+
+						Logger.Log("Change value toggle " + value.ToString());
+					});
+					
+			}
+
 			pAdapter.SetManager (pricepoints, virtualCurrencyName, buyBtnText);
 			if (pAdapter.OnBuyPricepoints == null) {
 				pAdapter.OnBuyPricepoints += (outAmount) => {

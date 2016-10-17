@@ -271,7 +271,11 @@ namespace Xsolla
 			string title = utils.GetTranslations ().Get (XsollaTranslations.PRICEPOINT_PAGE_TITLE);
 			string vcName = utils.GetProject ().virtualCurrencyName;
 			string buyText = utils.GetTranslations ().Get (XsollaTranslations.VIRTUAL_ITEM_OPTION_BUTTON);
-			_shopViewController.OpenPricepoints(title, pricepoints, vcName, buyText);
+
+			if (utils.GetSettings().components.virtualCurreny.customAmount)
+				_shopViewController.OpenPricepoints(title, pricepoints, vcName, buyText, true, utils);
+			else
+				_shopViewController.OpenPricepoints(title, pricepoints, vcName, buyText);
 		}
 		
 		public void OpenGoods(XsollaGroupsManager groups)
