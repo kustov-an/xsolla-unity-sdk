@@ -41,7 +41,7 @@ namespace Xsolla
 
 		}
 
-		public void Init(XsollaTranslations pTranslation, XsollaHistoryItem pItem, Boolean pEven, Action pSortAction, Boolean pHeader = false)
+		public void Init(XsollaTranslations pTranslation, XsollaHistoryItem pItem, String pVirtCurrName,  Boolean pEven, Action pSortAction, Boolean pHeader = false)
 		{
 			Image imgComp = this.GetComponent<Image>();
 			imgComp.enabled = pEven;
@@ -68,7 +68,8 @@ namespace Xsolla
 				return;
 			}
 				
-			mDate.text = pItem.date.ToShortDateString();
+			//mDate.text = pItem.date.ToShortDateString();
+			mDate.text = pItem.date.ToString("MMM d, yyyy HH:mm tt");
 			// balance_history_payment_info:"Payment via {{paymentName}}, transaction ID {{transactionId}}"
 			// balance_history_payment_info_cancellation:"Refund. Payment via {{paymentName}}, transaction ID {{transactionId}}"
 			// balance_history_subscription_change:"Subscription change. Payment via {{paymentName}}, transaction ID: {{transactionId}} "
@@ -135,8 +136,16 @@ namespace Xsolla
 			if (pItem.virtualItems.items.GetCount() != 0)
 				mItem.text = pItem.virtualItems.items.GetItemByPosition(0).GetName();
 
-			mBalance.text = pItem.vcAmount + "\n" + "=" + pItem.userBalance;
-			mPrice.text = pItem.paymentAmount.ToString();
+			if (pItem.vcAmount != 0)
+				mBalance.text = ((pItem.vcAmount > 0)?"+":"") + pItem.vcAmount + " " + pVirtCurrName + "\n" + "(=" + pItem.userBalance + " " + pVirtCurrName + ")";
+			else
+				mBalance.text = "";
+
+			if (pItem.paymentAmount != 0)
+				mPrice.text = CurrencyFormatter.FormatPrice(pItem.paymentCurrency, pItem.paymentAmount.ToString());
+			else
+				mPrice.text = ""; 
+
 		}
 	}
 }

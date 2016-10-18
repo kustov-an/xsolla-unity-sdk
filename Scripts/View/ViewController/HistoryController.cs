@@ -15,6 +15,7 @@ namespace Xsolla
 		private int mCountMore = 20;
 		public bool isRefresh = false;
 		public bool sortDesc = true;
+		private String mVirtCurrName;
 
 //		public Text mDateTitle;
 //		public Text mTypeTitle;
@@ -24,8 +25,9 @@ namespace Xsolla
 
 		public Button mBtnRefresh;
 
-		public void InitScreen(XsollaTranslations pTranslation, XsollaHistoryList pList)
+		public void InitScreen(XsollaTranslations pTranslation, XsollaHistoryList pList, String pVirtualCurrName)
 		{
+			mVirtCurrName = pVirtualCurrName;
 			Logger.Log("Init history screen");
 			mTitle.text = pTranslation.Get("balance_history_page_title");
 
@@ -51,6 +53,7 @@ namespace Xsolla
 			Logger.Log("Clear histroy List");
 			mLimit = 0;
 			Resizer.DestroyChilds(mHistoryContainer.transform);
+			mHistoryContainer.GetComponent<RectTransform>().anchoredPosition = new Vector3(0,0);
 			isRefresh = true;
 		}
 
@@ -80,11 +83,11 @@ namespace Xsolla
 			{
 				if (pHeader)
 				{
-					controller.Init(pTranslation, null, pEven, SortHistory, true);
+					controller.Init(pTranslation, null, mVirtCurrName, pEven, SortHistory, true);
 				}
 				else
 				{
-					controller.Init(pTranslation, pItem, pEven, null);
+					controller.Init(pTranslation, pItem, mVirtCurrName, pEven, null);
 				}
 			}
 			itemRow.transform.SetParent(mHistoryContainer.transform);

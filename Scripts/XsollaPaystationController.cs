@@ -231,7 +231,7 @@ namespace Xsolla
 				if (!controller.isRefresh)
 					controller.AddListRows(Utils.GetTranslations(), pList);
 				else
-					controller.InitScreen(Utils.GetTranslations(), pList);
+					controller.InitScreen(Utils.GetTranslations(), pList, Utils.GetProject().virtualCurrencyName);
 			}
 			else
 			{
@@ -239,7 +239,7 @@ namespace Xsolla
 				screenHistoryView = Instantiate(Resources.Load(PREFAB_SCREEN_HISTORY_USER)) as GameObject;
 				controller = screenHistoryView.GetComponent<HistoryController>();	
 				if (controller != null)
-					controller.InitScreen(Utils.GetTranslations(), pList);
+					controller.InitScreen(Utils.GetTranslations(), pList, Utils.GetProject().virtualCurrencyName);
 				// clear container
 				Resizer.DestroyChilds(mainScreenContainer.transform);
 				screenHistoryView.transform.SetParent (mainScreenContainer.transform);

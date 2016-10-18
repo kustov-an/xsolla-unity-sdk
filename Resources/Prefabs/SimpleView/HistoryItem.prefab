@@ -242,7 +242,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Date
+  m_Text: 
 --- !u!114 &11440550
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -340,7 +340,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 0
+  m_Spacing: 10
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
 --- !u!114 &11460758
@@ -393,7 +393,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Type
+  m_Text: 
 --- !u!114 &11475366
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -426,7 +426,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Item
+  m_Text: 
 --- !u!114 &11483906
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -459,7 +459,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Balance
+  m_Text: 
 --- !u!114 &11485130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -516,7 +516,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Price
+  m_Text: 
 --- !u!114 &11492166
 MonoBehaviour:
   m_ObjectHideFlags: 1
