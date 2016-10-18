@@ -13,8 +13,8 @@ namespace Xsolla
 		private const string PREFAB_HISTORY_ROW  = "Prefabs/SimpleView/HistoryItem";
 		private int mLimit = 0;
 		private int mCountMore = 20;
-		public bool isRefresh = false;
-		public bool sortDesc = true;
+		private bool isRefresh = false;
+		private bool sortDesc = true;
 		private String mVirtCurrName;
 
 //		public Text mDateTitle;
@@ -24,12 +24,25 @@ namespace Xsolla
 //		public Text mPriceTitle;
 
 		public Button mBtnRefresh;
+		public GameObject mBtnContinue;
+
+		public bool IsRefresh()
+		{
+			return isRefresh;
+		}
 
 		public void InitScreen(XsollaTranslations pTranslation, XsollaHistoryList pList, String pVirtualCurrName)
 		{
 			mVirtCurrName = pVirtualCurrName;
 			Logger.Log("Init history screen");
 			mTitle.text = pTranslation.Get("balance_history_page_title");
+				
+			mBtnContinue.GetComponent<Text>().text = pTranslation.Get("balance_back_button");	
+			mBtnContinue.GetComponent<Button>().onClick.AddListener(delegate 
+				{
+					Logger.Log("Destroy history");
+					Destroy(this.gameObject);	
+				});
 
 			AddHistoryRow(pTranslation, null, false, true);
 

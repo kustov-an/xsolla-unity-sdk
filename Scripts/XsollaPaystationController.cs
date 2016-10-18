@@ -224,11 +224,12 @@ namespace Xsolla
 		{
 			GameObject screenHistoryView;
 			HistoryController controller;
-			// if 
-			if (currentActive == ActiveScreen.HISTORY_LIST)
+			controller = GameObject.FindObjectOfType<HistoryController>();
+			// if we have controller
+			if (controller != null)
 			{
 				controller = GameObject.FindObjectOfType<HistoryController>();
-				if (!controller.isRefresh)
+				if (!controller.IsRefresh())
 					controller.AddListRows(Utils.GetTranslations(), pList);
 				else
 					controller.InitScreen(Utils.GetTranslations(), pList, Utils.GetProject().virtualCurrencyName);
@@ -241,7 +242,7 @@ namespace Xsolla
 				if (controller != null)
 					controller.InitScreen(Utils.GetTranslations(), pList, Utils.GetProject().virtualCurrencyName);
 				// clear container
-				Resizer.DestroyChilds(mainScreenContainer.transform);
+				//Resizer.DestroyChilds(mainScreenContainer.transform);
 				screenHistoryView.transform.SetParent (mainScreenContainer.transform);
 				screenHistoryView.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
 				Resizer.ResizeToParrent (screenHistoryView);

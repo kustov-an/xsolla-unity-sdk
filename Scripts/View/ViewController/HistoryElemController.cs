@@ -11,6 +11,7 @@ namespace Xsolla
 		public Text mItem;
 		public Text mBalance;
 		public Text mPrice;
+		public GameObject mSymbolRub;
 		public GameObject mDevider;
 
 		public String prepareTypeStr(String pStr)
@@ -142,7 +143,16 @@ namespace Xsolla
 				mBalance.text = "";
 
 			if (pItem.paymentAmount != 0)
-				mPrice.text = CurrencyFormatter.FormatPrice(pItem.paymentCurrency, pItem.paymentAmount.ToString());
+			{
+				mPrice.text = CurrencyFormatter.FormatPrice(pItem.paymentCurrency, pItem.paymentAmount.ToString("0.00"));
+				if (pItem.paymentCurrency == "RUB")
+					mSymbolRub.SetActive(true);
+				else
+				{
+					mSymbolRub.SetActive(false);
+					mPrice.alignment = TextAnchor.LowerLeft;
+				}
+			}
 			else
 				mPrice.text = ""; 
 
