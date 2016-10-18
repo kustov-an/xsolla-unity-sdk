@@ -50,6 +50,9 @@ namespace Xsolla
 
 						Logger.Log("Change value toggle " + value.ToString());
 					});
+
+				CustomVirtCurrAmountController controller = CustomAmountScreen.GetComponent<CustomVirtCurrAmountController>() as CustomVirtCurrAmountController;
+				controller.initScreen(pUtils);
 					
 			}
 

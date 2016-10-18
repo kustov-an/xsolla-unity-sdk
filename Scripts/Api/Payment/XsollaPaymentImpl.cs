@@ -30,6 +30,7 @@ namespace Xsolla
 		private const int APPLY_PROMO_COUPONE		= 12;
 		private const int COUPON_PROCEED			= 13;
 		private const int HISTORY					= 22;
+		private const int CALCULATE_CUSTOM_AMOUNT   = 14;
 
 	
 		public Action<XsollaUtils> 					UtilsRecieved;
@@ -386,6 +387,13 @@ namespace Xsolla
 			POST(APPLY_PROMO_COUPONE, GetDirectpaymentLink(), pParams);
 		}
 
+		public void CalculateCustomAmount(Dictionary<string, object> pParams)
+		{
+			if (!pParams.ContainsKey(XsollaApiConst.ACCESS_TOKEN))
+				pParams.Add(XsollaApiConst.ACCESS_TOKEN, baseParams[XsollaApiConst.ACCESS_TOKEN]);
+			POST(CALCULATE_CUSTOM_AMOUNT, GetCalculateCustomAmountUrl(), pParams);
+		}
+
 		public WWW POST(int type, string url, Dictionary<string, object> post)
 		{
 //			WWWForm form = new WWWForm();
@@ -627,6 +635,11 @@ namespace Xsolla
 							XsollaHistoryList history = new XsollaHistoryList().Parse(rootNode["operations"]) as XsollaHistoryList;
 							OnHistoryRecieved(history);
 
+						}
+						break;
+					case CALCULATE_CUSTOM_AMOUNT:
+						{
+							//TODO: fill method
 						}
 						break;
 					default:
@@ -927,6 +940,11 @@ namespace Xsolla
 
 		private string GetVirtualPaymentStatusLink() {
 			return DOMAIN + "/paystation2/api/virtualstatus";
+		}
+
+		private string GetCalculateCustomAmountUrl() 
+		{
+			return DOMAIN + "/paystation2/api/pricepoints/calculate";
 		}
 
 		//*** GA SECTION START ***
