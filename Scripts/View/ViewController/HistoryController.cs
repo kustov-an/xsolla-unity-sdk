@@ -96,7 +96,7 @@ namespace Xsolla
 			{
 				if (pHeader)
 				{
-					controller.Init(pTranslation, null, mVirtCurrName, pEven, SortHistory, true);
+					controller.Init(pTranslation, null, mVirtCurrName, pEven, SortHistory, true, sortDesc);
 				}
 				else
 				{

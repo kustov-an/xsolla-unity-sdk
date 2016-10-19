@@ -42,19 +42,20 @@ namespace Xsolla
 
 		}
 
-		public void Init(XsollaTranslations pTranslation, XsollaHistoryItem pItem, String pVirtCurrName,  Boolean pEven, Action pSortAction, Boolean pHeader = false)
+		public void Init(XsollaTranslations pTranslation, XsollaHistoryItem pItem, String pVirtCurrName,  Boolean pEven, Action pSortAction, Boolean pHeader = false, Boolean pDesc = true)
 		{
 			Image imgComp = this.GetComponent<Image>();
 			imgComp.enabled = pEven;
 	
 			if (pHeader)
 			{
-				mDate.text = pTranslation.Get("balance_history_date");
+				mDate.text = pTranslation.Get("balance_history_date") + (pDesc==true?" ▼":" ▲");
 				Button sortBtn = mDate.gameObject.AddComponent<Button>();
 				sortBtn.onClick.AddListener(delegate 
 					{
 						Logger.Log("On sort btn click");
 						pSortAction();
+						mDate.text = pTranslation.Get("balance_history_date") + " ↓";
 					});
 
 				mType.text = pTranslation.Get("balance_history_purpose");
@@ -66,7 +67,7 @@ namespace Xsolla
 				// Activate devider 
 				mDevider.SetActive(true);
 				LayoutElement layout = this.transform.GetComponent<LayoutElement>();
-				layout.minHeight = 20;
+				layout.minHeight = 30;
 				return;
 			}
 				
