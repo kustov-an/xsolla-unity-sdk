@@ -503,8 +503,9 @@ namespace Xsolla
 				XsollaTranslations translatrions = utils.GetTranslations ();
 				texts [4].text = translatrions.Get (XsollaTranslations.SUPPORT_CUSTOMER_SUPPORT);
 				texts [5].text = translatrions.Get (XsollaTranslations.SUPPORT_CONTACT_US);
-				texts [6].text = translatrions.Get (XsollaTranslations.FOOTER_SECURED_CONNECTION);
-				texts [7].text = translatrions.Get (XsollaTranslations.FOOTER_AGREEMENT);
+				texts [6].text = translatrions.Get (XsollaTranslations.XSOLLA_COPYRIGHT);
+				texts [7].text = translatrions.Get (XsollaTranslations.FOOTER_SECURED_CONNECTION);
+				texts [8].text = translatrions.Get (XsollaTranslations.FOOTER_AGREEMENT);
 			}
 		}
 

@@ -37,7 +37,7 @@ namespace Xsolla
 			Logger.Log("Init history screen");
 			mTitle.text = pTranslation.Get("balance_history_page_title");
 				
-			mBtnContinue.GetComponent<Text>().text = pTranslation.Get("balance_back_button");	
+			mBtnContinue.GetComponent<Text>().text = pTranslation.Get("balance_back_button") + " >";	
 			mBtnContinue.GetComponent<Button>().onClick.AddListener(delegate 
 				{
 					Logger.Log("Destroy history");
@@ -108,7 +108,8 @@ namespace Xsolla
 
 		public void OnScrollChange(Vector2 pVector)
 		{
-			if (pVector == new Vector2(0.0f, 0.0f))
+			Logger.Log("Scroll vector" + pVector.ToString());
+			if ((pVector == new Vector2(1.0f, 0.0f)) || ((pVector == new Vector2(0.0f, 0.0f))))
 			{
 				Logger.Log("End scroll");
 				if (!isRefresh)

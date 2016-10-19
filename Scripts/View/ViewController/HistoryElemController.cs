@@ -61,6 +61,7 @@ namespace Xsolla
 				mItem.text = pTranslation.Get("balance_history_item");
 				mBalance.text = pTranslation.Get("balance_history_vc_amount");
 				mPrice.text = pTranslation.Get("balance_history_payment_amount");
+				mPrice.alignment = TextAnchor.LowerLeft;
 
 				// Activate devider 
 				mDevider.SetActive(true);
@@ -70,7 +71,7 @@ namespace Xsolla
 			}
 				
 			//mDate.text = pItem.date.ToShortDateString();
-			mDate.text = pItem.date.ToString("MMM d, yyyy HH:mm tt");
+			mDate.text = pItem.date.ToString("MMM d, yyyy hh:mm tt");
 			// balance_history_payment_info:"Payment via {{paymentName}}, transaction ID {{transactionId}}"
 			// balance_history_payment_info_cancellation:"Refund. Payment via {{paymentName}}, transaction ID {{transactionId}}"
 			// balance_history_subscription_change:"Subscription change. Payment via {{paymentName}}, transaction ID: {{transactionId}} "
@@ -79,6 +80,7 @@ namespace Xsolla
 			// balance_history_ingame_info:"In-Game Purchase"
 			// balance_history_internal_info:"{{comment}}"
 			// balance_history_coupon_info:"Coupon, code {{code}}"
+			// subscription_cancellation:"Subscription cancellation"
 
 			switch (pItem.operationType)
 			{
@@ -124,7 +126,7 @@ namespace Xsolla
 				}
 			case "subscriptionCancellation":
 				{
-					mType.text = String.Format(prepareTypeStr(pTranslation.Get("balance_history_payment_info_cancellation")), pItem.paymentName, pItem.invoiceId);
+					mType.text = String.Format(prepareTypeStr(pTranslation.Get("subscription_cancellation")), pItem.paymentName, pItem.invoiceId);
 					break;
 				}
 			default:
