@@ -52,7 +52,8 @@ namespace Xsolla
 		public Action<XsollaForm>					ApplyCouponeCodeReceived;
 		public Action<XsollaStatusPing> 			StatusChecked;
 		public Action<XsollaError> 					ErrorReceived;
-		public Action<XsollaCouponProceedResult>	CouponProceedErrorRecived;							
+		public Action<XsollaCouponProceedResult>	CouponProceedErrorRecived;
+		public Action<CustomVirtCurrAmountController.CustomAmountCalcRes> CustomAmountCalcRecieved;
 
 		public Action<XVirtualPaymentSummary> 		VirtualPaymentSummaryRecieved;
 		public Action<string> 						VirtualPaymentProceedError;
@@ -252,6 +253,12 @@ namespace Xsolla
 		{
 			if (CouponProceedErrorRecived != null)
 				CouponProceedErrorRecived(pCouponObj);
+		}
+
+		protected virtual void OnCustomAmountResRecieved(CustomVirtCurrAmountController.CustomAmountCalcRes pRes)
+		{
+			if (CustomAmountCalcRecieved != null)
+				CustomAmountCalcRecieved(pRes);
 		}
 		
 		// ---------------------------------------------------------------------------
@@ -640,6 +647,8 @@ namespace Xsolla
 					case CALCULATE_CUSTOM_AMOUNT:
 						{
 							//TODO: fill method
+							CustomVirtCurrAmountController.CustomAmountCalcRes res = new CustomVirtCurrAmountController.CustomAmountCalcRes().Parse(rootNode["calculation"]) as CustomVirtCurrAmountController.CustomAmountCalcRes;
+							OnCustomAmountResRecieved(res);
 						}
 						break;
 					default:

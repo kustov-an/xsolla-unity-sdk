@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using SimpleJSON;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Xsolla
 {
@@ -16,30 +18,48 @@ namespace Xsolla
 		public Text			iconRealCurr;	
 
 		private string 		mTotalTitle = "";
+		private string 		mCustomCurrency = "";
 
 		public CustomVirtCurrAmountController ()
 		{
 		}
 
-		public void initScreen(XsollaUtils pUtils)
+		public void initScreen(XsollaUtils pUtils, string pCustomCurrency, Action<Dictionary<string, object>> pActionCalc, Action<float> pTryPay)
 		{
 			// Set btn Name
 			btnPay.gameObject.GetComponentInChildren<Text>().text = pUtils.GetTranslations().Get("form_continue");
 			mTotalTitle = pUtils.GetTranslations().Get("payment_summary_total");
+			mCustomCurrency = pCustomCurrency;
 			ImageLoader imageLoader = FindObjectOfType<ImageLoader>();
 			Logger.Log("VirtIcon " + pUtils.GetProject().virtualCurrencyIconUrl);
 			imageLoader.LoadImage(iconVirtCurr, "http:" + pUtils.GetProject().virtualCurrencyIconUrl);
 			virtCurrAmount.onEndEdit.AddListener(delegate 
 				{
-					Calculate();
+					pActionCalc(GetParamsForCalc());
 				});
 
+			btnPay.onClick.AddListener(delegate  
+				{
+					pTryPay(GetOutAmount());
+				});
 		}
 
-		public void Calculate()
+		private float GetOutAmount()
 		{
-			Logger.Log("Calculate");
+			float res = 0;
+			string value = virtCurrAmount.text;
 
+			float.TryParse(value, out res);
+			return res;
+		}
+
+		private Dictionary<string, object> GetParamsForCalc()
+		{
+			Dictionary<string, object> res = new Dictionary<string, object>();
+			res.Add("userInitialCurrency", "");
+			res.Add("custom_currency", mCustomCurrency);
+			res.Add("custom_vc_amount", virtCurrAmount.text);
+			return res;
 		}
 			
 		public void setValues(CustomAmountCalcRes pValue)
@@ -54,6 +74,12 @@ namespace Xsolla
 				iconRealCurr.text = "€";
 			else if (pValue.currency == "RUB")
 				iconRealCurr.text = "";
+
+			if (pValue.vcAmount > 0)
+				btnPay.interactable = true;
+			else
+				btnPay.interactable = false;
+
 		}
 
 		public class CustomAmountCalcRes: IParseble
@@ -78,12 +104,8 @@ namespace Xsolla
 				{
 					return this;
 				}
-
 			}
-
 		}
-			
-
 	}
 }
 

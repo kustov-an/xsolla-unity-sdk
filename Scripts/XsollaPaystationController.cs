@@ -179,8 +179,7 @@ namespace Xsolla
 			SetLoading (false);
 			DrawVPStatus (utils, status);
 		}
-
-
+			
 		protected override void ApplyPromoCouponeCode (XsollaForm pForm)
 		{
 			Logger.Log("Apply promo recieved");
@@ -247,6 +246,17 @@ namespace Xsolla
 				Resizer.ResizeToParrent (screenHistoryView);
 			}
 		}
+
+		protected override void UpdateCustomAmount (CustomVirtCurrAmountController.CustomAmountCalcRes pRes)
+		{
+			// find custom amount controller 
+			CustomVirtCurrAmountController controller = FindObjectOfType<CustomVirtCurrAmountController>();
+			if (controller != null)
+				controller.setValues(pRes);
+			else
+				Logger.Log("Custom amount controller not found");	
+		}
+
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<< PAYMENT METHODS <<<<<<<<<<<<<<<<<<<<<<<<<<<< 
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -50,10 +50,9 @@ namespace Xsolla
 
 						Logger.Log("Change value toggle " + value.ToString());
 					});
-
+						
 				CustomVirtCurrAmountController controller = CustomAmountScreen.GetComponent<CustomVirtCurrAmountController>() as CustomVirtCurrAmountController;
-				controller.initScreen(pUtils);
-					
+				controller.initScreen(pUtils, pricepoints.GetItemByPosition(1).currency, CalcCustomAmount, TryPayCustomAmount);
 			}
 
 			pAdapter.SetManager (pricepoints, virtualCurrencyName, buyBtnText);
@@ -65,6 +64,18 @@ namespace Xsolla
 				};
 			}
 			DrawContent (pAdapter, 3);
+		}
+
+		public void TryPayCustomAmount(float pOutAmount)
+		{
+			Dictionary<string, object> map = new Dictionary<string, object> (1);
+			map.Add ("out", pOutAmount);
+			OpenPaymentMethods (map, false);
+		}
+
+		public void CalcCustomAmount(Dictionary<string, object> pParam)
+		{
+			gameObject.GetComponentInParent<XsollaPaystationController> ().CalcCustomAmount(pParam);
 		}
 		
 		public void OpenSubscriptions(string title, XsollaSubscriptions subscriptions)
