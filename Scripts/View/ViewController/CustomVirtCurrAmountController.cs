@@ -19,6 +19,7 @@ namespace Xsolla
 
 		private string 		mTotalTitle = "";
 		private string 		mCustomCurrency = "";
+		private bool 		mSetValues = false;
 
 		public CustomVirtCurrAmountController ()
 		{
@@ -26,6 +27,11 @@ namespace Xsolla
 
 		public void initScreen(XsollaUtils pUtils, string pCustomCurrency, Action<Dictionary<string, object>> pActionCalc, Action<float> pTryPay)
 		{
+			if (pUtils.GetProject().isDiscrete)
+				virtCurrAmount.contentType = InputField.ContentType.IntegerNumber;
+			else
+				virtCurrAmount.contentType = InputField.ContentType.DecimalNumber;
+
 			// Set btn Name
 			btnPay.gameObject.GetComponentInChildren<Text>().text = pUtils.GetTranslations().Get("form_continue");
 			mTotalTitle = pUtils.GetTranslations().Get("payment_summary_total");
@@ -33,11 +39,19 @@ namespace Xsolla
 			ImageLoader imageLoader = FindObjectOfType<ImageLoader>();
 			Logger.Log("VirtIcon " + pUtils.GetProject().virtualCurrencyIconUrl);
 			imageLoader.LoadImage(iconVirtCurr, "http:" + pUtils.GetProject().virtualCurrencyIconUrl);
+
 			virtCurrAmount.onEndEdit.AddListener(delegate 
 				{
-					pActionCalc(GetParamsForCalc());
+					if (!mSetValues)
+						pActionCalc(GetParamsForCalc(true));
 				});
 
+			realCurrAmount.onEndEdit.AddListener(delegate 
+				{
+					if (!mSetValues)
+						pActionCalc(GetParamsForCalc(false));
+				});
+					
 			btnPay.onClick.AddListener(delegate  
 				{
 					pTryPay(GetOutAmount());
@@ -53,20 +67,35 @@ namespace Xsolla
 			return res;
 		}
 
-		private Dictionary<string, object> GetParamsForCalc()
+		private Dictionary<string, object> GetParamsForCalc(bool pVirtCurr)
 		{
 			Dictionary<string, object> res = new Dictionary<string, object>();
 			res.Add("userInitialCurrency", "");
 			res.Add("custom_currency", mCustomCurrency);
-			res.Add("custom_vc_amount", virtCurrAmount.text);
+			if (pVirtCurr)
+				res.Add("custom_vc_amount", virtCurrAmount.text);
+			else
+				res.Add("custom_amount", realCurrAmount.text);
 			return res;
 		}
 			
 		public void setValues(CustomAmountCalcRes pValue)
 		{
-			totalAmountTitle.text = mTotalTitle + " " + CurrencyFormatter.FormatPrice(pValue.currency, pValue.amount.ToString("0.00"));
-			virtCurrAmount.text = pValue.vcAmount.ToString();
-			realCurrAmount.text = pValue.amount.ToString("0.00");
+			mSetValues = true;
+			if (pValue.amount != 0)
+				totalAmountTitle.text = mTotalTitle + " " + CurrencyFormatter.FormatPrice(pValue.currency, pValue.amount.ToString("N2"));
+			else
+				totalAmountTitle.text = "";
+			
+			if (pValue.vcAmount != 0)
+				virtCurrAmount.text = pValue.vcAmount.ToString();
+			else
+				virtCurrAmount.text = "";
+			
+			if (pValue.amount != 0)
+				realCurrAmount.text = pValue.amount.ToString("0.00");
+			else
+				realCurrAmount.text = "";
 
 			if (pValue.currency == "USD")
 				iconRealCurr.text = "$";
@@ -80,20 +109,21 @@ namespace Xsolla
 			else
 				btnPay.interactable = false;
 
+			mSetValues = false;
 		}
 
 		public class CustomAmountCalcRes: IParseble
 		{
-			public float amount;
+			public double amount;
 			public string currency;
-			public float vcAmount;
+			public double vcAmount;
 			public Bonus bonus;
 
 			public IParseble Parse(JSONNode pNode)
 			{
-				amount = pNode["amount"].AsFloat;
+				amount = pNode["amount"].AsDouble;
 				currency = pNode["currency"];
-				vcAmount = pNode["vc_amount"].AsFloat;
+				vcAmount = pNode["vc_amount"].AsDouble;
 				bonus = new Bonus().Parse(pNode["bonus"]) as Bonus;
 				return this;
 			}
