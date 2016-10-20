@@ -29,6 +29,7 @@ namespace Xsolla
 			// if we have custom amount we need show link object 
 			if (pCustomHref)
 			{
+				CustomAmountLink.SetActive(true);
 				string customAmountShowTitle = pUtils.GetTranslations().Get(XsollaTranslations.PRICEPOINT_PAGE_CUSTOM_AMOUNT_SHOW_TITLE);
 				string customAmountHideTitle = pUtils.GetTranslations().Get(XsollaTranslations.PRICEPOINT_PAGE_CUSTOM_AMOUNT_HIDE_TITLE);
 
@@ -53,6 +54,10 @@ namespace Xsolla
 						
 				CustomVirtCurrAmountController controller = CustomAmountScreen.GetComponent<CustomVirtCurrAmountController>() as CustomVirtCurrAmountController;
 				controller.initScreen(pUtils, pricepoints.GetItemByPosition(1).currency, CalcCustomAmount, TryPayCustomAmount);
+			}
+			else
+			{
+				CustomAmountLink.SetActive(false);
 			}
 
 			pAdapter.SetManager (pricepoints, virtualCurrencyName, buyBtnText);
