@@ -11,7 +11,7 @@ namespace Xsolla
 
 		private string DOMAIN = "https://secure.xsolla.com";
 
-		private const string SDK_VERSION = "1.3.2";
+		private const string SDK_VERSION = "1.3.3";
 
 		private const int TRANSLATIONS 		 	= 0;
 		private const int DIRECTPAYMENT_FORM 	= 1;
@@ -29,10 +29,13 @@ namespace Xsolla
 		private const int VIRTUAL_STATUS 			= 11;
 		private const int APPLY_PROMO_COUPONE		= 12;
 		private const int COUPON_PROCEED			= 13;
+		private const int HISTORY					= 22;
+		private const int CALCULATE_CUSTOM_AMOUNT   = 14;
 
-
+	
 		public Action<XsollaUtils> 					UtilsRecieved;
 		public Action<XsollaTranslations> 			TranslationRecieved;
+		public Action<XsollaHistoryList>			HistoryRecieved;
 
 		public Action<XsollaPricepointsManager> 	PricepointsRecieved;
 		public Action<XsollaGroupsManager> 			GoodsGroupsRecieved;
@@ -49,7 +52,8 @@ namespace Xsolla
 		public Action<XsollaForm>					ApplyCouponeCodeReceived;
 		public Action<XsollaStatusPing> 			StatusChecked;
 		public Action<XsollaError> 					ErrorReceived;
-		public Action<XsollaCouponProceedResult>	CouponProceedErrorRecived;							
+		public Action<XsollaCouponProceedResult>	CouponProceedErrorRecived;
+		public Action<CustomVirtCurrAmountController.CustomAmountCalcRes> CustomAmountCalcRecieved;
 
 		public Action<XVirtualPaymentSummary> 		VirtualPaymentSummaryRecieved;
 		public Action<string> 						VirtualPaymentProceedError;
@@ -206,6 +210,12 @@ namespace Xsolla
 			if (TranslationRecieved != null)
 				TranslationRecieved(translations);
 		}
+
+		protected virtual void OnHistoryRecieved(XsollaHistoryList pHistoryList)
+		{
+			if (HistoryRecieved != null)
+				HistoryRecieved(pHistoryList);
+		}
 		
 		// ---------------------------------------------------------------------------
 
@@ -243,6 +253,12 @@ namespace Xsolla
 		{
 			if (CouponProceedErrorRecived != null)
 				CouponProceedErrorRecived(pCouponObj);
+		}
+
+		protected virtual void OnCustomAmountResRecieved(CustomVirtCurrAmountController.CustomAmountCalcRes pRes)
+		{
+			if (CustomAmountCalcRecieved != null)
+				CustomAmountCalcRecieved(pRes);
 		}
 		
 		// ---------------------------------------------------------------------------
@@ -297,7 +313,6 @@ namespace Xsolla
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
 			POST (GOODS, GetGoodsUrl(), requestParams);
 		}
-			
 		public void GetItemsGroups(Dictionary<string, object> requestParams)
 		{
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
@@ -366,10 +381,24 @@ namespace Xsolla
 //			Dictionary<string, object> requestParams = new Dictionary<string, object>();
 			POST (COUNTRIES, GetCountriesListUrl(), requestParams);
 		}
+			
+		public void GetHistory(Dictionary<string, object> pParams)
+		{
+			if (!pParams.ContainsKey(XsollaApiConst.ACCESS_TOKEN))
+				pParams.Add(XsollaApiConst.ACCESS_TOKEN, baseParams[XsollaApiConst.ACCESS_TOKEN]);
 
+			POST(HISTORY, GetHistoryUrl(), pParams);
+		}
 		public void ApplyPromoCoupone(Dictionary<string, object> pParams)
 		{
 			POST(APPLY_PROMO_COUPONE, GetDirectpaymentLink(), pParams);
+		}
+
+		public void CalculateCustomAmount(Dictionary<string, object> pParams)
+		{
+			if (!pParams.ContainsKey(XsollaApiConst.ACCESS_TOKEN))
+				pParams.Add(XsollaApiConst.ACCESS_TOKEN, baseParams[XsollaApiConst.ACCESS_TOKEN]);
+			POST(CALCULATE_CUSTOM_AMOUNT, GetCalculateCustomAmountUrl(), pParams);
 		}
 
 		public WWW POST(int type, string url, Dictionary<string, object> post)
@@ -605,6 +634,21 @@ namespace Xsolla
 								pDataArgs.Add("operation_id", operationId);
 								VPaymentStatus(pDataArgs);
 							}
+						}
+						break;
+
+					case HISTORY:
+						{
+							XsollaHistoryList history = new XsollaHistoryList().Parse(rootNode["operations"]) as XsollaHistoryList;
+							OnHistoryRecieved(history);
+
+						}
+						break;
+					case CALCULATE_CUSTOM_AMOUNT:
+						{
+							//TODO: fill method
+							CustomVirtCurrAmountController.CustomAmountCalcRes res = new CustomVirtCurrAmountController.CustomAmountCalcRes().Parse(rootNode["calculation"]) as CustomVirtCurrAmountController.CustomAmountCalcRes;
+							OnCustomAmountResRecieved(res);
 						}
 						break;
 					default:
@@ -864,6 +908,11 @@ namespace Xsolla
 			return DOMAIN + "/paystation2/api/virtualitems/items";
 		}
 
+		private string GetHistoryUrl()
+		{
+			return DOMAIN + "/paystation2/api/balance/history";
+		}
+
 
 		/*		PAYMENT METHODS LINKS	 */
 
@@ -900,6 +949,11 @@ namespace Xsolla
 
 		private string GetVirtualPaymentStatusLink() {
 			return DOMAIN + "/paystation2/api/virtualstatus";
+		}
+
+		private string GetCalculateCustomAmountUrl() 
+		{
+			return DOMAIN + "/paystation2/api/pricepoints/calculate";
 		}
 
 		//*** GA SECTION START ***
