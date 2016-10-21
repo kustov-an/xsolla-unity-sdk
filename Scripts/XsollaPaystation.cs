@@ -55,6 +55,8 @@ namespace  Xsolla
 		protected abstract void ShowSavedPaymentsList(XsollaSavedPaymentMethods savedPaymentsMethods);
 		protected abstract void ShowCountries (XsollaCountries paymentMethods);
 		protected abstract void ApplyPromoCouponeCode(XsollaForm pForm);
+		protected abstract void ShowHistory(XsollaHistoryList pList);
+		protected abstract void UpdateCustomAmount(CustomVirtCurrAmountController.CustomAmountCalcRes pRes);
 
 		protected abstract void ShowPaymentForm (XsollaUtils utils, XsollaForm form);
 
@@ -121,10 +123,12 @@ namespace  Xsolla
 			Payment.PaymentMethodsRecieved += ShowPaymentsList;
 			Payment.SavedPaymentMethodsRecieved += ShowSavedPaymentsList;
 			Payment.CountriesRecieved += ShowCountries;
-			
+			Payment.HistoryRecieved += ShowHistory;
+
 			Payment.PricepointsRecieved += (pricepoints) => ShowPricepoints(Utils, pricepoints);
 			Payment.GoodsGroupsRecieved += (goods) => ShowGoodsGroups(goods);
 			Payment.GoodsRecieved += (goods) => UpdateGoods(goods);
+			Payment.CustomAmountCalcRecieved += (calcRes) => UpdateCustomAmount(calcRes);
 
 			Payment.VirtualPaymentSummaryRecieved += (summary) => ShowVPSummary(Utils, summary);
 			Payment.VirtualPaymentProceedError += (error) => ShowVPError(Utils, error);
@@ -237,6 +241,11 @@ namespace  Xsolla
 			Payment.GetCountries (currentPurchase.GetMergedMap());
 		}
 
+		public void LoadHistory(Dictionary<string, object> pParams)
+		{
+			Payment.GetHistory(pParams);
+		}
+
 		public void UpdateCountries(string countryIso)
 		{
 			Logger.Log ("Update Countries request");
@@ -311,6 +320,12 @@ namespace  Xsolla
 			Logger.Log ("Get Status");
 			FillPurchase (ActivePurchase.Part.INVOICE, items);
 			Payment.NextStep (currentPurchase.GetMergedMap());
+		}
+
+		public void CalcCustomAmount(Dictionary<string, object> pParam)
+		{
+			Logger.Log("Calc custom amount");
+			Payment.CalculateCustomAmount(pParam);
 		}
 
 		protected void Restart (){

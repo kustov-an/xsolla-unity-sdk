@@ -14,6 +14,7 @@ namespace Xsolla
 		private const string PREFAB_SCREEN_CHECKOUT 	 = "Prefabs/SimpleView/_ScreenCheckout/ScreenCheckout";
 		private const string PREFAB_SCREEN_VP_SUMMARY 	 = "Prefabs/SimpleView/_ScreenVirtualPaymentSummary/ScreenVirtualPaymentSummary";
 		private const string PREFAB_SCREEN_REDEEM_COUPON = "Prefabs/SimpleView/_ScreenShop/RedeemCouponView";
+		private const string PREFAB_SCREEN_HISTORY_USER  = "Prefabs/SimpleView/_ScreenShop/HistoryView";
 
 		private const string PREFAB_VIEW_MENU_ITEM		 = "Prefabs/SimpleView/MenuItem";
 		private const string PREFAB_VIEW_MENU_ITEM_ICON	 = "Prefabs/SimpleView/MenuItemIcon";
@@ -41,7 +42,7 @@ namespace Xsolla
 
 		enum ActiveScreen
 		{
-			SHOP, P_LIST, VP_PAYMENT, PAYMENT, STATUS, ERROR, UNKNOWN, FAV_ITEMS_LIST, REDEEM_COUPONS
+			SHOP, P_LIST, VP_PAYMENT, PAYMENT, STATUS, ERROR, UNKNOWN, FAV_ITEMS_LIST, REDEEM_COUPONS, HISTORY_LIST
 		}
 
 		protected override void RecieveUtils (XsollaUtils utils)
@@ -51,7 +52,7 @@ namespace Xsolla
 			mainScreen.transform.SetParent (container.transform);
 			mainScreen.SetActive (true);
 			mainScreenContainer = mainScreen.GetComponentsInChildren<ScrollRect> ()[0].gameObject;
-			menuTransform = mainScreen.GetComponentsInChildren<RectTransform> ()[5].transform;
+			menuTransform = mainScreen.GetComponentsInChildren<RectTransform> ()[8].transform;
 			Resizer.ResizeToParrent (mainScreen);
 			base.RecieveUtils(utils);
 			InitHeader(utils);
@@ -178,8 +179,7 @@ namespace Xsolla
 			SetLoading (false);
 			DrawVPStatus (utils, status);
 		}
-
-
+			
 		protected override void ApplyPromoCouponeCode (XsollaForm pForm)
 		{
 			Logger.Log("Apply promo recieved");
@@ -207,8 +207,6 @@ namespace Xsolla
 				footerTexts[1].text = Utils.GetTranslations().Get(XsollaTranslations.TOTAL) + " " + pForm.GetSumTotal ();
 			}
 			promoController.ApplySuccessful();
-
-
 		}
 
 		protected override void GetCouponErrorProceed (XsollaCouponProceedResult pResult)
@@ -219,8 +217,47 @@ namespace Xsolla
 				_couponController.ShowError(pResult._error);
 				return;
 			}
-
 		}
+
+		protected override void ShowHistory (XsollaHistoryList pList)
+		{
+			GameObject screenHistoryView;
+			HistoryController controller;
+			controller = GameObject.FindObjectOfType<HistoryController>();
+			// if we have controller
+			if (controller != null)
+			{
+				controller = GameObject.FindObjectOfType<HistoryController>();
+				if (!controller.IsRefresh())
+					controller.AddListRows(Utils.GetTranslations(), pList);
+				else
+					controller.InitScreen(Utils.GetTranslations(), pList, Utils.GetProject().virtualCurrencyName);
+			}
+			else
+			{
+				currentActive = ActiveScreen.HISTORY_LIST;
+				screenHistoryView = Instantiate(Resources.Load(PREFAB_SCREEN_HISTORY_USER)) as GameObject;
+				controller = screenHistoryView.GetComponent<HistoryController>();	
+				if (controller != null)
+					controller.InitScreen(Utils.GetTranslations(), pList, Utils.GetProject().virtualCurrencyName);
+				// clear container
+				//Resizer.DestroyChilds(mainScreenContainer.transform);
+				screenHistoryView.transform.SetParent (mainScreenContainer.transform);
+				screenHistoryView.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+				Resizer.ResizeToParrent (screenHistoryView);
+			}
+		}
+
+		protected override void UpdateCustomAmount (CustomVirtCurrAmountController.CustomAmountCalcRes pRes)
+		{
+			// find custom amount controller 
+			CustomVirtCurrAmountController controller = FindObjectOfType<CustomVirtCurrAmountController>();
+			if (controller != null)
+				controller.setValues(pRes);
+			else
+				Logger.Log("Custom amount controller not found");	
+		}
+
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<< PAYMENT METHODS <<<<<<<<<<<<<<<<<<<<<<<<<<<< 
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -245,7 +282,11 @@ namespace Xsolla
 			string title = utils.GetTranslations ().Get (XsollaTranslations.PRICEPOINT_PAGE_TITLE);
 			string vcName = utils.GetProject ().virtualCurrencyName;
 			string buyText = utils.GetTranslations ().Get (XsollaTranslations.VIRTUAL_ITEM_OPTION_BUTTON);
-			_shopViewController.OpenPricepoints(title, pricepoints, vcName, buyText);
+
+			if (utils.GetSettings().components.virtualCurreny.customAmount)
+				_shopViewController.OpenPricepoints(title, pricepoints, vcName, buyText, true, utils);
+			else
+				_shopViewController.OpenPricepoints(title, pricepoints, vcName, buyText);
 		}
 		
 		public void OpenGoods(XsollaGroupsManager groups)
@@ -255,7 +296,7 @@ namespace Xsolla
 			_shopViewController.OpenGoods(groups);
 			_radioController.SelectItem(0);
 		}
-
+			
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SHOP <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -392,8 +433,11 @@ namespace Xsolla
 
 		private void InitHeader(XsollaUtils utils)
 		{
-			Text[] texts = mainScreen.GetComponentsInChildren<Text> ();
-			texts [0].text = utils.GetProject ().name;
+			MainHeaderController controller = mainScreen.GetComponentInChildren<MainHeaderController>();
+			controller.InitScreen(utils);
+
+			//Text[] texts = mainScreen.GetComponentsInChildren<Text> ();
+			//texts [0].text = utils.GetProject ().name;
 		}
 
 		//TODO minimize
@@ -471,10 +515,11 @@ namespace Xsolla
 			if (utils != null) {
 				Text[] texts = mainScreen.GetComponentsInChildren<Text> ();
 				XsollaTranslations translatrions = utils.GetTranslations ();
-				texts [2].text = translatrions.Get (XsollaTranslations.SUPPORT_CUSTOMER_SUPPORT);
-				texts [3].text = translatrions.Get (XsollaTranslations.SUPPORT_CONTACT_US);
-				texts [5].text = translatrions.Get (XsollaTranslations.FOOTER_SECURED_CONNECTION);
-				texts [6].text = translatrions.Get (XsollaTranslations.FOOTER_AGREEMENT);
+				texts [4].text = translatrions.Get (XsollaTranslations.SUPPORT_CUSTOMER_SUPPORT);
+				texts [5].text = translatrions.Get (XsollaTranslations.SUPPORT_CONTACT_US);
+				texts [6].text = translatrions.Get (XsollaTranslations.XSOLLA_COPYRIGHT);
+				texts [7].text = translatrions.Get (XsollaTranslations.FOOTER_SECURED_CONNECTION);
+				texts [8].text = translatrions.Get (XsollaTranslations.FOOTER_AGREEMENT);
 			}
 		}
 
