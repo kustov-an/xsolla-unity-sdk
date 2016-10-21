@@ -223,14 +223,15 @@ namespace Xsolla
 		{
 			GameObject screenHistoryView;
 			HistoryController controller;
-			// if 
-			if (currentActive == ActiveScreen.HISTORY_LIST)
+			controller = GameObject.FindObjectOfType<HistoryController>();
+			// if we have controller
+			if (controller != null)
 			{
 				controller = GameObject.FindObjectOfType<HistoryController>();
-				if (!controller.isRefresh)
+				if (!controller.IsRefresh())
 					controller.AddListRows(Utils.GetTranslations(), pList);
 				else
-					controller.InitScreen(Utils.GetTranslations(), pList);
+					controller.InitScreen(Utils.GetTranslations(), pList, Utils.GetProject().virtualCurrencyName);
 			}
 			else
 			{
@@ -238,9 +239,9 @@ namespace Xsolla
 				screenHistoryView = Instantiate(Resources.Load(PREFAB_SCREEN_HISTORY_USER)) as GameObject;
 				controller = screenHistoryView.GetComponent<HistoryController>();	
 				if (controller != null)
-					controller.InitScreen(Utils.GetTranslations(), pList);
+					controller.InitScreen(Utils.GetTranslations(), pList, Utils.GetProject().virtualCurrencyName);
 				// clear container
-				Resizer.DestroyChilds(mainScreenContainer.transform);
+				//Resizer.DestroyChilds(mainScreenContainer.transform);
 				screenHistoryView.transform.SetParent (mainScreenContainer.transform);
 				screenHistoryView.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
 				Resizer.ResizeToParrent (screenHistoryView);
@@ -516,8 +517,9 @@ namespace Xsolla
 				XsollaTranslations translatrions = utils.GetTranslations ();
 				texts [4].text = translatrions.Get (XsollaTranslations.SUPPORT_CUSTOMER_SUPPORT);
 				texts [5].text = translatrions.Get (XsollaTranslations.SUPPORT_CONTACT_US);
-				texts [6].text = translatrions.Get (XsollaTranslations.FOOTER_SECURED_CONNECTION);
-				texts [7].text = translatrions.Get (XsollaTranslations.FOOTER_AGREEMENT);
+				texts [6].text = translatrions.Get (XsollaTranslations.XSOLLA_COPYRIGHT);
+				texts [7].text = translatrions.Get (XsollaTranslations.FOOTER_SECURED_CONNECTION);
+				texts [8].text = translatrions.Get (XsollaTranslations.FOOTER_AGREEMENT);
 			}
 		}
 

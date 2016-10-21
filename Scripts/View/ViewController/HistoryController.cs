@@ -13,8 +13,9 @@ namespace Xsolla
 		private const string PREFAB_HISTORY_ROW  = "Prefabs/SimpleView/HistoryItem";
 		private int mLimit = 0;
 		private int mCountMore = 20;
-		public bool isRefresh = false;
-		public bool sortDesc = true;
+		private bool isRefresh = false;
+		private bool sortDesc = true;
+		private String mVirtCurrName;
 
 //		public Text mDateTitle;
 //		public Text mTypeTitle;
@@ -23,11 +24,25 @@ namespace Xsolla
 //		public Text mPriceTitle;
 
 		public Button mBtnRefresh;
+		public GameObject mBtnContinue;
 
-		public void InitScreen(XsollaTranslations pTranslation, XsollaHistoryList pList)
+		public bool IsRefresh()
 		{
+			return isRefresh;
+		}
+
+		public void InitScreen(XsollaTranslations pTranslation, XsollaHistoryList pList, String pVirtualCurrName)
+		{
+			mVirtCurrName = pVirtualCurrName;
 			Logger.Log("Init history screen");
 			mTitle.text = pTranslation.Get("balance_history_page_title");
+				
+			mBtnContinue.GetComponent<Text>().text = pTranslation.Get("balance_back_button") + " >";	
+			mBtnContinue.GetComponent<Button>().onClick.AddListener(delegate 
+				{
+					Logger.Log("Destroy history");
+					Destroy(this.gameObject);	
+				});
 
 			AddHistoryRow(pTranslation, null, false, true);
 
@@ -51,6 +66,7 @@ namespace Xsolla
 			Logger.Log("Clear histroy List");
 			mLimit = 0;
 			Resizer.DestroyChilds(mHistoryContainer.transform);
+			mHistoryContainer.GetComponent<RectTransform>().anchoredPosition = new Vector3(0,0);
 			isRefresh = true;
 		}
 
@@ -80,11 +96,11 @@ namespace Xsolla
 			{
 				if (pHeader)
 				{
-					controller.Init(pTranslation, null, pEven, SortHistory, true);
+					controller.Init(pTranslation, null, mVirtCurrName, pEven, SortHistory, true, sortDesc);
 				}
 				else
 				{
-					controller.Init(pTranslation, pItem, pEven, null);
+					controller.Init(pTranslation, pItem, mVirtCurrName, pEven, null);
 				}
 			}
 			itemRow.transform.SetParent(mHistoryContainer.transform);
@@ -92,7 +108,8 @@ namespace Xsolla
 
 		public void OnScrollChange(Vector2 pVector)
 		{
-			if (pVector == new Vector2(0.0f, 0.0f))
+			Logger.Log("Scroll vector" + pVector.ToString());
+			if ((pVector == new Vector2(1.0f, 0.0f)) || ((pVector == new Vector2(0.0f, 0.0f))))
 			{
 				Logger.Log("End scroll");
 				if (!isRefresh)
