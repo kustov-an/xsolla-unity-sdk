@@ -2,11 +2,11 @@
 
 ### GETTING STARTED
 
-1. To become an Xsolla partner, sign up in Xsolla control panel at this address: https://merchant.xsolla.com/signup/?utm_source=unity&utm_medium=instruction  
+1. To become an Xsolla partner, sign up in Xsolla control panel at this address: https://publisher.xsolla.com/signup/?utm_source=unity&utm_medium=instruction  
 2. Familiarize yourself with the Integration Guides and select the modules that best fit your project. All the guides contain video tutorials on how to set up a Xsolla control panel for each specific module. You can find the Integration Guides here: https://developers.xsolla.com/#getting-started
 3. You have to chose way how to integrate **GENERAL INTEGRATION** or **SIMPLE INTEGRATION**.  
     - **GENERAL** - require own backend and IPN realization. 
-    - **SIMPLE** - require only created project inside your merchant account but have less functionality.
+    - **SIMPLE** - require only created project inside your publisher account but have less functionality.
 ##### GENERAL INTEGRATION
 **Features:**  
     - Saved payment methods  
